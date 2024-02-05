@@ -1,6 +1,7 @@
 const { render } = require("ejs")
 const User = require("../models/userModel")
-
+const otpSend = require("../helper/otpHelper")
+const otpHelper = require("../helper/otpHelper")
 
 
 const loginLoad = function (req, res) {
@@ -42,7 +43,7 @@ const insertUser = async function(req, res) {
     console.log(result);
 
     if (result) {
-      res.redirect("/");
+      res.redirect("/otpVerify");
     }
   } catch (error) {
   
@@ -80,7 +81,8 @@ const loadUserHome = async function (req,res){
   try {
     if(req.session.user){
       const userData = await User.findOne({_id:req.session.user});
-      res.render("user/userHome");
+      const name = userData.name
+      res.render("user/userHome",{message:name});
     } else{
       res.redirect("/")
     }
@@ -90,6 +92,58 @@ const loadUserHome = async function (req,res){
     
   }
 }
+
+const loadLogout = (req,res)=>{
+  
+  if(req.session.user){
+    req.session.destroy((err)=>{
+      if(err){
+        console.log("Error in login");
+      }
+      else{
+        res.redirect("/")
+      }
+    })
+  }else{
+    res.redirect("/")
+  }
+
+}
+
+const loadOtpVerify = async function(req,res){
+      res.render('user/otpVerify')
+}   
+
+
+// const dataStoreSession = async (req,res)=>{
+//      const {name,email,mob,password} = req.body
+//      req.session.insertedData = {name,email,mob,password}
+    
+//      res.redirect('/sendotp')
+//      console.log(req.session.insertedData);
+//      }
+
+
+const registerWithOtp = async(req,res)=>{
+  try {
+        
+    
+  } catch (error) {
+    console.log(error.message)
+  }
+}
+  
+
+// const otp = (req,res)=>{
+//   try{
+//     res.redirect("/sendotp")
+//   }catch(error){
+//     console.log(error.message);
+//   }
+// }
+
+
+
    
 
 
@@ -104,5 +158,9 @@ module.exports = {
               loadRegister,
               insertUser,
               logUser,
-              loadUserHome
+              loadUserHome,
+              loadLogout,
+              loadOtpVerify,
+              //otp
+              
                     }

@@ -21,8 +21,13 @@ const userSchema = new mongoose.Schema({
   isAdmin:{
     type:Number,
     value:0
-  }
+  },
+  // isVerified:{
+  //   type:Number,
+  //   value:0
+  // }
 
+  
 
 })
 

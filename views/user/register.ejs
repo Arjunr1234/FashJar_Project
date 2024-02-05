@@ -10,46 +10,46 @@
 </head>
 <body>
     <section class=" gradient-custom">
-        <div class="container py-5 h-100">
+        <div class="container py-4 h-100"> <!-- Adjusted padding -->
           <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-              <div class="card bg-success text-white" style="border-radius: 1rem;">
-                <div class="card-body p-5 text-center">
+              <div class="card bg-success text-white" style="border-radius: 0.5rem;"> <!-- Adjusted border-radius -->
+                <div class="card-body p-3 text-center"> <!-- Adjusted padding -->
       
-                  <div class="mb-md-5 mt-md-4 pb-5">
+                  <div class="mb-md-4 mt-md-3 pb-4"> <!-- Adjusted margin and padding -->
       
                     <h2 class="fw-bold mb-2 text-uppercase">Register</h2>
-                    <p class="text-white-50 mb-4">Please enter your details</p>
+                    <p class="text-white-50 mb-3">Please enter your details</p>
 
-                    <form id="regform" action="/register" method="post">
+                    <form id="regform" action="/otp" method="post">
                      
                       <% if(locals.message) { %>
                       <div class="alert alert-danger"> <%= locals.message %></div>
                         <% } %>
 
                         
-                    <div class="form-outline form-white mb-3">
+                    <div class="form-outline form-white mb-2">
                       <label class="form-label" for="typeNameX">Name</label>
                       <input type="text" id="typeNameX" class="form-control form-control-lg" name="name" required />
                       
                     </div>
                     <p><div id="error1" style="display: none;" class="alert alert-danger err"></div></p>
       
-                    <div class="form-outline form-white mb-3">
+                    <div class="form-outline form-white mb-2">
                       <label class="form-label" for="typeEmailX">Email</label>
                       <input type="email" id="typeEmailX" class="form-control form-control-lg" name="email" required />
                       
                     </div>
                     <p><div id="error2" style="display: none;" class="alert alert-danger err"></div></p>
 
-                    <div class="form-outline form-white mb-3">
+                    <div class="form-outline form-white mb-2">
                       <label class="form-label" for="typeMobileX">Mobile</label>
                       <input type="number" id="typeMobileX" class="form-control form-control-lg" name="mob" required/>
                      
                     </div>
                     <p><div id="error3" style="display: none;" class="alert alert-danger err"></div></p>
       
-                    <div class="form-outline form-white mb-3">
+                    <div class="form-outline form-white mb-2">
                       <label class="form-label" for="typePasswordX">Password</label>
                       <input type="password" id="typePasswordX" class="form-control form-control-lg" name="password" required/>
                       
@@ -58,11 +58,8 @@
                     
                     
       
-                    <input class="btn btn-outline-light btn-lg px-5" type="submit" value="Sign Up" />
-
+                    <input class="btn btn-outline-light btn-lg px-4" type="submit" value="Sign Up" /> <!-- Adjusted padding -->
                   </form>
-      
-                    
       
                   </div>
       

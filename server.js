@@ -3,6 +3,7 @@ const path = require("path");
 const nocache = require("nocache");
 const session = require("express-session");
 const flash = require("express-flash");
+const nodemailer = require("nodemailer")
 
 
 const userAuthRoute = require("./routes/userAuth");
@@ -29,12 +30,12 @@ app.use(
 )
 
 app.use("/", nocache());
-// app.use(flash())
-// app.use((req,res,next)=>{
-//   res.locals.message = req.session.message;
-//   delete req.session.message;
-//   next();
-// })
+app.use(flash())
+app.use((req,res,next)=>{
+  res.locals.message = req.session.message;
+  delete req.session.message;
+  next();
+})
 
 app.use("/", userAuthRoute);
 
