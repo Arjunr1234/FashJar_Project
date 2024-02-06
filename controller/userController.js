@@ -11,7 +11,9 @@ const loginLoad = function (req, res) {
   }else if(req.session.admin){
     res.redirect("/adminHome")
   }else{
-    res.render("user/login")
+    const message=req.flash("message")
+    const error=req.flash("error")
+    res.render("user/login",{message,error})
   }
 
 }
@@ -22,6 +24,7 @@ const loadRegister = function(req, res){
      }else if(req.session.admin){
       res.redirect("/adminHome")
      }else{
+     
       res.render("user/register")
      }
 }
@@ -68,6 +71,7 @@ const logUser = async function(req,res){
         res.redirect("/userHome")
       }
     }else{
+      req.flash("error","Login Failed")
       res.redirect("/")
     }
     

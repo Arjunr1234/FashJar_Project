@@ -20,6 +20,7 @@
         .card {
             width: 100%;
             max-width: 400px; /* Set a maximum width for better responsiveness */
+            background-color: #57cd57;
         }
         .brandName{
             text-align: center;
@@ -46,20 +47,27 @@
                     <h1 class="mt-5">FashJar</h1>
                     <h4 class="mb-5">Where Fashion meets Passion</h4>
                   </div>
-                    <div class="card bg-success text-white" style="border-radius: 1rem;">
+                    <div class="card  text-white" style="border-radius: 1rem;">
                         <div class="card-body p-4 text-center">
                             <div class="mb-md-3 mt-md-2 pb-3">
                                 <h2 class="fw-bold mb-2 text-uppercase">Login</h2>
                                 <p class="text-white-50 mb-3">Please enter your email and password!</p>
                                 
                                 <form  id ="logform" action="/" method="post">
-                                    <% if(locals.message) { %>
-                                        <div class="alert alert-success"> <%= locals.message %></div>
-                                    <% } %>
+                                    <% if (locals.message && message.length>0) { %>
+                                        <div id="flashMessage" class="flash-message alert alert-info alert-dismissible fade show" role="alert">
 
-                                    <% if(locals.errmessage) { %>
-                                        <div class="alert alert-danger"> <%= locals.errmessage %></div>
-                                    <% } %>
+                                          <%= message %>
+                                        </div>
+                                      <% } %>
+                                      <% if (locals.error && error.length>0) { %>
+                                        <div id="flashMessage" class='alert alert-danger' role="alert">
+
+                                          <%= error %>
+                                        </div>
+                                      <% } %>
+
+                                    
 
                                     <div class="form-outline form-white mb-3">
                                         <label class="form-label" for="typeEmailX">Email</label>
@@ -87,6 +95,15 @@
             </div>
         </div>
     </section>
+
+
+    <script>
+        setTimeout(
+            function(){
+                document.getElementById('flashMessage').style.display='none';
+            },3000
+        )
+    </script>
 
     <script src="../public/js/script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>

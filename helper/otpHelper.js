@@ -1,4 +1,6 @@
 const nodemailer = require("nodemailer");
+const { create } = require("../models/userModel");
+const User = require("../models/userModel")
 
 function generateSixDigitNumber(){
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -15,8 +17,9 @@ const transporter = nodemailer.createTransport({
 
 const sendOtp = (req,res)=>{
   try {
-    const {name,email,mob,password} = req.body
-     req.session.insertedData = {name,email,mob,password};
+    const {name,email,mobile,password} = req.body
+     
+     req.session.insertedData = {name,email,mobile,password};
 
     const otp = generateSixDigitNumber();
     req.session.otpExpiry = Date.now()+30*1000;
@@ -56,7 +59,8 @@ const sendOtp = (req,res)=>{
  
 };
 
-const verify = (req, res )=>{
+const verify = async (req, res )=>{
+  try{
   const sendedOtp = req.session.otp;
   const verifyOtp = req.body.otp;
   console.log(sendedOtp);
@@ -68,6 +72,8 @@ const verify = (req, res )=>{
       console.log("otp entered before time expires");
       req.session.otpMatched = true;
       req.flash("message","Successfully Registred")
+      const result = await User.create(req.session.insertedData);
+
       res.redirect('/')
     }
   }else{
@@ -76,7 +82,9 @@ const verify = (req, res )=>{
    req.flash( "message","Registration Failed!!")
     res.redirect('/register')
   }
-}
+}catch(error){
+  console.log(error.message);
+}}
 const otpHelper = {
   sendOtp,
   verify
