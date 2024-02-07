@@ -13,7 +13,7 @@ const loginLoad = function (req, res) {
     res.redirect("/adminHome")
   }else{
     const message=req.flash("message")
-    const error=req.flash("error")
+    const error=req.flash(error)
     res.render("user/login",{message,error})
   }
 
@@ -25,10 +25,12 @@ const loadRegister = function(req, res){
      }else if(req.session.admin){
       res.redirect("/adminHome")
      }else{
+      const message = req.flash("message")
       const error = req.flash("error")
-      res.render("user/register",{error})
+      res.render("user/register",{error,message})
      }
 }
+
 
 const insertUserWithVerify = async function(req, res) {
   try {
@@ -48,8 +50,8 @@ const insertUserWithVerify = async function(req, res) {
       console.log(response)
 
       if (!response.status) {
-        const message = response.message;
-        req.flash("message", message);
+        const error = response.message;
+        req.flash("message", error);
         return res.redirect("/register");
       } else {
         const message = response.message;
@@ -57,9 +59,9 @@ const insertUserWithVerify = async function(req, res) {
         return res.redirect('/');
       }
     } else {
-      console.log("failed otp verification");
-      req.session.otpExpiry = false;
-      req.flash("error", "Registration Failed!!");
+       console.log("failed otp verification");
+       req.session.otpExpiry = false;
+       req.flash("error", "Registration Failed_failedotp!!");
       return res.redirect('/register');
     }
   } catch (error) {
@@ -67,6 +69,8 @@ const insertUserWithVerify = async function(req, res) {
     return res.redirect("/register");
   }
 };
+
+
 
 const logUser = async function(req,res){
   const logEmail = req.body.email;

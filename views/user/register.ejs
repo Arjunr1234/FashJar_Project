@@ -51,6 +51,12 @@
                       <div id="flashMessage" class="alert alert-danger"> <%= error %></div>
                         <% } %>
 
+                        <% if(locals.message && message.length>0) { %>
+                          <div id="flashMessage" class="alert alert-danger"> <%= message %></div>
+                            <% } %>
+
+                       
+
 
                         
                     <div class="form-outline form-white mb-2">

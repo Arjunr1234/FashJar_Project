@@ -38,7 +38,7 @@ const doSignup = (userData, verify)=>{
             }
           }else{
             response.status = false,
-            response.message = "Otp Doesn't Match"
+            response.message = "Enter the correct otp"
             resolve(response)
           }
       }else{

@@ -9,7 +9,7 @@ router.post('/',userController.logUser);
 router.get('/userHome',userController.loadUserHome)
 
 router.get('/register',userController.loadRegister);
-
+//router.post('/register',userController.insertUser)
 
 router.get('/logout',userController.loadLogout)
 
