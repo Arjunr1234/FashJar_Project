@@ -9,14 +9,14 @@ router.post('/',userController.logUser);
 router.get('/userHome',userController.loadUserHome)
 
 router.get('/register',userController.loadRegister);
-router.post('/register',userController.insertUser)
+
 
 router.get('/logout',userController.loadLogout)
 
 router.get('/sendotp',userController.loadOtpVerify)
 router.post('/otp',otpHelper.sendOtp);
 
-router.post('/verify-otp',otpHelper.verify);
+router.post('/verify-otp',userController.insertUserWithVerify);
 //router.get('/resendOtp',otpHelper.sendOtp);
 router.get('/resendOtp',userController.loadOtpVerify);
 

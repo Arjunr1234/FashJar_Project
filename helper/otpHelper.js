@@ -15,11 +15,13 @@ const transporter = nodemailer.createTransport({
 
 });
 
+
 const sendOtp = (req,res)=>{
-  try {
+  try {    
     const {name,email,mobile,password} = req.body
      
      req.session.insertedData = {name,email,mobile,password};
+     console.log(req.session.insertedData)
 
     const otp = generateSixDigitNumber();
     const expiryTime = 30
@@ -72,7 +74,9 @@ const verify = async (req, res )=>{
       console.log("otp entered before time expires");
       req.session.otpMatched = true;
       req.flash("message","Successfully Registred")
-      const result = await User.create(req.session.insertedData);
+      //const result = await User.create(req.session.insertedData);
+
+
 
       res.redirect('/')
     }

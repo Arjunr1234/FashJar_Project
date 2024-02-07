@@ -2,6 +2,7 @@ const { render } = require("ejs")
 const User = require("../models/userModel")
 const otpSend = require("../helper/otpHelper")
 const otpHelper = require("../helper/otpHelper")
+const userHelper = require("../helper/userHelper")
 
 
 const loginLoad = function (req, res) {
@@ -29,28 +30,41 @@ const loadRegister = function(req, res){
      }
 }
 
-const insertUser = async function(req, res) {
+const insertUserWithVerify = async function(req, res) {
   try {
-    console.log("req in insert user");
+    const sendedOtp = req.session.otp;
+    const verifyOtp = req.body.otp;
+    console.log(sendedOtp);
+    console.log(verifyOtp);
+    console.log("start Checking");
 
-    const userIn = {
-      name: req.body.name,
-      email: req.body.email,
-      mobile: req.body.mob,
-      password: req.body.password,
-    };
+    if (sendedOtp === verifyOtp && Date.now() < req.session.otpExpiry) {
+      console.log("otp entered before time expires");
+      req.session.otpMatched = true;
+      console.log("req in insert user");
 
-  
-    const result = await User.create(userIn);
+      const UserData = req.session.insertedData;
+      const response = await userHelper.doSignup(UserData, req.session.otpMatched);
+      console.log(response)
 
-    console.log(result);
-
-    if (result) {
-      res.redirect("/otpVerify");
+      if (!response.status) {
+        const message = response.message;
+        req.flash("message", message);
+        return res.redirect("/register");
+      } else {
+        const message = response.message;
+        req.flash("message", message);
+        return res.redirect('/');
+      }
+    } else {
+      console.log("failed otp verification");
+      req.session.otpExpiry = false;
+      req.flash("error", "Registration Failed!!");
+      return res.redirect('/register');
     }
   } catch (error) {
-  
-    res.redirect("/register");
+    console.error(error);
+    return res.redirect("/register");
   }
 };
 
@@ -154,11 +168,12 @@ const registerWithOtp = async(req,res)=>{
 module.exports = { 
               loginLoad,
               loadRegister,
-              insertUser,
+              insertUserWithVerify,
               logUser,
               loadUserHome,
               loadLogout,
               loadOtpVerify,
+
               //otp
               
                     }

@@ -17,15 +17,11 @@ const userSchema = new mongoose.Schema({
   password:{
     type:String,
     required:true
-   }//,
-  // isAdmin:{
-  //   type:Number,
-  //   value:0
-  // },
-  // isVerified:{
-  //   type:Number,
-  //   value:0
-  // }
+   },
+   isActive:{
+    type:Boolean,
+    default:true
+   }
 
   
 

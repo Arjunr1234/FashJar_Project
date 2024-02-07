@@ -3,7 +3,7 @@ const passId = document.getElementById('typePasswordX');
 const error1 = document.getElementById('error1');
 const error2 = document.getElementById('error2');
 const logForm = document.getElementById('logform');
-
+console.log("gff")
 function emailValidate() {
   const emailVal = emailId.value;
    
