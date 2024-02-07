@@ -24,8 +24,8 @@ const loadRegister = function(req, res){
      }else if(req.session.admin){
       res.redirect("/adminHome")
      }else{
-     
-      res.render("user/register")
+      const error = req.flash("error")
+      res.render("user/register",{error})
      }
 }
 
@@ -138,13 +138,7 @@ const registerWithOtp = async(req,res)=>{
 }
   
 
-// const otp = (req,res)=>{
-//   try{
-//     res.redirect("/sendotp")
-//   }catch(error){
-//     console.log(error.message);
-//   }
-// }
+
 
 
 

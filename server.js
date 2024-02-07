@@ -16,6 +16,7 @@ mongoose.connect("mongodb://localhost:27017/Fashjar");
 mongoose.connection.on("connected", () => console.log("Connected to MongoDB"));
 mongoose.connection.on("error", (err) => console.log("Error in connecting to MongoDB:", err));
 mongoose.connection.on("disconnected", () => console.log("Disconnected from MongoDB"));
+app.use(express.static('public'))
 
 app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");

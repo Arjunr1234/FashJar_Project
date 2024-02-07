@@ -53,7 +53,7 @@
                                 <h2 class="fw-bold mb-2 text-uppercase">Login</h2>
                                 <p class="text-white-50 mb-3">Please enter your email and password!</p>
                                 
-                                <form  id ="logform" action="/" method="post">
+                                <form  id="logform" action="/" method="post">
                                     <% if (locals.message && message.length>0) { %>
                                         <div id="flashMessage" class="flash-message alert alert-info alert-dismissible fade show" role="alert">
 
@@ -72,12 +72,14 @@
                                     <div class="form-outline form-white mb-3">
                                         <label class="form-label" for="typeEmailX">Email</label>
                                         <input type="email" id="typeEmailX" class="form-control form-control-lg" name="email" required/>
+                                        
                                     </div>
-                                    <p><div id="error1" style="display: none;" class="alert alert-danger err"></div></p>
+                                    <p><span id="error1" style="display:none;" class="alert alert-danger"  ></span></p>
                                     
                                     <div class="form-outline form-white mb-3">
                                         <label class="form-label" for="typePasswordX">Password</label>
                                         <input type="password" id="typePasswordX" class="form-control form-control-lg" name="password" required/>
+
                                     </div>
                                     <p><div id="error2" style="display: none;" class="alert alert-danger err"></div></p>
                                     
@@ -95,6 +97,62 @@
             </div>
         </div>
     </section>
+    <script>
+        const emailId = document.getElementById('typeEmailX');
+const passId = document.getElementById('typePasswordX');
+const error1 = document.getElementById('error1');
+const error2 = document.getElementById('error2');
+const logForm = document.getElementById('logform');
+
+function emailValidate() {
+  const emailVal = emailId.value;
+  console.log(emailVal);  
+
+  const emailPattern = /^([a-zA-Z0-9._-]+)@([a-zA-Z.-]+).([a-zA-z]{2,4})$/;
+  if (!emailPattern.test(emailVal)) {
+    error1.style.display = "block";
+    error1.innerHTML = "Invalid Format!!";
+  } else {
+    error1.style.display = "none";
+    error1.innerHTML = "";
+  }
+}
+
+function passValidate() {
+  const passVal = passId.value;
+  const alpha = /[a-zA-Z]/;
+  const digit = /\d/;
+  if (passVal.length < 8) {
+    error2.style.display = "block";
+    error2.innerHTML = "Must have at least 8 characters!!";
+  } else if (!alpha.test(passVal) || !digit.test(passVal)) {
+    error2.style.display = "block";
+    error2.innerHTML = "Should contain numbers and alphabet!!";
+  } else if (passVal.trim() === "") {
+    error2.style.display = "block";
+    error2.innerHTML = "Please Enter the password!!";
+  } else {
+    error2.style.display = "none";
+    error2.innerHTML = "";
+  }
+}
+
+emailId.addEventListener('blur', emailValidate);
+passId.addEventListener('blur', passValidate);
+
+logForm.addEventListener('submit', function (e) {
+  emailValidate();
+  passValidate();
+  if (error1.innerHTML !== "" || error2.innerHTML !== "") {
+    e.preventDefault();
+  }
+});
+
+    </script>
+    <script src="loginVal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+
 
 
     <script>
@@ -102,11 +160,10 @@
             function(){
                 document.getElementById('flashMessage').style.display='none';
             },3000
-        )
-    </script>
 
-    <script src="../public/js/script.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+        )
+
+        
+    </script>
 </body>
 </html>

@@ -73,6 +73,9 @@
             background-color: white;
             color: rgb(27, 137, 20);
         }
+        #otpTimer{
+            color: red;
+        }
     </style>
 </head>
 
@@ -91,14 +94,17 @@
                             <p class="text-white-50 mb-3">Please enter the OTP sent to your email.</p>
 
                             <form id="otpForm" action="/verify-otp" method="post">
+                                <p><div id="error1" style="display: none ;" class="alert alert-danger"></div></p>
                                 <div class="mb-3">
                                     <label class="otp-form-label" for="otpInput">OTP</label>
                                     <input type="text" id="otpInput" class="form-control otp-form-control" name="otp"
                                         required />
                                 </div>
+                                
                                 <div class="mt-3 text-center">
-                                    <span id="otpTimer">Time Remaining: 20 seconds</span>
-                                    <button id="resendOTP" class="btn btn-secondary" style="display: none;" type="button">Resend</button>
+                                    <span id="otpTimer" ></span>
+                                    <a href="/resendOtp"><button id="resendOtp" class="btn btn-secondary" style="display: none;" type="button">Resend</button></a>
+
                                 </div>
 
                                 <p><div id="otpError" style="display: none;" class="alert alert-danger err"></div></p>
@@ -112,6 +118,66 @@
             </div>
         </div>
     </section>
+    <script>
+        var logTimmer = 30;
+        const timerElement = document.getElementById('otpTimer')
+        const resentOtp  = document.getElementById('resendOtp')
+        timeRemaining = logTimmer;
+
+        function updateTimer(){
+            if(timeRemaining >= 0){
+                timerElement.textContent = `Time remaining: ${timeRemaining} seconds`
+                timeRemaining--;
+                setTimeout(updateTimer,1000)
+            }else{
+                timerElement.style.display = 'none';
+                resentOtp.style.display = 'inline-block'
+                
+            }
+        }
+        updateTimer();
+        
+        function resendOTP(){
+            timeRemaining = logTimmer;
+            timerElement.style.display = 'inline-block';
+            resentOtp.style.display = 'none';
+            updateTimer();
+        }
+
+        document.getElementById('resendOtp').addEventListener('click',resendOTP)
+    </script>
+  
+    <!-- otp Validation ---------------------------------------------------------------->
+
+   <script>
+    const otpId = document.getElementById('otpInput');
+const error1 = document.getElementById('error1');
+const otpForm = document.getElementById('otpForm');
+
+function otpValidation(e){
+
+  otpValue = otpId.value;
+  const digit = /\d/;
+  if(otpValue.lenght < 6 || otpValue.lenght > 6){
+    error1.style.display = "block"
+    error1.innerHTML = "Please enter 6 digit otp"
+  }else if(!digit.test(otpValue)){
+    error1.style.display = "block"
+    error1.innerHTML = "Enter a Valid otp!!"
+  }
+  
+}
+
+otpId.addEventListener('blur',otpValidation);
+
+logForm.addEventListener('submit',function(e){
+  otpValidation();
+  if(error1.innerHTML){
+    e.preventDefault()
+  }
+})
+
+   </script>
 
     <script src="../public/js/script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"

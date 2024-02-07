@@ -17,6 +17,8 @@ router.get('/sendotp',userController.loadOtpVerify)
 router.post('/otp',otpHelper.sendOtp);
 
 router.post('/verify-otp',otpHelper.verify);
+//router.get('/resendOtp',otpHelper.sendOtp);
+router.get('/resendOtp',userController.loadOtpVerify);
 
 
 

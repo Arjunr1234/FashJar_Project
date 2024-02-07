@@ -22,9 +22,9 @@ const sendOtp = (req,res)=>{
      req.session.insertedData = {name,email,mobile,password};
 
     const otp = generateSixDigitNumber();
-    req.session.otpExpiry = Date.now()+30*1000;
+    const expiryTime = 30
+    req.session.otpExpiry = Date.now()+expiryTime*1000;
     console.log("generate otp: "+otp);
-
     const userEmail = email;
     console.log("This is the user email: " + userEmail);
 
@@ -79,7 +79,7 @@ const verify = async (req, res )=>{
   }else{
     console.log("failed otp verification");
     req.session.otpExpiry = false;
-   req.flash( "message","Registration Failed!!")
+   req.flash( "error","Registration Failed!!")
     res.redirect('/register')
   }
 }catch(error){
