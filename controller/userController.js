@@ -37,13 +37,14 @@ const loadRegister = function(req, res){
 
 const insertUserWithVerify = async function(req, res) {
   try {
+    const resendedOtp = req.session.resendedOtp;
     const sendedOtp = req.session.otp;
     const verifyOtp = req.body.otp;
     console.log(sendedOtp);
     console.log(verifyOtp);
     console.log("start Checking");
 
-    if (sendedOtp === verifyOtp && Date.now() < req.session.otpExpiry) {
+    if (sendedOtp === verifyOtp  && Date.now() < req.session.otpExpiry) {
       console.log("otp entered before time expires");
       req.session.otpMatched = true;
       console.log("req in insert user");
