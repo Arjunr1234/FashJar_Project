@@ -40,7 +40,7 @@ app.use((req,res,next)=>{
 
 app.use("/", userAuthRoute);
 
-
+         
 app.listen(2999, () => {
   console.log("Server is running at http://localhost:2999");
 });

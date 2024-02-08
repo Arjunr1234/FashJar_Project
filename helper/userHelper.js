@@ -1,7 +1,77 @@
 const userModel = require('../models/userModel');
-const bycrypt = require("bcrypt");
+const bcrypt = require("bcrypt");
 const { verify } = require('./otpHelper');
 
+
+// const doLoginHome = async (logEmail, logPassword)=>{
+//   return new Promise (async (resolve, reject)=>{
+//     try{
+//     const response = {}
+//     const user = await userModel.findOne({email:logEmail})
+//     if(user){
+//       if(user.isActive){
+        
+//         bycrypt.compare(logPassword,user.password).then((result)=>{
+//                 if(result){
+//                   response.user = user;
+//                   response.login = true;
+//                   resolve(response)
+//                 }else{
+//                   response.errorMsg = "Invalid email or noresult  Password"
+//                   resolve(response)
+//                 }
+//         })
+
+
+//       }else{
+//         response.errorMsg = "You are Blocked"
+//         resolve(response)
+//       }
+//     }else{
+//       response.errorMsg = "Invalid username or fucking password"
+//       resolve(response)
+//     }
+//   }catch(error){
+//     console.log(error);
+//   }
+//   })
+// }
+const loginHome = (userData) => {
+  console.log(userData);
+  return new Promise(async (resolve, reject) => {
+    try {
+      let user = await userModel.findOne({ email: userData.email });
+      let response = {};
+
+      if (user) {
+        console.log('The user is now at loginhome and found the user');
+        console.log(user.isActive);
+        if (user.isActive) {
+          bcrypt.compare(userData.password, user.password).then((result) => {
+            if (result) {
+              console.log(result);
+              response.user = user;
+              response.login = true;
+              console.log(response);
+              resolve(response);
+            } else {
+              response.loginMessage = "Invalid email or password";
+              resolve(response);
+            }
+          });
+        } else {
+          response.loginMessage = "You are Blocked";
+          resolve(response);
+        }
+      } else {
+        response.loginMessage = "Invalid username or password";
+        resolve(response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  });
+};
 
 const doSignup = (userData, verify)=>{
    return new Promise(async(resolve, reject)=>{
@@ -17,7 +87,7 @@ const doSignup = (userData, verify)=>{
           if(verify){
             console.log("verified");
             try{
-              const password = await bycrypt.hash(userData.password,10);
+              const password = await bcrypt.hash(userData.password,10);
               const userD = {
                 name:userData.name,
                 email:userData.email,
@@ -50,5 +120,8 @@ const doSignup = (userData, verify)=>{
 }
 
 module.exports = {
-                    doSignup
+                    doSignup,
+                    loginHome
+                    
+
                  }

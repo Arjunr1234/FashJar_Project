@@ -5,7 +5,7 @@ const passId = document.getElementById('typePasswordX');
 const error1 = document.getElementById('error1');
 const error2 = document.getElementById('error2');
 const error3 = document.getElementById('error3');
-const error4 = document.getElementById('error4');
+const error4 = document.getElementById('error4');  
 const regFrom = document.getElementById('logform');
 
 function emailValidate(e){

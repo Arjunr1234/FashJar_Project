@@ -3,6 +3,9 @@ const User = require("../models/userModel")
 const otpSend = require("../helper/otpHelper")
 const otpHelper = require("../helper/otpHelper")
 const userHelper = require("../helper/userHelper")
+const { response } = require("express")
+const bcrypt = require("bcrypt")
+// const {doLoginHome} = require("../helper/userHelper")
 
 
 const loginLoad = function (req, res) {
@@ -13,7 +16,7 @@ const loginLoad = function (req, res) {
     res.redirect("/adminHome")
   }else{
     const message=req.flash("message")
-    const error=req.flash(error)
+    const error=req.flash("error")
     res.render("user/login",{message,error})
   }
 
@@ -61,7 +64,8 @@ const insertUserWithVerify = async function(req, res) {
     } else {
        console.log("failed otp verification");
        req.session.otpExpiry = false;
-       req.flash("error", "Registration Failed_failedotp!!");
+       
+      req.flash("error", "Enter correct otp");
       return res.redirect('/register');
     }
   } catch (error) {
@@ -69,6 +73,56 @@ const insertUserWithVerify = async function(req, res) {
     return res.redirect("/register");
   }
 };
+
+
+
+
+// const logNewUser = async function (req, res) {
+//   const logEmail = req.body.email;
+//   const logPassword = req.body.password;
+
+//   const response = await doLoginHome(logEmail, logPassword);
+//   console.log(response);
+//   if (response) {
+//       if (response.login) {
+//         console.log("here it is coming")  
+//           req.session.user = response.user._id;
+//           res.redirect('/userHome');
+//       } else {
+//           req.flash("error", response.errorMsg);
+//           res.redirect("/");
+//       }
+//   } else {
+//       req.flash("error", "Some error occurred");
+//       res.redirect("/");
+//   }
+// };   
+
+const loginHome = async (req, res) => {
+  try {
+    const response = await userHelper.loginHome(req.body);
+    console.log(response)
+    if (response.login) {
+      req.session.user = response.user;
+      //console.log('User logged in successfully:', response.user,);
+      console.log("user is login",response)
+      res.redirect("/userHome");
+    } else {
+      //console.log('Login failed:', response.loginMessage);
+      //res.render("login", { errorMessage: response.loginMessage });
+      console.log("error",response)
+      req.flash("error",response.loginMessage)
+      res.redirect('/')
+    }
+  } catch (error) {
+    //console.error('Error in loginHome:', error);
+      res.status(500).send('Internal Server Error');
+  }
+};
+
+
+
+
 
 
 
@@ -132,8 +186,12 @@ const loadLogout = (req,res)=>{
 
 }
 
-const loadOtpVerify = async function(req,res){
-      res.render('user/otpVerify')
+const loadOtpVerify = async function(req,res,next){
+     
+        res.render('user/otpVerify')
+      
+        next()
+      
 }   
 
 
@@ -177,6 +235,7 @@ module.exports = {
               loadUserHome,
               loadLogout,
               loadOtpVerify,
+              loginHome
 
               //otp
               
