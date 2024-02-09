@@ -101,6 +101,7 @@ const insertUserWithVerify = async function(req, res) {
 //   }
 // };   
 
+
 const loginHome = async (req, res) => {
   try {
     const response = await userHelper.loginHome(req.body);
@@ -191,9 +192,9 @@ const loadLogout = (req,res)=>{
 
 const loadOtpVerify = async function(req,res,next){
      
-        res.render('user/otpVerify')
+        res.render('otpVerify')
       
-        next()
+        
       
 }   
 
