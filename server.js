@@ -7,6 +7,7 @@ const nodemailer = require("nodemailer")
 
 
 const userAuthRoute = require("./routes/userAuth");
+const adminAuthRoute = require("./routes/adminAuth")
 
 const app = express();
 
@@ -20,7 +21,7 @@ app.use("/public",express.static(path.join(__dirname,'/public')))
 
 app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
-app.set("views",path.join(__dirname,"/views"));
+app.set("views",[path.join(__dirname,"views/user"),path.join(__dirname,'views/admin')]);
 
 app.use(
   session({
@@ -39,8 +40,10 @@ app.use((req,res,next)=>{
 })
 
 app.use("/", userAuthRoute);
+app.use("/admin",adminAuthRoute)
+
 
          
 app.listen(2999, () => {
-  console.log("Server is running at http://localhost:2999");
+  console.log("Server is running at http://localhost:2999  http://localhost:2999/admin/login");
 });

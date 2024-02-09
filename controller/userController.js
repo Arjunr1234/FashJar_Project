@@ -5,7 +5,7 @@ const otpHelper = require("../helper/otpHelper")
 const userHelper = require("../helper/userHelper")
 const { response } = require("express")
 const bcrypt = require("bcrypt")
-// const {doLoginHome} = require("../helper/userHelper")
+
 
 
 const loginLoad = function (req, res) {
@@ -17,10 +17,12 @@ const loginLoad = function (req, res) {
   }else{
     const message=req.flash("message")
     const error=req.flash("error")
-    res.render("user/login",{message,error})
+    res.render("userLogin",{message,error})
   }
 
 }
+
+
 
 const loadRegister = function(req, res){
      if(req.session.user){
@@ -30,7 +32,7 @@ const loadRegister = function(req, res){
      }else{
       const message = req.flash("message")
       const error = req.flash("error")
-      res.render("user/register",{error,message})
+      res.render("register",{error,message})
      }
 }
 
@@ -127,39 +129,39 @@ const loginHome = async (req, res) => {
 
 
 
-const logUser = async function(req,res){
-  const logEmail = req.body.email;
-  const logPassword = req.body.password;
-  try {
-    const loggedUser = await User.findOne({
-      email:logEmail,
-      password:logPassword
-    })
-    if(loggedUser){
-      if(loggedUser.isAdmin === 1){
-        req.session.admin = loggedUser._id
-        res.redirect("/adminHome")
-      }else{
-        req.session.user = loggedUser._id
-        res.redirect("/userHome")
-      }
-    }else{
-      req.flash("error","Login Failed")
-      res.redirect("/")
-    }
+// const logUser = async function(req,res){
+//   const logEmail = req.body.email;
+//   const logPassword = req.body.password;
+//   try {
+//     const loggedUser = await User.findOne({
+//       email:logEmail,
+//       password:logPassword
+//     })
+//     if(loggedUser){
+//       if(loggedUser.isAdmin === 1){
+//         req.session.admin = loggedUser._id
+//         res.redirect("/adminHome")
+//       }else{
+//         req.session.user = loggedUser._id
+//         res.redirect("/userHome")
+//       }
+//     }else{
+//       req.flash("error","Login Failed")
+//       res.redirect("/")
+//     }
     
-  } catch (error) {
+//   } catch (error) {
 
-    console.log(error.message);
-  }
-}
+//     console.log(error.message);
+//   }
+// }
 
 const loadUserHome = async function (req,res){
   try {
     if(req.session.user){
       const userData = await User.findOne({_id:req.session.user});
       const name = userData.name
-      res.render("user/userHome",{message:name});
+      res.render("userHome",{message:name});
     } else{
       res.redirect("/")
     }
@@ -232,7 +234,7 @@ module.exports = {
               loginLoad,
               loadRegister,
               insertUserWithVerify,
-              logUser,
+              
               loadUserHome,
               loadLogout,
               loadOtpVerify,

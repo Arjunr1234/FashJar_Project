@@ -60,47 +60,6 @@ const sendOtp = (req,res)=>{
   }
  
 };
-const reSendOtp = (req,res)=>{
-  try {    
-    
-    const otp = generateSixDigitNumber();
-    req.session.resendedOtp = otp;
-    const expiryTime = 30
-    req.session.otpExpiry = Date.now()+expiryTime*1000;
-    console.log("generate otp: "+otp);
-    const userEmail  = req.session.storedEmail
-    console.log("This is the user email: " + userEmail);
-
-    if(!userEmail){
-      return res.status(400).json({error:"Error or Invalid Email"});
-    }
-    const mailOptions = {
-      from:"arjunreji1234@gmail.com",
-      to:userEmail,
-      subject:"Your OTP Verification Code",
-      text:`Your otp is ${otp}`
-    }
-   
-    transporter.sendMail(mailOptions,(error)=>{
-      console.log("1st");
-      if(error){
-        console.log(error);
-        return res.status(500).json({error:"Error sending OTP email"});
-      }
-      console.log("otp sended to the user email");
-    });
-    console.log("2");
-    req.session.otp = otp;
-   // res.json({message:"OTP Sent to Your Email, Check it!!!"});
-    res.redirect('/sendotp');
-    
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).json({error:"Internal Server Error"});
-    
-  }
- 
-};
 
 const verify = async (req, res )=>{
   try{
@@ -133,6 +92,6 @@ const verify = async (req, res )=>{
 const otpHelper = {
   sendOtp,
   verify,
-  reSendOtp
+  
 }
 module.exports = otpHelper;
