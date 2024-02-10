@@ -15,7 +15,7 @@ const loadHome = (req, res)=>{
     if(req.session.admin){
       res.render("adminHome")
     }else{
-      res.redirect("/login")
+      res.redirect("admin/login")
     }
 }
 
@@ -85,9 +85,7 @@ const loadAdminLogout = (req, res)=>{
                     }
                   })(req, res)
                 ])
-                console.log("This is the adminData: ",adminData);
-                console.log("This is the UserData : ", userData);
-
+                
                 res.render("customerPage",{users:userData})
               }else{
                 res.redirect("/admin/adminHome")
@@ -100,6 +98,41 @@ const loadAdminLogout = (req, res)=>{
             }            
 };
 
+  const blockUser = async(req, res)=>{
+              try{
+                console.log("Enter to the block user page");
+                const userId = req.query.id;
+                console.log(userId)
+                const findUser = await User.findById({_id:userId});
+
+                if(findUser.isActive === true){
+                  const userData = await User.findByIdAndUpdate(
+                    {_id:userId},
+                    {$set:{isActive:false}
+                  });
+                }else{
+                  const userData = await User.findByIdAndUpdate({_id:userId},
+                    {$set:{isActive:true}})
+                }
+                res.redirect("/admin/customerlist")
+              }catch(error){
+                console.log(error.message);
+              }
+
+  }
+
+  const unblockUser = async (req, res)=>{
+                     try{
+                      const userId = req.query._id;
+                      const status = await User.findOne({_id:userId},{$set:{isActive:flase}});
+                      delete req.session.user
+ 
+                     }catch(error){
+                      console.log(error.message);
+                     }
+  }
+
+
    
 
 
@@ -109,5 +142,7 @@ module.exports =  {
                     loadAdminHome,
                     loadHome,
                     loadAdminLogout,
-                    loadCustomerList
+                    loadCustomerList,
+                    blockUser,
+                    unblockUser
                  }

@@ -28,6 +28,8 @@
     }
 </style>
 
+
+
   
     <div class="screen-overlay"></div>
     <aside class="navbar-aside" id="offcanvas_aside">
@@ -240,7 +242,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                  <% if (typeof users !== 'undefined') { %>
+                                  <% if (locals.users) { %>
                                       <% for (let i = 0; i < users.length; i++) { %>
                                           <tr>
                                               <td class="col-name"><%= users[i].name %></td>
@@ -256,11 +258,12 @@
                                               <td class="col-mobile"><%= users[i].mobile %></td>
                                               <td class="col-action text-end">
                                                   <% if (users[i].isActive) { %>
-                                                      <a href="/admin/blockuser?id=<%= users[i]._id %>" class="btn btn-sm font-sm btn-action" style="background-color: rgb(54, 138, 198); color: white;">
+                  
+                                                      <a  href="/admin/blockuser?id=<%= users[i]._id %>" class="btn btn-sm font-sm btn-action" style="background-color: rgb(54, 138, 198); color: white;">
                                                           Block
                                                       </a>
                                                   <% } else { %>
-                                                      <a href="/admin/unblockuser?id=<%= users[i]._id %>" class="btn btn-sm font-sm btn-action" style="background-color: rgb(252, 0, 0); color: white;">
+                                                      <a href="/admin/blockuser?id=<%= users[i]._id %>" class="btn btn-sm font-sm btn-action" style="background-color: rgb(252, 0, 0); color: white;">
                                                           Unblock
                                                       </a>
                                                   <% } %>
@@ -269,6 +272,7 @@
                                       <% } %>
                                   <% } %>
                               </tbody>
+                              
                             </table>
                         </div>
                     </div>
@@ -304,6 +308,8 @@
             </div>
         </footer>
     </main>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/public/admin-assets/js/vendors/jquery-3.6.0.min.js"></script>
     <script src="/public/admin-assets/js/vendors/bootstrap.bundle.min.js"></script>
     <script src="/public/admin-assets/js/vendors/select2.min.js"></script>
