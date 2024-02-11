@@ -15,6 +15,10 @@ router.get('/customerlist',isAdmin,adminController.loadCustomerList)
 router.get('/blockuser',isAdmin,adminController.blockUser);
 router.get('/unblockuser',isAdmin,adminController.unblockUser)
 
+router.get('/category',isAdmin, adminController.loadCategoryPage)
+router.post('/addCategory',isAdmin,adminController.addCategory)
+router.get('/listUnlist',isAdmin,adminController.listUnlistCategory)
+
 
 
 module.exports = router

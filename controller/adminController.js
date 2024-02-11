@@ -2,6 +2,7 @@ const session = require("express-session");
 const admin = require("../models/adminModel");
 const flash = require("express-flash");
 const User = require("../models/userModel");
+const category = require("../models/categoryModel")
 
 
 
@@ -98,6 +99,30 @@ const loadAdminLogout = (req, res)=>{
             }            
 };
 
+const loadCategoryPage = async (req, res) => {
+  if (req.session.admin) {
+      console.log("Entered into loadCategory");
+      try {
+          const categoryD = await category.find();
+          console.log(category); 
+          const message = req.flash("message")
+          res.render("catagoryPage", { categoryD,message });
+          
+      } catch (error) {
+          console.log(error);
+          res.status(500).send("Internal Server Error");
+      }
+  } else {
+      res.redirect("/admin/login");
+  }
+};
+
+
+  // const loadCategory = (req, res)=>{
+  //    const message = req.flash("message")
+  //    res.render("catagoryPage",{message})
+  // }
+
   const blockUser = async(req, res)=>{
               try{
                 console.log("Enter to the block user page");
@@ -121,10 +146,27 @@ const loadAdminLogout = (req, res)=>{
 
   }
 
+    const listUnlistCategory = async(req, res)=>{
+                   try{
+                     const catId = req.query.id;
+                     const findCat = await category.findById({_id:catId})
+
+                     if(findCat.isListed === true){
+                      const catData = await category.findByIdAndUpdate({_id:catId},{$set:{isListed:false}})
+                     }else{
+                      const catData = await category.findByIdAndUpdate({_id:catId},{$set:{isListed:true}})
+                     }
+                     res.redirect("/admin/category")
+                   }catch(error){
+                    console.log(error)
+                   }
+
+    }
+
   const unblockUser = async (req, res)=>{
                      try{
                       const userId = req.query._id;
-                      const status = await User.findOne({_id:userId},{$set:{isActive:flase}});
+                      const status = await User.findOne({_id:userId},{$set:{isActive:false}});
                       delete req.session.user
  
                      }catch(error){
@@ -132,6 +174,29 @@ const loadAdminLogout = (req, res)=>{
                      }
   }
 
+  const addCategory = async (req, res)=>{
+
+                  try {
+                    console.log("Enter in to try catch")
+
+                    const receivedData = req.body;
+                    console.log(receivedData);
+                  const categoryData = {
+                    name:receivedData.name,
+                    description:receivedData.description
+                  }
+
+               const data = category.create(categoryData) 
+               console.log("Data is Added to the Database");
+               req.flash("message","Added Successfully!!");
+               res.redirect("/admin/category") 
+                    
+                  } catch (error) {
+                    console.log(error.message)
+                    
+                  } 
+
+  }
 
    
 
@@ -144,5 +209,8 @@ module.exports =  {
                     loadAdminLogout,
                     loadCustomerList,
                     blockUser,
-                    unblockUser
+                    unblockUser,
+                    loadCategoryPage,
+                    addCategory,
+                    listUnlistCategory
                  }
