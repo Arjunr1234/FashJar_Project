@@ -134,14 +134,20 @@
                         <div class="col-md-3">
                             <form id="addCategory" action="/admin/addCategory" method="post">
                                 <% if (locals.message && message.length>0) { %>
-                                    <div id="flashMessage" class="flash-message alert alert-info alert-dismissible fade show text-center" role="alert">
+                                    <div id="flashMessage" class="flash-message alert alert-success alert-info alert-dismissible fade show text-center" role="alert">
 
                                       <%= message %>
                                     </div>
                                   <% } %>
-                                  
-                                
-      
+                                  <% if (locals.error && error.length>0) { %>
+                                    <div id="errorMessage" style="display: block;" class="flash-message alert alert-danger alert-info alert-dismissible fade show text-center" role="alert">
+
+                                      <%= error %>
+                                    </div>
+                                  <% } %>
+
+                                  <!-- <p><div id="message" style="display: block;" class="alert alert-success err"></div></p>
+                                  <p><div id="error" style="display: block;" class="alert alert-danger err"></div></p> -->
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Name</label>
                                     <input type="text" placeholder="Type here" class="form-control" id="product_name " name="name" />
@@ -188,9 +194,9 @@
                                                     <td class="col-action">
                                                         <div class="">
                                                             <% if (categoryD[i].isListed) { %>
-                                                                <a href="/admin/listUnlist?id=<%= categoryD[i]._id %>" class="btn btn-sm font-sm btn-action" style="width: 55%; background-color: rgb(54, 138, 198); color: white;">Unlist</a>
+                                                                 <a  class="btn btn-sm font-sm btn-action" style="width: 55%; background-color: rgb(54, 138, 198); color: white;" onclick="unlist('<%= categoryD[i]._id %>', 'Unlist')">Unlist</a> 
                                                             <% } else { %>
-                                                                <a href="/admin/listUnlist?id=<%= categoryD[i]._id %>" class="btn btn-sm font-sm btn-action" style="width: 55%; background-color: rgb(252, 0, 0); color: white;">List</a>
+                                                                <a  class="btn btn-sm font-sm btn-action" style="width: 55%; background-color: rgb(252, 0, 0); color: white;" onclick="unlist('<%= categoryD[i]._id %>','list')">List</a>
                                                             <% } %>
                                                         </div>
                                                     </td>
@@ -231,7 +237,69 @@
         setTimeout(function(){
             document.getElementById('flashMessage').style.display = "none";
         },2000)
+        setTimeout(function(){
+            document.getElementById('errorMessage').style.display = "none";
+        },2000)
     </script>
+    <script>
+        function unlist(id, clicked) {
+            let confirmationMessage;
+            if (clicked === 'Unlist') {
+                confirmationMessage = "Are you sure you want to unlist this category?"
+            } else {
+                confirmationMessage = "Are you sure you want to list this category?"
+            }
+    
+            swal({
+                text: confirmationMessage,
+                buttons: ["cancel", true],
+            }).then((result) => {
+                if (result) {
+                    $.ajax({
+                        url: `/admin/listUnlist?id=${id}`,  // Corrected from `categoryId` to `id`
+                        method: 'PATCH',
+                        contentType: 'application/json',
+                        success: function (data) {
+                            console.log("Entered into success function")
+                            if (data.success) {
+                                if (clicked === 'Unlist') {
+                                    swal("Category Unlisted!", {
+                                        icon: "success",
+                                    }).then(() => {
+                                        location.reload();
+                                    });
+                                } else {
+                                    swal("Category Listed!", {
+                                        icon: "success",
+                                    }).then(() => {
+                                        location.reload();
+                                    });
+                                }
+                            } else {
+                                console.error('Unlisting failed');
+                            }
+                        },
+                        error: function (error) {
+                            swal("Oops!", "Failed to unlist the category. Please try again.", "error");
+                            console.error('AJAX error:', error);
+                        }
+                    });
+                } else {
+                    // If the user cancels, do nothing
+                    // Optionally, you can display a message here 
+                }
+            });
+        }
+          
+          setTimeout(() => {
+              const insertmessage = document.getElementById("insertmessage");
+              insertmessage.style.display = "none";
+          }, 5000);
+          
+          
+    </script>
+    
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="/public/admin-assets/js/vendors/jquery-3.6.0.min.js"></script>
     <script src="/public/admin-assets/js/vendors/bootstrap.bundle.min.js"></script>
     <script src="/public/admin-assets/js/vendors/select2.min.js"></script>

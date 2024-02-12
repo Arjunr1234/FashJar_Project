@@ -17,7 +17,7 @@ router.get('/unblockuser',isAdmin,adminController.unblockUser)
 
 router.get('/category',isAdmin, adminController.loadCategoryPage)
 router.post('/addCategory',isAdmin,adminController.addCategory)
-router.get('/listUnlist',isAdmin,adminController.listUnlistCategory)
+router.patch('/listUnlist',isAdmin,adminController.listUnlistCategory)
 router.get('/categoryEdit',isAdmin,adminController.loadCategoryEdit)
 router.post('/updateCategory',isAdmin,adminController.updateCategory)
 

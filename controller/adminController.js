@@ -149,15 +149,20 @@ const loadCategoryPage = async (req, res) => {
 
     const listUnlistCategory = async(req, res)=>{
                    try{
+                     console.log("Entered in to listUnlist catetory")
                      const catId = req.query.id;
+                     console.log(catId);
                      const findCat = await category.findById({_id:catId})
-
+                     console.log(findCat)
                      if(findCat.isListed === true){
                       const catData = await category.findByIdAndUpdate({_id:catId},{$set:{isListed:false}})
+                      res.json({success:true})
+                      console.log("true to false");
                      }else{
                       const catData = await category.findByIdAndUpdate({_id:catId},{$set:{isListed:true}})
+                      res.json({success:true})
                      }
-                     res.redirect("/admin/category")
+                    
                    }catch(error){
                     console.log(error)
                    }
@@ -176,10 +181,13 @@ const loadCategoryPage = async (req, res) => {
   }
 
   const addCategory = async (req, res) => {
+    console.log("Entered into addcategory");
     const categoryName = req.body.name;
+    console.log(categoryName);
     const checkingName = await category.find({ name: categoryName });
+    console.log(checkingName);
   
-    if (!checkingName) {
+    if (checkingName.length === 0) {
       try {
         console.log("Enter into try catch");
   
@@ -203,8 +211,10 @@ const loadCategoryPage = async (req, res) => {
       req.flash("error", "Category Exists");
       res.redirect("/admin/category");
     }
-  };
   
+
+  }
+
     const loadCategoryEdit = async (req, res)=>{
            const   categoryId = req.query.categoryId
            const   categoryData = await category.findOne({_id:categoryId})
