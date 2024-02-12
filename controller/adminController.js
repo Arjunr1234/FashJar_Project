@@ -105,8 +105,9 @@ const loadCategoryPage = async (req, res) => {
       try {
           const categoryD = await category.find();
           console.log(category); 
+          const error = req.flash("error")
           const message = req.flash("message")
-          res.render("catagoryPage", { categoryD,message });
+          res.render("catagoryPage", { categoryD,message,error });
           
       } catch (error) {
           console.log(error);
@@ -174,29 +175,70 @@ const loadCategoryPage = async (req, res) => {
                      }
   }
 
-  const addCategory = async (req, res)=>{
+  const addCategory = async (req, res) => {
+    const categoryName = req.body.name;
+    const checkingName = await category.find({ name: categoryName });
+  
+    if (!checkingName) {
+      try {
+        console.log("Enter into try catch");
+  
+        const receivedData = req.body;
+        console.log(receivedData);
+  
+        const categoryData = {
+          name: receivedData.name,
+          description: receivedData.description,
+        };
+  
+        const data = await category.create(categoryData);
+        console.log("Data is Added to the Database");
+        req.flash("message", "Added Successfully!!");
+        res.redirect("/admin/category");
+      } catch (error) {
+        console.log(error.message);
+        res.status(500).send("Internal Server Error");
+      }
+    } else {
+      req.flash("error", "Category Exists");
+      res.redirect("/admin/category");
+    }
+  };
+  
+    const loadCategoryEdit = async (req, res)=>{
+           const   categoryId = req.query.categoryId
+           const   categoryData = await category.findOne({_id:categoryId})
+              res.render("categoryEdit",{categoryData})
+       }
 
-                  try {
-                    console.log("Enter in to try catch")
+       const updateCategory = async (req, res) => {
+        try {
+          console.log("Entered into updateCategory");
+          const categoryId = req.query.categoryId;
+          const updatedData = req.body;
+      
+          console.log("Updated Data:", updatedData);
+      
+          const categoryData = await category.findByIdAndUpdate(
+            { _id: categoryId },
+            {
+              $set: {
+                name: updatedData.categoryName,
+                description: updatedData.description
+              }
+            },
+            { new: true } // This option returns the modified document instead of the original
+          );
+      
+          console.log("Updated Data:", categoryData);
+          res.redirect("/admin/category");
+        } catch (error) {
+          console.log(error.message);
+          res.status(500).send("Internal Server Error");
+        }
+      };
+      
 
-                    const receivedData = req.body;
-                    console.log(receivedData);
-                  const categoryData = {
-                    name:receivedData.name,
-                    description:receivedData.description
-                  }
-
-               const data = category.create(categoryData) 
-               console.log("Data is Added to the Database");
-               req.flash("message","Added Successfully!!");
-               res.redirect("/admin/category") 
-                    
-                  } catch (error) {
-                    console.log(error.message)
-                    
-                  } 
-
-  }
 
    
 
@@ -212,5 +254,8 @@ module.exports =  {
                     unblockUser,
                     loadCategoryPage,
                     addCategory,
-                    listUnlistCategory
+                    listUnlistCategory,
+                    loadCategoryEdit,
+                    updateCategory
+                    
                  }

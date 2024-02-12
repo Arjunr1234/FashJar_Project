@@ -1,0 +1,144 @@
+<%- include("../partials/adminHeader") %>
+        <section class="content-main" style="background-color: white;">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Edit Category</h2>
+                   
+                </div>
+                <% if (locals.message) { %>
+                    <span class="text-center w-50 mx-auto" style=" display: block;  color:red;" id="insertmessage"><%=message %></span>
+                 
+                <% } %>
+                <div>
+                    <!-- <a href="#" class="btn btn-light rounded font-md">Export</a>
+                    <a href="#" class="btn btn-light rounded  font-md">Import</a> -->
+                </div>
+            </div>
+            <div class="card mb-4">
+                <header class="card-header">
+                    <!-- <div class="row align-items-center">
+                        <div class="col col-check flex-grow-0">
+                            <div class="form-check ms-2">
+                                <input class="form-check-input" type="checkbox" value="">
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-12 me-auto mb-md-0 mb-3">
+                            <select class="form-select">
+                                <option selected>All category</option>
+                                <option>Electronics</option>
+                                <option>Clothes</option>
+                                <option>Automobile</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 col-6">
+                            <input type="date" value="02.05.2021" class="form-control">
+                        </div>
+                        <div class="col-md-2 col-6">
+                            <select class="form-select">
+                                <option selected>Status</option>
+                                <option>Active</option>
+                                <option>Disabled</option>
+                                <option>Show all</option>
+                            </select>
+                        </div>
+                    </div> -->
+                </header> <!-- card-header end// -->
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-md-6 mt-60">
+                            <form method="post"  onsubmit="return validateForm()" action="/admin/editCategory/<%= category._id %>">
+                                
+                                <div class="mb-4 mt-30">
+                                    <label for="product_name" class="form-label">Name</label>
+                                    <input type="text" id="categoryx" name="categoryName" value="<%= category.name%>" class="form-control border" />
+                                    <div id="categoryName-error" class="error-message"></div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label class="form-label">Description</label>
+                                    <textarea name="description" id="descriptionX" class="form-control border"><%= category.description %></textarea>
+                                    <div id="description-error" class="error-message"></div>
+                                </div>
+                                <div class="d-grid text-center mt-30 col-md-5 mx-auto">
+                                    <button class="btn " type="submit" style="background-color: rgb(0, 94, 255); color: white;">Update category</button>
+                                </div>
+                                
+                            </form>
+                        </div>
+                    </div>
+                </div>                
+            </div>
+                
+        </section> <!-- content-main end// -->
+        <footer class="main-footer font-xs">
+            <div class="row pb-30 pt-15">
+                <div class="col-sm-6">
+                    <script>
+                    document.write(new Date().getFullYear())
+                    </script> ©, Evara - HTML Ecommerce Template .
+                </div>
+                <div class="col-sm-6">
+                    <div class="text-sm-end">
+                        All rights reserved
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+    <script src="/public/admin-assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/public/admin-assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/public/admin-assets/js/vendors/select2.min.js"></script>
+    <script src="/public/admin-assets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/public/admin-assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <script>
+
+
+setTimeout(() => {
+            const insertmessage = document.getElementById("insertmessage");
+            insertmessage.style.display = "none";
+        }, 5000)
+
+
+        
+        function validateForm() {
+
+            resetErrorMessages();
+            console.log("in validation function");
+            
+            let isValid = true;
+            const category = document.getElementById("categoryx").value.trim();
+            const description = document.getElementById("descriptionX").value.trim();
+            
+            
+            if (category === "") {
+              displayErrorMessage("categoryName-error", "Category Name is required");
+              isValid = false;
+            }
+            
+            if (description === "") {
+              displayErrorMessage("description-error", "Write the description About the product");
+              isValid = false;
+            }
+            return isValid;
+        }
+
+        
+        
+        function displayErrorMessage(elementId, message) {
+            var errorElement = document.getElementById(elementId);
+            errorElement.innerText = message;
+            errorElement.style.display = "block";
+            errorElement.style.color = "red";
+        }
+    
+        function resetErrorMessages() {
+            var errorElements = document.querySelectorAll(".error-message");
+            errorElements.forEach(function (element) {
+                element.innerText = "";
+                element.style.display = "none";
+            });
+        }
+            
+    </script>
+   
+    <!-- Main Script -->
