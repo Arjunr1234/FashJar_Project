@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router()
 const adminController = require("../controller/adminController");
 const isAdmin = require("../controller/adminMiddleware");
+const multer = require("multer");
+const uploads = require("../middlewares/multer");
+
 
 router.get('/login',adminController.loadLogin);
 
@@ -20,6 +23,13 @@ router.post('/addCategory',isAdmin,adminController.addCategory)
 router.patch('/listUnlist',isAdmin,adminController.listUnlistCategory)
 router.get('/categoryEdit',isAdmin,adminController.loadCategoryEdit)
 router.post('/updateCategory',isAdmin,adminController.updateCategory)
+
+//===============================products===================================
+
+router.get('/products',isAdmin,adminController.loadProductPage);
+router.get('/loadAddProduct',isAdmin,adminController.loadAddProduct);
+router.post('/productAdd',isAdmin,uploads.array("images",4) ,adminController.addingProduct)
+
 
 
 

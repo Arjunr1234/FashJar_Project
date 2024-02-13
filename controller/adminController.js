@@ -3,6 +3,9 @@ const admin = require("../models/adminModel");
 const flash = require("express-flash");
 const User = require("../models/userModel");
 const category = require("../models/categoryModel")
+const product = require("../models/productModel")
+
+
 
 
 
@@ -249,8 +252,73 @@ const loadCategoryPage = async (req, res) => {
       };
       
 
-
+   const loadProductPage = (req, res)=>{
+                       res.render("productPage")
+   }
    
+
+   const loadAddProduct = async (req, res)=>{
+                       try {
+
+                        const categoryData = await category.find({isListed:true})
+                        res.render("addProduct",{category:categoryData})
+                       } catch (error) {
+                        console.log("error in loadAddproduct: "+error)
+                        
+                        
+                       }
+   }
+
+   const addingProduct = async(req, res)=>{
+            try { 
+
+              console.log("Entered into adding product");
+             
+           //  const imageName = req.file && Array.isArray(req.file) ? req.file.map((x) => x.originalname) : [];
+               const imageName = req.files.map((x)=>x.originalname)
+             console.log(imageName)
+             const  receivedproductData = req.body;
+             const productData = {
+              id:Date.now(),
+              productName:receivedproductData.productName,
+              brand:receivedproductData.brandName,
+              description:receivedproductData.description,
+              category:receivedproductData.category,
+              regularPrice:receivedproductData.regularPrice,
+              salePrice:receivedproductData.salePrice,
+              createdOn:Date.now(),
+              totalQuantity:receivedproductData.totalQuantity,
+              productImage:imageName,
+              totalQuantity:receivedproductData.totalQuantity,
+              size:{
+                s:{
+                  quantity:receivedproductData.ssize
+                },
+                m:{
+                  quantity:receivedproductData.msize
+                },
+                l:{
+                  quantity:receivedproductData.lsize
+                }
+              },
+              color:receivedproductData.color
+              
+
+             }
+             console.log(receivedproductData);
+
+             const storedData = await product.create(productData)
+             console.log(storedData);
+             res.redirect('/admin/loadAddProduct')
+
+                  
+            } catch (error) {
+              console.log(error.message);
+              
+            }
+
+
+   }
 
 
 
@@ -266,6 +334,9 @@ module.exports =  {
                     addCategory,
                     listUnlistCategory,
                     loadCategoryEdit,
-                    updateCategory
+                    updateCategory,
+                    loadProductPage,
+                    loadAddProduct,
+                    addingProduct
                     
                  }
