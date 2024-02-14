@@ -152,7 +152,7 @@ const loadCategoryPage = async (req, res) => {
 
     const listUnlistCategory = async(req, res)=>{
                    try{
-                     console.log("Entered in to listUnlist catetory")
+                     console.log("Entered in to listUnlist catetory why entered")
                      const catId = req.query.id;
                      console.log(catId);
                      const findCat = await category.findById({_id:catId})
@@ -171,6 +171,7 @@ const loadCategoryPage = async (req, res) => {
                    }
 
     }
+   
 
   const unblockUser = async (req, res)=>{
                      try{
@@ -252,8 +253,23 @@ const loadCategoryPage = async (req, res) => {
       };
       
 
-   const loadProductPage = (req, res)=>{
-                       res.render("productPage")
+   const loadProductPage = async (req, res)=>{
+                      const productDetails = await product.aggregate([
+                        {
+                          $lookup: {
+                            from: "categories",
+                            localField: "category",
+                            foreignField: "_id",
+                            as: "newfield"
+                          }
+                        }
+                      ])
+                      
+                      console.log(productDetails)
+
+                      
+                    
+                       res.render("productPage",{productDetails})
    }
    
 
@@ -261,7 +277,8 @@ const loadCategoryPage = async (req, res) => {
                        try {
 
                         const categoryData = await category.find({isListed:true})
-                        res.render("addProduct",{category:categoryData})
+                        const message = req.flash("message")
+                        res.render("addProduct",{category:categoryData,message})
                        } catch (error) {
                         console.log("error in loadAddproduct: "+error)
                         
@@ -271,11 +288,20 @@ const loadCategoryPage = async (req, res) => {
 
    const addingProduct = async(req, res)=>{
             try { 
-
+              
               console.log("Entered into adding product");
-             
+              const dateFormatted = new Date().toISOString().replace(/[-T:.Z]/g, '');
+             // const imageName = dateFormatted + '_' + files.originalname;
            //  const imageName = req.file && Array.isArray(req.file) ? req.file.map((x) => x.originalname) : [];
-               const imageName = req.files.map((x)=>x.originalname)
+           // const imageName = req.files.map((file) => `${dateFormatted}_${file.originalname}`);
+              const imageName = [];
+              if (req.files && req.files.length > 0) {
+                for (let i = 0; i < req.files.length; i++) {
+                    imageName.push(req.files[i].filename); 
+                }
+            }
+
+              // const imageName = req.files.map((x)=>x.originalname)
              console.log(imageName)
              const  receivedproductData = req.body;
              const productData = {
@@ -308,7 +334,8 @@ const loadCategoryPage = async (req, res) => {
              console.log(receivedproductData);
 
              const storedData = await product.create(productData)
-             console.log(storedData);
+             
+             const message = req.flash("message","Successfully added!!")
              res.redirect('/admin/loadAddProduct')
 
                   
@@ -319,6 +346,28 @@ const loadCategoryPage = async (req, res) => {
 
 
    }
+
+   const listUnlistProduct = async(req, res)=>{
+    try {  
+          console.log("Entered into list unlist of Product");
+          const prodId = req.query.id;
+          console.log(prodId);
+          const findPrd = await product.findById({_id:prodId});
+          if(findPrd.isBlocked === true){
+            const productData = await product.findByIdAndUpdate({_id:prodId},{$set:{isBlocked:false}});
+            res.json({success:true})
+            console.log("true to false");
+          }else{
+            const productData = await product.findByIdAndUpdate({_id:prodId},{$set:{isBlocked:true}})
+            res.json({success:true})
+            console.log("false to true");
+          }
+      
+    } catch (error) {
+      console.log(error.message);
+      
+    }
+  }
 
 
 
@@ -337,6 +386,7 @@ module.exports =  {
                     updateCategory,
                     loadProductPage,
                     loadAddProduct,
-                    addingProduct
+                    addingProduct,
+                    listUnlistProduct
                     
                  }

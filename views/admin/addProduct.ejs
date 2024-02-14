@@ -137,6 +137,12 @@
 
                     <form method="post" action="/admin/productAdd" enctype="multipart/form-data"
                         onsubmit="return validateForm()">
+                        <% if (locals.message && message.length>0) { %>
+                          <div id="flashMessage" class="flash-message alert alert-success alert-info alert-dismissible fade show text-center" role="alert">
+
+                            <%= message %>
+                          </div>
+                        <% } %>
                         <div class="mb-4">
                             <label for="product_name" class="form-label">Product Name</label>
                             <input type="text" placeholder="Type here" name="productName" class="form-control border"

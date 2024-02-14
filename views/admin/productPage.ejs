@@ -123,6 +123,7 @@
                 <div>
                     <h2 class="content-title card-title">Products </h2>
                     <p>Add, edit a Products</p>
+                   
                 </div>
                 <div>
                     <a href="/admin/loadAddProduct" class="btn btn-md rounded font-sm hover-up">Add new Product</a>
@@ -130,6 +131,72 @@
             </div>
             <div class="card">
                 <div class="card-body">
+                  <div class="col-md-13">
+                     
+                   
+
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="col-md-2">Images</th>
+                                    <th class="col-md-2">Name</th>
+                                    <th class="col-md-2">Category</th>
+                                    <th class="col-md-1">Regular Price</th>
+                                    <th class="col-md-1">Sale Price</th>
+                                    <th class="col-md-1 text-center">Quantity</th>
+                                    <th class="col-md-2">List/Unlist</th>
+                                    <th class="text-center col-md-2">Edit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                              <% if (locals.productDetails  ) { %>
+                                <% for (let i = 0; i < productDetails.length; i++) { %>
+                                    <tr>
+                                        <td class="col-md-2 ">
+                                          <div class="itemside">
+                                            <div class="left">
+                                                <img src="/public/uploads/product-images/<%=productDetails[i].productImage[0] %>" class="img-sm img-thumbnail" alt="Item">
+                                            </div>
+                                            
+                                        </div>
+                                        </td>
+                                        <td class="col-md-2 align-self-center align-items-center"><%= productDetails[i].productName %></td>
+                                        <!-- <td class="col-md-2 "><//%= productDetails[i].newfield[0].name %></td> -->
+                                        <td class="col-md-2 ">
+                                          <% if (productDetails[i].newfield && productDetails[i].newfield.length > 0) { %>
+                                              <%= productDetails[i].newfield[0].name %>
+                                          <% } else { %>
+                                              
+                                              No Category
+                                          <% } %>
+                                      </td>
+                                        <td class="col-md-1 text-center"><%= productDetails[i].regularPrice %></td>
+                                        <td class="col-md-1 text-center"><%= productDetails[i].salePrice  %></td>
+                                        <td class="col-md-2 text-center"><%= productDetails[i].regularPrice  %></td>
+                                       
+                                        <td class="col-md-2 col-action">
+                                            <div class="">
+                                                <% if (productDetails[i].isBlocked) { %>
+                                                     <a  class="btn btn-sm font-sm btn-action" style="width: 55%; background-color: rgb(54, 138, 198); color: white;" onclick="unlist('<%= productDetails[i]._id %>', 'Unlist')">Unlist</a> 
+                                                <% } else { %>
+                                                    <a  class="btn btn-sm font-sm btn-action" style="width: 55%; background-color: rgb(252, 0, 0); color: white;" onclick="unlist('<%= productDetails[i]._id %>','list')">List</a>
+                                                <% } %>
+                                            </div>
+                                        </td>
+                                        <td class="col-edit col-md-2 text-center  ">
+                                            <a href="/admin/categoryEdit?categoryId=<%= productDetails[i]._id %>" class="btn btn-md font-sm btn-action btn-warning" style="width: 100%">Edit</a>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            <% } %>
+                            
+                              
+                            </tbody>
+                          </table>
+                      </div>
+                    </div>
                     
                   
                     
@@ -156,6 +223,63 @@
         </footer>
     </main>
     <script>
+      function unlist(id, clicked) {
+          let confirmationMessage;
+          if (clicked === 'Unlist') {
+              confirmationMessage = "Are you sure you want to unlist this category?"
+          } else {
+              confirmationMessage = "Are you sure you want to list this category?"
+          }
+  
+          swal({
+              text: confirmationMessage,
+              buttons: ["cancel", true],
+          }).then((result) => {
+              if (result) {
+                  $.ajax({
+                      url: `/admin/listUnlistProduct?id=${id}`,  // Corrected from `categoryId` to `id`
+                      method: 'PATCH',
+                      contentType: 'application/json',
+                      success: function (data) {
+                          console.log("Entered into success function")
+                          if (data.success) {
+                              if (clicked === 'Unlist') {
+                                  swal("Category Unlisted!", {
+                                      icon: "success",
+                                  }).then(() => {
+                                      location.reload();
+                                  });
+                              } else {
+                                  swal("Category Listed!", {
+                                      icon: "success",
+                                  }).then(() => {
+                                      location.reload();
+                                  });
+                              }
+                          } else {
+                              console.error('Unlisting failed');
+                          }
+                      },
+                      error: function (error) {
+                          swal("Oops!", "Failed to unlist the category. Please try again.", "error");
+                          console.error('AJAX error:', error);
+                      }
+                  });
+              } else {
+                  // If the user cancels, do nothing
+                  // Optionally, you can display a message here 
+              }
+          });
+      }
+        
+        setTimeout(() => {
+            const insertmessage = document.getElementById("insertmessage");
+            insertmessage.style.display = "none";
+        }, 5000);
+        
+        
+  </script>
+    <script>
         setTimeout(function(){
             document.getElementById('flashMessage').style.display = "none";
         },2000)
@@ -163,63 +287,7 @@
             document.getElementById('errorMessage').style.display = "none";
         },2000)
     </script>
-    <script>
-        function unlist(id, clicked) {
-            let confirmationMessage;
-            if (clicked === 'Unlist') {
-                confirmationMessage = "Are you sure you want to unlist this category?"
-            } else {
-                confirmationMessage = "Are you sure you want to list this category?"
-            }
     
-            swal({
-                text: confirmationMessage,
-                buttons: ["cancel", true],
-            }).then((result) => {
-                if (result) {
-                    $.ajax({
-                        url: `/admin/listUnlist?id=${id}`,  // Corrected from `categoryId` to `id`
-                        method: 'PATCH',
-                        contentType: 'application/json',
-                        success: function (data) {
-                            console.log("Entered into success function")
-                            if (data.success) {
-                                if (clicked === 'Unlist') {
-                                    swal("Category Unlisted!", {
-                                        icon: "success",
-                                    }).then(() => {
-                                        location.reload();
-                                    });
-                                } else {
-                                    swal("Category Listed!", {
-                                        icon: "success",
-                                    }).then(() => {
-                                        location.reload();
-                                    });
-                                }
-                            } else {
-                                console.error('Unlisting failed');
-                            }
-                        },
-                        error: function (error) {
-                            swal("Oops!", "Failed to unlist the category. Please try again.", "error");
-                            console.error('AJAX error:', error);
-                        }
-                    });
-                } else {
-                    // If the user cancels, do nothing
-                    // Optionally, you can display a message here 
-                }
-            });
-        }
-          
-          setTimeout(() => {
-              const insertmessage = document.getElementById("insertmessage");
-              insertmessage.style.display = "none";
-          }, 5000);
-          
-          
-    </script>
     
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="/public/admin-assets/js/vendors/jquery-3.6.0.min.js"></script>
