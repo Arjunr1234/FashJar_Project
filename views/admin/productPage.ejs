@@ -179,9 +179,9 @@
                                         <td class="col-md-2 col-action">
                                             <div class="">
                                                 <% if (productDetails[i].isBlocked) { %>
-                                                     <a  class="btn btn-sm font-sm btn-action" style="width: 55%; background-color: rgb(54, 138, 198); color: white;" onclick="unlist('<%= productDetails[i]._id %>', 'Unlist')">Unlist</a> 
+                                                     <a  class="btn btn-sm font-sm btn-action" style="width: 55%; background-color: rgb(54, 138, 198); color: white;" onclick="unlist('<%= productDetails[i]._id %>', 'Unlist')">List</a> 
                                                 <% } else { %>
-                                                    <a  class="btn btn-sm font-sm btn-action" style="width: 55%; background-color: rgb(252, 0, 0); color: white;" onclick="unlist('<%= productDetails[i]._id %>','list')">List</a>
+                                                    <a  class="btn btn-sm font-sm btn-action" style="width: 55%; background-color: rgb(252, 0, 0); color: white;" onclick="unlist('<%= productDetails[i]._id %>','list')">UnList</a>
                                                 <% } %>
                                             </div>
                                         </td>
@@ -226,9 +226,9 @@
       function unlist(id, clicked) {
           let confirmationMessage;
           if (clicked === 'Unlist') {
-              confirmationMessage = "Are you sure you want to unlist this category?"
-          } else {
               confirmationMessage = "Are you sure you want to list this category?"
+          } else {
+              confirmationMessage = "Are you sure you want to unlist this category?"
           }
   
           swal({
@@ -244,13 +244,13 @@
                           console.log("Entered into success function")
                           if (data.success) {
                               if (clicked === 'Unlist') {
-                                  swal("Category Unlisted!", {
+                                  swal("Category Listed!", {
                                       icon: "success",
                                   }).then(() => {
                                       location.reload();
                                   });
                               } else {
-                                  swal("Category Listed!", {
+                                  swal("Category Unlisted!", {
                                       icon: "success",
                                   }).then(() => {
                                       location.reload();

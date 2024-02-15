@@ -5,6 +5,7 @@ const otpHelper = require("../helper/otpHelper")
 const userHelper = require("../helper/userHelper")
 const { response } = require("express")
 const bcrypt = require("bcrypt")
+const product = require("../models/productModel")
 
 
 
@@ -12,8 +13,6 @@ const loginLoad = function (req, res) {
 
   if(req.session.user){
     res.redirect("/userHome")
-  }else if(req.session.admin){
-    res.redirect("/adminHome")
   }else{
     const message=req.flash("message")
     const error=req.flash("error")
@@ -162,7 +161,8 @@ const loadUserHome = async function (req,res){
     if(req.session.user){
       const userData = await User.findOne({_id:req.session.user});
       const name = userData.name
-      res.render("userHome",{message:name});
+      const productData = await product.find()
+      res.render("userHome",{productData});
     } else{
       res.redirect("/")
     }
