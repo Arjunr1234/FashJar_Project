@@ -6,6 +6,7 @@ const multer = require("multer");
 const uploads = require("../middlewares/multer");
 
 
+
 router.get('/login',adminController.loadLogin);
 
 

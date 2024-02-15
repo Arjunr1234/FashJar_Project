@@ -342,10 +342,7 @@ const loadCategoryPage = async (req, res) => {
             } catch (error) {
               console.log(error.message);
               
-            }
-
-
-   }
+            }}
 
    const listUnlistProduct = async(req, res)=>{
     try {  
