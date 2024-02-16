@@ -179,24 +179,27 @@
                   <div class="row">
                       <div class="col-md-6 mt-60">
                           <h2 class="content-title card-title">Category Edit</h2>
-                          <form method="post" onsubmit="" action="/admin/updateCategory?categoryId=<%= categoryData._id %>">
-                              <div class="mb-3">
-                                  <label for="categoryName" class="form-label">Name</label>
-                                  <input type="text" id="categoryName" name="categoryName" value="<%=categoryData.name %>"
-                                      class="form-control border large-input" />
-                                  <div id="categoryName-error" class="error-message"></div>
-                              </div>
-                              <div class="mb-3">
-                                  <label for="descriptionX" class="form-label">Description</label>
-                                  <textarea name="description" id="descriptionX"
-                                      class="form-control border large-input"><%=categoryData.description  %></textarea>
-                                  <div id="description-error" class="error-message"></div>
-                              </div>
-                              <div class="d-grid text-center mt-3">
-                                  <button class="btn" type="submit"
-                                      style="background-color: rgb(0, 94, 255); color: white;">Update category</button>
-                              </div>
-                          </form>
+                          <form id="addCategory" action="/admin/updateCategory?categoryId=<%= categoryData._id %>" method="post" onsubmit="return validateAndSubmit()">
+                           
+                        
+                            <div class="mb-4">
+                                <label for="product_name" class="form-label">Name</label>
+                                <input type="text" placeholder="Type here" class="form-control" id="categoryNameX" name="categoryName" value="<%= categoryData.name %>" />
+                                <div id="categoryName-error" class="error-message"></div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label">Description</label>
+                                <textarea placeholder="Type here" class="form-control" id="descriptionX" name="description"><%= categoryData.description %></textarea>
+                                <div id="description-error" class="error-message"></div>
+                            </div>
+                            <div class="d-grid">
+                                <button class="btn btn-primary">Create category</button>
+                            </div>
+                        </form>
+                        
+                        
+                        
                       </div>
                       <!-- Additional column for responsive layout -->
                       
@@ -219,7 +222,7 @@
             </div>
         </footer>
     </main>
-    
+    <script src="/public/js/categoryValidation.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/public/admin-assets/js/vendors/jquery-3.6.0.min.js"></script>
     <script src="/public/admin-assets/js/vendors/bootstrap.bundle.min.js"></script>

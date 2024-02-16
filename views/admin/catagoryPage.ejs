@@ -132,36 +132,34 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3">
-                            <form id="addCategory" action="/admin/addCategory" method="post">
+                            <form id="addCategory" action="/admin/addCategory" method="post" onsubmit="return validateAndSubmit()">
                                 <% if (locals.message && message.length>0) { %>
                                     <div id="flashMessage" class="flash-message alert alert-success alert-info alert-dismissible fade show text-center" role="alert">
-
-                                      <%= message %>
+                                        <%= message %>
                                     </div>
-                                  <% } %>
-                                  <% if (locals.error && error.length>0) { %>
+                                <% } %>
+                                <% if (locals.error && error.length>0) { %>
                                     <div id="errorMessage" style="display: block;" class="flash-message alert alert-danger alert-info alert-dismissible fade show text-center" role="alert">
-
-                                      <%= error %>
+                                        <%= error %>
                                     </div>
-                                  <% } %>
-
-                                  <!-- <p><div id="message" style="display: block;" class="alert alert-success err"></div></p>
-                                  <p><div id="error" style="display: block;" class="alert alert-danger err"></div></p> -->
+                                <% } %>
+                            
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Name</label>
-                                    <input type="text" placeholder="Type here" class="form-control" id="product_name " name="name" />
+                                    <input type="text" placeholder="Type here" class="form-control" id="categoryNameX" name="name" />
+                                    <div id="categoryName-error" class="error-message"></div>
                                 </div>
                                 
-                             
                                 <div class="mb-4">
                                     <label class="form-label">Description</label>
-                                    <textarea placeholder="Type here" class="form-control" name="description"></textarea>
+                                    <textarea placeholder="Type here" class="form-control" id="descriptionX" name="description"></textarea>
+                                    <div id="description-error" class="error-message"></div>
                                 </div>
                                 <div class="d-grid">
                                     <button class="btn btn-primary">Create category</button>
                                 </div>
                             </form>
+                            
                         </div>
                         
                         <div class="col-md-9">
@@ -298,7 +296,7 @@
           
           
     </script>
-    
+    <script src="/public/js/categoryValidation.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="/public/admin-assets/js/vendors/jquery-3.6.0.min.js"></script>
     <script src="/public/admin-assets/js/vendors/bootstrap.bundle.min.js"></script>
