@@ -167,29 +167,29 @@
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th>ID</th>
-                                            <th>Name</th>
-                                            <th>Description</th>
-                                            <th>Status</th>
-                                            <th>Action</th>
-                                            <th class="">Edit</th>
+                                            <th class="col-md-1">ID</th>
+                                            <th class="col-md-2">Name</th>
+                                            <th class="col-md-3">Description</th>
+                                            <th class="col-md-2">Status</th>
+                                            <th class="col-md-2">Action</th>
+                                            <th class="col-md-2">Edit</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <% if (locals.categoryD) { %>
                                             <% for (let i = 0; i < categoryD.length; i++) { %>
                                                 <tr>
-                                                    <td class="col-id"><%= i+1 %></td>
-                                                    <td class="col-name"><%= categoryD[i].name %></td>
-                                                    <td class="col-description"><%= categoryD[i].description %></td>
-                                                    <td class="col-status">
+                                                    <td class="col-md-1 col-id"><%= i+1 %></td>
+                                                    <td class="col-md-2 col-name"><%= categoryD[i].name %></td>
+                                                    <td class="col-md-3 col-description"><%= categoryD[i].description %></td>
+                                                    <td class="col-md-2 col-status">
                                                         <% if (categoryD[i].isListed) { %>
                                                             <span class="badge" style="width: 53%; background-color: rgb(7, 219, 11);">Listed</span>
                                                         <% } else { %>
                                                             <span class="badge" style="width: 53%; background-color: red;">Unlisted</span>
                                                         <% } %>
                                                     </td>
-                                                    <td class="col-action">
+                                                    <td class="col-md-2 col-action">
                                                         <div class="">
                                                             <% if (categoryD[i].isListed) { %>
                                                                  <a  class="btn btn-sm font-sm btn-action" style="width: 55%; background-color: rgb(54, 138, 198); color: white;" onclick="unlist('<%= categoryD[i]._id %>', 'Unlist')">Unlist</a> 
@@ -198,7 +198,7 @@
                                                             <% } %>
                                                         </div>
                                                     </td>
-                                                    <td class="col-edit ">
+                                                    <td class="col-md-2 col-edit ">
                                                         <a href="/admin/categoryEdit?categoryId=<%= categoryD[i]._id %>" class="btn btn-sm font-sm btn-action btn-warning" style="width: 70%">Edit</a>
                                                     </td>
                                                 </tr>

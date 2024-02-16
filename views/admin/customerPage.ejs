@@ -199,24 +199,24 @@
                 <div class="card-body">
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-bordered" id="customerlist">
+                            <table class="table table-bordered table-hover" id="customerlist">
                                 <thead>
                                     <tr style="background-color: white; color: black;">
-                                        <th scope="col" class="col-name">Name</th>
-                                        <th scope="col" class="col-email">Email</th>
-                                        <th scope="col" class="col-status">Status</th>
-                                        <th scope="col" class="col-mobile">Mobile</th>
+                                        <th scope="col-md-3" class="col-name">Name</th>
+                                        <th scope="col-md-3" class="col-email">Email</th>
+                                        <th scope="col-md-2" class="col-status">Status</th>
+                                        <th scope="col-md-2" class="col-mobile">Mobile</th>
                                         <!-- Add more columns if needed -->
-                                        <th scope="col" class="col-action text-end">Actions</th>
+                                        <th scope="col-md-2 " class="col-action text-center">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                   <% if (locals.users) { %>
                                       <% for (let i = 0; i < users.length; i++) { %>
                                           <tr>
-                                              <td class="col-name"><%= users[i].name %></td>
-                                              <td class="col-email"><%= users[i].email %></td>
-                                              <td class="col-status">
+                                              <td class="col-md-3 col-name"><%= users[i].name %></td>
+                                              <td class="col-md-3 col-email"><%= users[i].email %></td>
+                                              <td class="col-md-2 col-status">
                                                  
                                                   <% if (users[i].isActive) { %>
                                                       <span class="badge" style="background-color: rgb(7, 219, 11);">Active</span>
@@ -224,8 +224,8 @@
                                                       <span class="badge" style="background-color: red;">Blocked</span>
                                                   <% } %>
                                               </td>
-                                              <td class="col-mobile"><%= users[i].mobile %></td>
-                                              <td class="col-action text-end">
+                                              <td class="col-md-2 col-mobile"><%= users[i].mobile %></td>
+                                              <td class="col-md-2 col-action text-end">
                                                   <% if (users[i].isActive) { %>
                   
                                                       <a  href="/admin/blockuser?id=<%= users[i]._id %>" class="btn btn-sm font-sm btn-action" style="background-color: rgb(54, 138, 198); color: white;">

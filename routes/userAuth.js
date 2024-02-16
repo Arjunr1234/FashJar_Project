@@ -24,3 +24,5 @@ router.get('/resendOtp', userController.loadOtpVerify);
 router.get('/viewProduct',userController.loadVeiwProduct)
 
 module.exports = router;
+
+

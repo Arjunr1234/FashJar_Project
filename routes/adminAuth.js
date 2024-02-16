@@ -1,16 +1,25 @@
 const express = require("express");
 const router = express.Router()
 const adminController = require("../controller/adminController");
-const isAdmin = require("../controller/adminMiddleware");
+const isAdmin = require("../middlewares/adminMiddleware");
 const multer = require("multer");
 const uploads = require("../middlewares/multer");
+const adminIsLogin = require("../middlewares/adminIsLoginMiddleware");
+
+// const adminIsLogin = (req,res,next)=>{
+//   if(req.session.admin){
+//      res.redirect('/admin/adminhome')
+// }else{
+//      next();
+//  }
+// }
 
 
 
-router.get('/login',adminController.loadLogin);
+router.get('/login',adminIsLogin,adminController.loadLogin);
 
 
-router.post('/adminloging',adminController.loadAdminHome);
+router.post('/adminloging',adminIsLogin,adminController.loadAdminHome);
 router.get('/adminHome',isAdmin,adminController.loadHome);
 
 router.get('/logout',isAdmin ,adminController.loadAdminLogout)
@@ -38,3 +47,4 @@ router.post('/editProduct',isAdmin,uploads.array("images"),adminController.editP
 
 
 module.exports = router
+
