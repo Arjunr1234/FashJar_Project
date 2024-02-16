@@ -156,22 +156,38 @@ const loginHome = async (req, res) => {
 //   }
 // }
 
-const loadUserHome = async function (req,res){
+const loadUserHome = async function (req, res) {
   try {
-    if(req.session.user){
-      const userData = await User.findOne({_id:req.session.user});
-      const name = userData.name
-      const productData = await product.find()
-      res.render("userHome",{productData});
-    } else{
-      res.redirect("/")
-    }
+      if (req.session.user) {
+          const userData = await User.findOne({ _id: req.session.user });
+          const name = userData.name;
 
-   } catch (error) {
-    console.log(error.message)
-    
+          const productData = await product.aggregate([
+              {
+                  $match: {
+                      "isBlocked": false
+                  }
+              },
+              {
+                  $lookup: {
+                      from: "categories",
+                      localField: "category",
+                      foreignField: "_id",
+                      as: "newField"
+                  }
+              }
+          ]);
+
+          
+          res.render("userHome", { productData });
+      } else {
+          res.redirect("/");
+      }
+  } catch (error) {
+      console.log(error.message);
   }
-}
+};
+
 
 const loadLogout = (req,res)=>{
   
@@ -219,8 +235,23 @@ const registerWithOtp = async(req,res)=>{
   
 
 
+const loadSample = async (req, res)=>{
+  console.log("Entered into loadSample");
+  const products  = await product.find({_id:'65cdd01b55d639d38a200df2'})
+  console.log(products);
+  res.render("sample",{products});
+}
 
 
+const loadVeiwProduct = async(req, res)=>{
+        console.log("Entered to the loadview product");
+         const productId = req.query.id;
+         console.log(productId)
+         const products =await product.find({_id:productId})
+         console.log(products);
+         res.render("productView",{products});
+
+}
 
    
 
@@ -232,6 +263,7 @@ const registerWithOtp = async(req,res)=>{
 
 
 module.exports = { 
+              loadSample,
               loginLoad,
               loadRegister,
               insertUserWithVerify,
@@ -239,7 +271,8 @@ module.exports = {
               loadUserHome,
               loadLogout,
               loadOtpVerify,
-              loginHome
+              loginHome,
+              loadVeiwProduct
 
               //otp
               

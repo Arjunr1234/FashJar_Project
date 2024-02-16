@@ -580,6 +580,7 @@
                                             <li><a href="page-terms.html">Terms of Service</a></li>
                                             <li><a href="page-404.html">404 Page</a></li>
                                             <li><a href="/logout">logout</a></li>
+                                            <li><a href="/sampleForCheck">sample</a></li>
                                         </ul>
                                     </li>
                                     <li>
@@ -981,7 +982,7 @@
                                                 <div class="product-cart-wrap mb-30">
                                                     <div class="product-img-action-wrap">
                                                         <div class="product-img product-img-zoom">
-                                                            <a href="shop-product-right.html">
+                                                            <a href="/viewProduct?id=<%= productData[i]._id %>">
                                                                 <img class="default-img" src="/public/uploads/product-images/<%= productData[i].productImage[0] %>" alt="">
                                                                 <img class="hover-img" src="/public/uploads/product-images/<%= productData[i].productImage[1] %>" alt="">
                                                             </a>
@@ -997,17 +998,17 @@
                                                     </div>
                                                     <div class="product-content-wrap">
                                                         <div class="product-category">
-                                                            <a href="shop-grid-right.html">Clothing</a>
+                                                            <a href="/viewProduct?id=<%= productData[i]._id %>">Clothing</a>
                                                         </div>
-                                                        <h2><a href="shop-product-right.html">Plain Color Pocket Shirts</a></h2>
+                                                        <h2><a href="/viewProduct?id=<%= productData[i]._id %>"><%= productData[i].productName %></a></h2>
                                                         <div class="rating-result" title="90%">
-                                                            <span>
-                                                                <span>50%</span>
-                                                            </span>
+                                                            <!-- <span>
+                                                                <span> off %/span>
+                                                            </span> -->
                                                         </div>
                                                         <div class="product-price">
-                                                            <span>$138.85 </span>
-                                                            <span class="old-price">$255.8</span>
+                                                            <span>₹ <%= productData[i].salePrice %> </span>
+                                                            <span class="old-price">₹ <%= productData[i].regularPrice %></span>
                                                         </div>
                                                         <div class="product-action-1 show">
                                                             <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>

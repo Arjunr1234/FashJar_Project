@@ -30,7 +30,9 @@ router.post('/updateCategory',isAdmin,adminController.updateCategory)
 router.get('/products',isAdmin,adminController.loadProductPage);
 router.get('/loadAddProduct',isAdmin,adminController.loadAddProduct);
 router.post('/productAdd',isAdmin,uploads.array("images",4) ,adminController.addingProduct);
-router.patch('/listUnlistProduct',isAdmin,adminController.listUnlistProduct)
+router.patch('/listUnlistProduct',isAdmin,adminController.listUnlistProduct);
+router.get('/productEdit',isAdmin,adminController.loadProductEdit);
+router.post('/editProduct',isAdmin,uploads.array("images"),adminController.editProducts)
 
 
 

@@ -268,7 +268,7 @@ const loadCategoryPage = async (req, res) => {
                       console.log(productDetails)
 
                       
-                    
+                       
                        res.render("productPage",{productDetails})
    }
    
@@ -331,7 +331,7 @@ const loadCategoryPage = async (req, res) => {
               
 
              }
-             console.log(receivedproductData);
+             
 
              const storedData = await product.create(productData)
              
@@ -366,6 +366,77 @@ const loadCategoryPage = async (req, res) => {
     }
   }
 
+   const loadProductEdit = async(req, res)=>{
+              const productId = req.query.id
+              console.log("This is the received id: "+productId);
+              const productData = await product.findById({_id:productId})
+              console.log("This is the productdata from loadProductEdit"+productData);
+              res.render("productEdit",{productData})
+   }
+
+   const mongoose = require('mongoose'); // Import mongoose if not already imported
+
+const editProducts = async (req, res) => {
+    try {
+        const imageName = [];
+        if (req.files && req.files.length > 0) {
+            for (let i = 0; i < req.files.length; i++) {
+                imageName.push(req.files[i].filename);
+            }
+        }
+
+        const productId = req.query.id;
+        const receivedproductData = req.body;
+        console.log("This is the productId:", productId);
+        console.log("This is the received data:", receivedproductData);
+
+        // Validate ObjectId
+        if (!mongoose.Types.ObjectId.isValid(productId)) {
+            console.log("Invalid product ID");
+            return res.status(400).json({ success: false, message: 'Invalid product ID' });
+        }
+
+        const productData = {
+            id: Date.now(),
+            productName: receivedproductData.productName,
+            brand: receivedproductData.brandName,
+            description: receivedproductData.description,
+            category: receivedproductData.category,
+            regularPrice: receivedproductData.regularPrice,
+            salePrice: receivedproductData.salePrice,
+            createdOn: Date.now(),
+            totalQuantity: receivedproductData.totalQuantity,
+            productImage: imageName,
+            size: {
+                s: {
+                    quantity: receivedproductData.ssize,
+                },
+                m: {
+                    quantity: receivedproductData.msize,
+                },
+                l: {
+                    quantity: receivedproductData.lsize,
+                },
+            },
+            color: receivedproductData.color,
+        };
+
+        const editedData = await product.findByIdAndUpdate(productId, productData, { new: true });
+
+        if (!editedData) {
+            console.log("Product not found");
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+
+        console.log("This is the edited product:", editedData);
+        
+        res.redirect('/admin/products');
+    } catch (error) {
+        console.error("Error editing product:", error.message);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};
+
 
 
 module.exports =  {
@@ -384,6 +455,8 @@ module.exports =  {
                     loadProductPage,
                     loadAddProduct,
                     addingProduct,
-                    listUnlistProduct
+                    listUnlistProduct,
+                    loadProductEdit,
+                    editProducts
                     
                  }

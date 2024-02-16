@@ -13,6 +13,7 @@ router.get('/register', userController.loadRegister);
 // router.post('/register', userController.insertUser);
 
 router.get('/logout', userController.loadLogout);
+router.get('/sampleForCheck',userController.loadSample)
 
 router.get('/sendotp', userController.loadOtpVerify);
 router.post('/otp', otpHelper.sendOtp);
@@ -20,5 +21,6 @@ router.post('/otp', otpHelper.sendOtp);
 router.post('/verify-otp', userController.insertUserWithVerify);
 // router.get('/resendOtp', otpHelper.sendOtp);
 router.get('/resendOtp', userController.loadOtpVerify);
+router.get('/viewProduct',userController.loadVeiwProduct)
 
 module.exports = router;
