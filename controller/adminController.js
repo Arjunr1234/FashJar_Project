@@ -369,9 +369,11 @@ const loadCategoryPage = async (req, res) => {
    const loadProductEdit = async(req, res)=>{
               const productId = req.query.id
               console.log("This is the received id: "+productId);
+              const categoryData = await category.find()
+             // console.log("This is category data in the loadProductEdit ",categoryData)
               const productData = await product.findById({_id:productId})
               console.log("This is the productdata from loadProductEdit"+productData);
-              res.render("productEdit",{productData})
+              res.render("productEdit",{productData,categoryData})
    }
 
    const mongoose = require('mongoose'); // Import mongoose if not already imported

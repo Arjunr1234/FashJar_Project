@@ -219,13 +219,13 @@
                                   <div class="row gx-2">
                                       <div class="col-sm-6 mb-3">
                                           <label class="form-label">Category</label>
-                                          <!-- <select class="form-select border" style="width: 150px;" name="category">
-                                            //  <% //for (let i=0; i < category.length; i++) { %>
-                                                  <option value="<%=// category[i]._id %>">
-                                                      <%= //category[i].name %>
+                                          <select class="form-select border" style="width: 150px;" name="category">
+                                             <% for (let i=0; i < categoryData.length; i++) { %>
+                                                  <option value="<%= categoryData[i]._id %>" >
+                                                      <%= categoryData[i].name %>
                                                   </option>
-                                                  <%// } %>
-                                          </select> -->
+                                                  <% } %>
+                                          </select>
                                       </div>
                                   </div>
                               </div>

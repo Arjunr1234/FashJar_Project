@@ -20,8 +20,8 @@ const productSchema = mongoose.Schema({
             category:{
               type:mongoose.Schema.Types.ObjectId,
               ref:"category",
-              //required:true
-              default:"one"
+              required:true
+             // default:"one"
             },
             regularPrice:{
               type:Number,
