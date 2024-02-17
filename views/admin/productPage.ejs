@@ -112,7 +112,7 @@
                             <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
                             <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help center</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item text-danger" href="#"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                            <a class="dropdown-item text-danger" href="/admin/logout"><i class="material-icons md-exit_to_app"></i>Logout</a>
                         </div>
                     </li>
                 </ul>
@@ -145,9 +145,9 @@
                                     <th class="col-md-2">Category</th>
                                     <th class="col-md-1">Regular Price</th>
                                     <th class="col-md-1">Sale Price</th>
-                                    <th class="col-md-1 text-center">Quantity</th>
+                                    <!-- <th class="col-md-1 text-center">Quantity</th> -->
                                     <th class="col-md-2">List/Unlist</th>
-                                    <th class="text-center col-md-2">Edit</th>
+                                    <th class="text-center col-md-1">Edit</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -175,7 +175,7 @@
                                       </td>
                                         <td class="col-md-1 text-center"><%= productDetails[i].regularPrice %></td>
                                         <td class="col-md-1 text-center"><%= productDetails[i].salePrice  %></td>
-                                        <td class="col-md-2 text-center"><%= productDetails[i].regularPrice  %></td>
+                                        <!-- <td class="col-md-2 text-center"><%=// productDetails[i].regularPrice  %></td> -->
                                        
                                         <td class="col-md-2 col-action">
                                             <div class="">
@@ -186,7 +186,7 @@
                                                 <% } %>
                                             </div>
                                         </td>
-                                        <td class="col-edit col-md-2 text-center  ">
+                                        <td class="col-edit col-md-1 text-center  ">
                                             <a href="/admin/productEdit?id=<%= productDetails[i]._id %>" class="btn btn-md font-sm btn-action btn-warning" style="width: 100%">Edit</a>
                                         </td>
                                     </tr>

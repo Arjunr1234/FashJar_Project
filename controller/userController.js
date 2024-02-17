@@ -6,6 +6,7 @@ const userHelper = require("../helper/userHelper")
 const { response } = require("express")
 const bcrypt = require("bcrypt")
 const product = require("../models/productModel")
+const category = require("../models/categoryModel")
 
 
 
@@ -177,9 +178,11 @@ const loadUserHome = async function (req, res) {
                   }
               }
           ]);
+          const categoryData = await category.find({isListed:true})
+          
 
           
-          res.render("userHome", { productData });
+          res.render("userHome", { productData,categoryData });
       } else {
           res.redirect("/");
       }

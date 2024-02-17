@@ -36,10 +36,10 @@ const productSchema = mongoose.Schema({
               required:true,
               default:Date.now()
             },
-            totalQuantity:{
-              type:String,
-              required:true
-            },
+            // totalQuantity:{
+            //   type:String,
+            //   required:true
+            // },
             isBlocked:{
               type:Boolean,
               default:false
