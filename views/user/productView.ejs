@@ -147,6 +147,7 @@
                                                     class="product-color-purple"></span></a></li>
                                     </ul>
                                 </div>
+                               
                                 <div class="attr-detail attr-size">
                                     <strong class="mr-10">Size</strong>
                                     <ul class="list-filter size-filter font-small">
@@ -581,6 +582,9 @@
                                                 <% } %>
                                             </div>
                                         </div>
+                                        <br>
+
+                                       
                                         
                                         
                                         </div>
@@ -589,35 +593,43 @@
                                             <p><%= products[0].description %>!</p>
                                         </div>
                                         <!-- above this is trying to modify -->
-                                        <!-- <div class="product_sort_info font-xs mb-30">
+                                        <div class="product_sort_info font-xs mb-30">
                                             <ul>
                                                 <li class="mb-10"><i class="fi-rs-crown mr-5"></i> 1 Year AL Jazeera Brand Warranty</li>
                                                 <li class="mb-10"><i class="fi-rs-refresh mr-5"></i> 30 Day Return Policy</li>
                                                 <li><i class="fi-rs-credit-card mr-5"></i> Cash on Delivery available</li>
                                             </ul>
-                                        </div> -->
-                                        <!-- <div class="attr-detail attr-color mb-15">
+                                        </div>
+                                        <div class="attr-detail attr-color mb-15">
                                             <strong class="mr-10">Color</strong>
                                             <ul class="list-filter color-filter">
-                                                <li><a href="#" data-color="Red"><span class="product-color-red"></span></a></li>
-                                                <li><a href="#" data-color="Yellow"><span class="product-color-yellow"></span></a></li>
-                                                <li class="active"><a href="#" data-color="White"><span class="product-color-white"></span></a></li>
-                                                <li><a href="#" data-color="Orange"><span class="product-color-orange"></span></a></li>
-                                                <li><a href="#" data-color="Cyan"><span class="product-color-cyan"></span></a></li>
-                                                <li><a href="#" data-color="Green"><span class="product-color-green"></span></a></li>
-                                                <li><a href="#" data-color="Purple"><span class="product-color-purple"></span></a></li>
+                                                <li><a href="#" data-color="Red"><span class="product-color-red"></span></a>
+                                                </li>
+                                                <li><a href="#" data-color="Yellow"><span
+                                                            class="product-color-yellow"></span></a></li>
+                                                <li class="active"><a href="#" data-color="White"><span
+                                                            class="product-color-white"></span></a></li>
+                                                <li><a href="#" data-color="Orange"><span
+                                                            class="product-color-orange"></span></a></li>
+                                                <li><a href="#" data-color="Cyan"><span class="product-color-cyan"></span></a>
+                                                </li>
+                                                <li><a href="#" data-color="Green"><span class="product-color-green"></span></a>
+                                                </li>
+                                                <li><a href="#" data-color="Purple"><span
+                                                            class="product-color-purple"></span></a></li>
                                             </ul>
-                                        </div> -->
-                                        <!-- <div class="attr-detail attr-size">
+                                        </div>
+                                        <div class="attr-detail attr-size">
                                             <strong class="mr-10">Size</strong>
                                             <ul class="list-filter size-filter font-small">
-                                                <li><a href="#">S</a></li>
-                                                <li class="active"><a href="#">M</a></li>
-                                                <li><a href="#">L</a></li>
-                                                <li><a href="#">XL</a></li>
-                                                <li><a href="#">XXL</a></li>
+                                                <li><a  onclick="sizeClick('<%= products[0]._id %>','s')">S</a></li>
+                                                <li class="active"><a  onclick="sizeClick('<%= products[0]._id %>','m')">M</a></li>
+                                                <li><a  onclick="sizeClick('<%= products[0]._id %>','l')">L</a></li>
+                                               
                                             </ul>
-                                        </div> -->
+                                        </div>
+                                        
+                                        
                                         <div class="bt-1 border-color-1 mt-30 mb-30"></div>
                                         <div class="detail-extralink">
                                             <div class="detail-qty border radius">
@@ -627,13 +639,13 @@
                                             </div>
                                             <div class="col-md-6"> <!-- Adjust the column size based on your layout -->
                                              
-                                                <button onclick="addtoCartBtn('<%= products[0]._id %>')" id="addToCartBtn" type="submit" class="btn btn-primary">Add to cart</button>
+                                                <button onclick="addtoCartBtn('<%= products[0]._id %>')" id="addToCartButton" type="submit" class="btn btn-primary">Add to cart</button>
                                             </div>
                                         </div>
                                         <ul class="product-meta font-xs color-grey mt-50">
                                             <li class="mb-5">SKU: <a href="#">FWM15VKT</a></li>
                                             <li class="mb-5">Tags: <a href="#" rel="tag">Cloth</a>, <a href="#" rel="tag">Women</a>, <a href="#" rel="tag">Dress</a> </li>
-                                            <li>Availability:<span class="in-stock text-success ml-5">8 Items In Stock</span></li>
+                                            <li>Availability:<span class="in-stock  ml-5" id="messageDisplay"></span></li>
                                         </ul>
                                     </div>
                                     <!-- Detail Info -->
@@ -1083,21 +1095,39 @@
       </html>
       
       <script>
-          function addtoCartBtn(prodId){
-              console.log(prodId);
-              swal("Adding to Cart", "Please wait...", "info"); 
-              
-              $.ajax({
-                  url: '/addToCart/'+ prodId,
-                  method: 'get'
-              }).done((res) => {
-                  
-                  swal("Success", "Product added to cart!", "success");
-               
-              }).fail((error) => {
-            
-                  console.error("Error adding to cart:", error);
-                  swal("Error", "Failed to add product to cart. Please try again later.", "error");
-              });
+          function sizeClick(id, size){
+            console.log("Entered in to sizeClick function")
+            sizeClicked = size;
+            console.log(sizeClicked);
+            $.ajax({
+                url:`/size/${id}/${size}`,
+                method:'POST',
+                contentType:'application/json',
+                success:function(response){
+                    const messageDisplay = document.getElementById("messageDisplay");
+                    const size = response.message;
+                    if(size !== undefined){
+                        if(response.message === 0){
+                            messageDisplay.innerHTML = "Product Out of Stock!!";
+                            messageDisplay.style.color = "red"
+                            document.getElementById("addToCartButton").disabled = true
+                        }else if(response.message < 10){
+                            messageDisplay.innerHTML = `${size} item Available in Stock`
+                            messageDisplay.style.color = 'red';
+                            document.getElementById("addToCartButton").disabled = false;
+                        }else{
+                            document.getElementById("addToCartButton").disabled = false;
+                            messageDisplay.innerHTML = `${size} item Avaliable in Stock`;
+                            messageDisplay.style.color = 'green'
+                        }
+                    }else{
+                        messageDisplay.innerHTML = "";
+                    }
+                    isProductWithThisSize(id, size)
+                },
+                error:function(error){
+                    console.error("AJAX error :",error)
+                }
+            })
           }
       </script>

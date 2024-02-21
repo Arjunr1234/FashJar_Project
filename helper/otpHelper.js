@@ -24,7 +24,7 @@ const sendOtp = (req,res)=>{
      console.log(req.session.insertedData)
      req.session.storedEmail = email
     const otp = generateSixDigitNumber();
-    const expiryTime = 30
+    const expiryTime = 60
     req.session.otpExpiry = Date.now()+expiryTime*1000;
     console.log("generate otp: "+otp);
     const userEmail = email;

@@ -47,15 +47,15 @@ function validateForm() {
       displayErrorMessage("salePrice-error", "Sale Price must be a valid positive number less than Regular Price");
       isValid = false;
   }
-  if (sSize === "" || isNaN(parseInt(sSize)) || parseInt(sSize) <= 0) {
+  if (sSize === "" || isNaN(parseInt(sSize)) || parseInt(sSize) < 0) {
       displayErrorMessage("sSize-error", "Small size quantity must be a positive number");
       isValid = false;
   }
-  if (mSize === "" || isNaN(parseInt(mSize)) || parseInt(mSize) <= 0) {
+  if (mSize === "" || isNaN(parseInt(mSize)) || parseInt(mSize) < 0) {
       displayErrorMessage("mSize-error", "Medium size quantity must be a positive number");
       isValid = false;
   }
-  if (lSize === "" || isNaN(parseInt(lSize)) || parseInt(lSize) <= 0) {
+  if (lSize === "" || isNaN(parseInt(lSize)) || parseInt(lSize) < 0) {
       displayErrorMessage("lSize-error", "Large size quantity must be a positive number");
       isValid = false;
   }

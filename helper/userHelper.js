@@ -3,39 +3,7 @@ const bcrypt = require("bcrypt");
 const { verify } = require('./otpHelper');
 
 
-// const doLoginHome = async (logEmail, logPassword)=>{
-//   return new Promise (async (resolve, reject)=>{
-//     try{
-//     const response = {}
-//     const user = await userModel.findOne({email:logEmail})
-//     if(user){
-//       if(user.isActive){
-        
-//         bycrypt.compare(logPassword,user.password).then((result)=>{
-//                 if(result){
-//                   response.user = user;
-//                   response.login = true;
-//                   resolve(response)
-//                 }else{
-//                   response.errorMsg = "Invalid email or noresult  Password"
-//                   resolve(response)
-//                 }
-//         })
 
-
-//       }else{
-//         response.errorMsg = "You are Blocked"
-//         resolve(response)
-//       }
-//     }else{
-//       response.errorMsg = "Invalid username or fucking password"
-//       resolve(response)
-//     }
-//   }catch(error){
-//     console.log(error);
-//   }
-//   })
-// }
 const loginHome = (userData) => {
   console.log(userData);
   return new Promise(async (resolve, reject) => {
@@ -119,9 +87,31 @@ const doSignup = (userData, verify)=>{
    })
 }
 
+const checkUserExist = async (req, res, next)=>{
+            const enteredEmail = req.body.email
+            const enteredPhone = req.body.mobile
+            const checkEmail = await userModel.findOne({email:enteredEmail});
+            const checkPhone = await userModel.findOne({mobile:enteredPhone});
+            console.log("This is the entred email ", enteredEmail);
+            console.log("This is the entered phone ",enteredPhone);
+            console.log("This is checked email",checkEmail);
+            console.log("Thsi is checked phone",checkPhone);
+            if(checkEmail){
+                    const error = req.flash("error","Email already registred!!")
+                    res.redirect("/register")
+            }else if(checkPhone){
+                   const error = req.flash("error","Phone number alredy registred!!")
+                   res.redirect("/register")
+            }else{
+              next()
+            }
+
+}
+
 module.exports = {
                     doSignup,
-                    loginHome
+                    loginHome,
+                    checkUserExist
                     
 
                  }

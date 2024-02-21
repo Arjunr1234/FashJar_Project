@@ -228,11 +228,11 @@
                                               <td class="col-md-2 col-action text-end">
                                                   <% if (users[i].isActive) { %>
                   
-                                                      <a  href="/admin/blockuser?id=<%= users[i]._id %>" class="btn btn-sm font-sm btn-action" style="background-color: rgb(54, 138, 198); color: white;">
+                                                      <a  class="btn btn-sm font-sm btn-action" style="background-color: rgb(54, 138, 198); color: white;" onclick="blockUnblockUser('<%=users[i]._id %>', 'block','<%= users[i].name %>' )">
                                                           Block
                                                       </a>
                                                   <% } else { %>
-                                                      <a href="/admin/blockuser?id=<%= users[i]._id %>" class="btn btn-sm font-sm btn-action" style="background-color: rgb(252, 0, 0); color: white;">
+                                                      <a  class="btn btn-sm font-sm btn-action" style="background-color: rgb(252, 0, 0); color: white;" onclick="blockUnblockUser('<%=users[i]._id %>', 'unBlock', '<%= users[i].name %>' )">
                                                           Unblock
                                                       </a>
                                                   <% } %>
@@ -277,6 +277,66 @@
             </div>
         </footer>
     </main>
+    <script>
+        
+        function blockUnblockUser(id, clicked, name) {
+           
+            console.log("Entered into the block user script");
+            let confirmationMessage;
+            console.log(clicked);
+        
+            if (clicked === 'block') {
+                confirmationMessage = `Are you sure you want to Block ${name}?`;
+            } else {
+                confirmationMessage = `Are you sure you want to Unblock ${name}?`;
+            }
+        
+            Swal.fire({
+                text: confirmationMessage,
+                buttons: ["cancel", true],
+            }).then((result) => {
+                console.log("Entered into result");
+        
+                if (result.value) {
+                    $.ajax({
+                        url: `/admin/blockuser?id=${id}`,
+                        method: 'PATCH',
+                        contentType: 'application/json',
+                        success: function (data) {
+                            console.log("Entered into success function");
+                            if (data.success) {
+                                let successMessage;
+                                if (clicked === 'block') {
+                                    successMessage = `${name} is Blocked`;
+                                } else {
+                                    successMessage = `${name} is Unblocked`;
+                                }
+        
+                                Swal.fire({
+                                    text: successMessage,
+                                    icon: "success",
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                console.error('Blocking failed');
+                            }
+                        },
+                        error: function (error) {
+                            Swal.fire("Oops!", "Failed to Block the User. Please try again.", "error");
+                            console.error('AJAX error:', error);
+                        }
+                    });
+                } else {
+                    // If the user cancels, do nothing
+                    // Optionally, you can display a message here
+                }
+            });
+        }
+        
+                        
+
+    </script>
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/public/admin-assets/js/vendors/jquery-3.6.0.min.js"></script>
@@ -295,5 +355,5 @@
 </body>
 
 
-<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-products-list.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:12 GMT -->
+
 </html>

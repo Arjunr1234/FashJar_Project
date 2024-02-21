@@ -27,8 +27,6 @@ const loginLoad = function (req, res) {
 const loadRegister = function(req, res){
      if(req.session.user){
       res.redirect("/userHome")
-     }else if(req.session.admin){
-      res.redirect("/adminHome")
      }else{
       const message = req.flash("message")
       const error = req.flash("error")
@@ -80,26 +78,7 @@ const insertUserWithVerify = async function(req, res) {
 
 
 
-// const logNewUser = async function (req, res) {
-//   const logEmail = req.body.email;
-//   const logPassword = req.body.password;
 
-//   const response = await doLoginHome(logEmail, logPassword);
-//   console.log(response);
-//   if (response) {
-//       if (response.login) {
-//         console.log("here it is coming")  
-//           req.session.user = response.user._id;
-//           res.redirect('/userHome');
-//       } else {
-//           req.flash("error", response.errorMsg);
-//           res.redirect("/");
-//       }
-//   } else {
-//       req.flash("error", "Some error occurred");
-//       res.redirect("/");
-//   }
-// };   
 
 
 const loginHome = async (req, res) => {
@@ -130,32 +109,7 @@ const loginHome = async (req, res) => {
 
 
 
-// const logUser = async function(req,res){
-//   const logEmail = req.body.email;
-//   const logPassword = req.body.password;
-//   try {
-//     const loggedUser = await User.findOne({
-//       email:logEmail,
-//       password:logPassword
-//     })
-//     if(loggedUser){
-//       if(loggedUser.isAdmin === 1){
-//         req.session.admin = loggedUser._id
-//         res.redirect("/adminHome")
-//       }else{
-//         req.session.user = loggedUser._id
-//         res.redirect("/userHome")
-//       }
-//     }else{
-//       req.flash("error","Login Failed")
-//       res.redirect("/")
-//     }
-    
-//   } catch (error) {
 
-//     console.log(error.message);
-//   }
-// }
 
 const loadUserHome = async function (req, res) {
   try {
@@ -213,35 +167,20 @@ const loadOtpVerify = async function(req,res,next){
      
         res.render('otpVerify')
       
-        
-      
 }   
 
 
-// const dataStoreSession = async (req,res)=>{
-//      const {name,email,mob,password} = req.body
-//      req.session.insertedData = {name,email,mob,password}
-    
-//      res.redirect('/sendotp')
-//      console.log(req.session.insertedData);
-//      }
 
 
-const registerWithOtp = async(req,res)=>{
-  try {
-        
-    
-  } catch (error) {
-    console.log(error.message)
-  }
-}
+
+
   
 
 
 const loadSample = async (req, res)=>{
   console.log("Entered into loadSample");
   const products  = await product.find({_id:'65cdd01b55d639d38a200df2'})
-  console.log(products);
+  
   res.render("sample",{products});
 }
 
@@ -249,11 +188,47 @@ const loadSample = async (req, res)=>{
 const loadVeiwProduct = async(req, res)=>{
         console.log("Entered to the loadview product");
          const productId = req.query.id;
-         console.log(productId)
+         
          const products =await product.find({_id:productId})
-         console.log(products);
+         
+         console.log(products[0].size.s.quantity)
+         
          res.render("productView",{products});
 
+}
+
+const displaySize = async(req, res)=>{
+  try {
+     console.log("Entered in to display Size")
+    if(req.session.user){
+      const id = req.params.id;
+      const size = req.params.size;
+      console.log(id);
+      console.log(size);
+
+      const productData = await product.find({_id:id})
+      console.log("This is product data :" , productData)
+
+      const small = productData[0].size.s.quantity
+      const medium = productData[0].size.m.quantity
+      const large = productData[0].size.l.quantity
+      
+      if(size === 's'){
+        res.json({message:small})
+      }else if(size === 'm'){
+        res.json({message:medium})
+      }else if(size === 'l'){
+        res.json({message:large})
+      }
+
+    }else{
+      res.json({message:false})
+    }
+    
+  } catch (error) {
+    console.log(error)
+    
+  }
 }
 
    
@@ -269,14 +244,14 @@ module.exports = {
               loadSample,
               loginLoad,
               loadRegister,
-              insertUserWithVerify,
-              
+              insertUserWithVerify,  
               loadUserHome,
               loadLogout,
               loadOtpVerify,
               loginHome,
-              loadVeiwProduct
+              loadVeiwProduct,
+              displaySize
 
-              //otp
+              
               
                     }

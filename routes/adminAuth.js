@@ -6,13 +6,7 @@ const multer = require("multer");
 const uploads = require("../middlewares/multer");
 const adminIsLogin = require("../middlewares/adminIsLoginMiddleware");
 
-// const adminIsLogin = (req,res,next)=>{
-//   if(req.session.admin){
-//      res.redirect('/admin/adminhome')
-// }else{
-//      next();
-//  }
-// }
+
 
 
 
@@ -25,7 +19,7 @@ router.get('/adminHome',isAdmin,adminController.loadHome);
 router.get('/logout',isAdmin ,adminController.loadAdminLogout)
 router.get('/customerlist',isAdmin,adminController.loadCustomerList)
 
-router.get('/blockuser',isAdmin,adminController.blockUser);
+router.patch('/blockuser',isAdmin,adminController.blockUser);
 router.get('/unblockuser',isAdmin,adminController.unblockUser)
 
 router.get('/category',isAdmin, adminController.loadCategoryPage)

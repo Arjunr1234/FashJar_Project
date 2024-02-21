@@ -4,6 +4,7 @@ const flash = require("express-flash");
 const User = require("../models/userModel");
 const category = require("../models/categoryModel")
 const product = require("../models/productModel")
+const mongoose = require('mongoose'); 
 
 
 
@@ -127,28 +128,26 @@ const loadCategoryPage = async (req, res) => {
   //    res.render("catagoryPage",{message})
   // }
 
-  const blockUser = async(req, res)=>{
-              try{
-                console.log("Enter to the block user page");
-                const userId = req.query.id;
-                console.log(userId)
-                const findUser = await User.findById({_id:userId});
-
-                if(findUser.isActive === true){
-                  const userData = await User.findByIdAndUpdate(
-                    {_id:userId},
-                    {$set:{isActive:false}
-                  });
-                }else{
-                  const userData = await User.findByIdAndUpdate({_id:userId},
-                    {$set:{isActive:true}})
-                }
-                res.redirect("/admin/customerlist")
-              }catch(error){
-                console.log(error.message);
-              }
-
-  }
+  const blockUser = async (req, res) => {
+    try {
+      console.log("Enter to the block user page");
+      const userId = req.query.id;
+      console.log(userId);
+      const findUser = await User.findById({ _id: userId });
+  
+      if (findUser.isActive === true) {
+        await User.findByIdAndUpdate({ _id: userId }, { $set: { isActive: false } });
+      } else {
+        await User.findByIdAndUpdate({ _id: userId }, { $set: { isActive: true } });
+      }
+  
+      res.json({ success: true }); // Send a JSON response
+    } catch (error) {
+      console.log(error.message);
+      res.status(500).json({ success: false, error: error.message }); // Handle errors
+    }
+  };
+  
 
     const listUnlistCategory = async(req, res)=>{
                    try{
@@ -188,7 +187,7 @@ const loadCategoryPage = async (req, res) => {
     console.log("Entered into addcategory");
     const categoryName = req.body.name;
     console.log(categoryName);
-    const checkingName = await category.find({ name: categoryName });
+    const checkingName = await category.find({ name: { $regex: new RegExp("^" + categoryName + "$", "i") } });
     console.log(checkingName);
   
     if (checkingName.length === 0) {
@@ -222,7 +221,7 @@ const loadCategoryPage = async (req, res) => {
     const loadCategoryEdit = async (req, res)=>{
            const   categoryId = req.query.categoryId
            const   categoryData = await category.findOne({_id:categoryId})
-              res.render("categoryEdit",{categoryData})
+           res.render("categoryEdit",{categoryData})
        }
 
        const updateCategory = async (req, res) => {
@@ -366,24 +365,55 @@ const loadCategoryPage = async (req, res) => {
     }
   }
 
-   const loadProductEdit = async(req, res)=>{
-              const productId = req.query.id
-              console.log("This is the received id: "+productId);
-              const categoryData = await category.find()
-             // console.log("This is category data in the loadProductEdit ",categoryData)
-              const productData = await product.findById({_id:productId})
-              console.log("This is the productdata from loadProductEdit"+productData);
-              res.render("productEdit",{productData,categoryData})
-   }
+  
+  const { Types: { ObjectId } } = mongoose;
+  
+  const loadProductEdit = async (req, res) => {
+    try {
+      // Extract the product ID from query parameters
+      const productId = req.query.id;
+      console.log("This is the received id: ", productId);
+  
+      // Fetch category data
+      const categoryData = await category.find();
+      const productData = await product.find({_id:productId})
+      const selectedCat = await category.findOne({_id:productData[0].category})
+      
+      console.log("This is the product Data from loadProductedit : ",productData)
+  
+      console.log("This is the product data from loadProductEdit", productData[0].category);
+      
+  
+      // Render the product edit page with the fetched data
+      res.render("productEdit", { productData, categoryData,selectedCat });
+    } catch (error) {
+      console.error("Error in loadProductEdit:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  };
+  
 
-   const mongoose = require('mongoose'); // Import mongoose if not already imported
+   
 
-const editProducts = async (req, res) => {
+  const editProducts = async (req, res) => {
     try {
         const imageName = [];
+
+        // Check if new images are uploaded
         if (req.files && req.files.length > 0) {
             for (let i = 0; i < req.files.length; i++) {
+              const existingProduct = await product.findById(req.query.id);
+            if (existingProduct) {
+                imageName.push(...existingProduct.productImage);
+            }
                 imageName.push(req.files[i].filename);
+            }
+         }
+        else {
+            // No new images uploaded, preserve existing images
+            const existingProduct = await product.findById(req.query.id);
+            if (existingProduct) {
+                imageName.push(...existingProduct.productImage);
             }
         }
 
@@ -398,8 +428,8 @@ const editProducts = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Invalid product ID' });
         }
 
+        // Update product data
         const productData = {
-            id: Date.now(),
             productName: receivedproductData.productName,
             brand: receivedproductData.brandName,
             description: receivedproductData.description,
@@ -438,6 +468,8 @@ const editProducts = async (req, res) => {
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };
+
+
 
 
 

@@ -133,33 +133,33 @@
                     
                     
 
-                    <form method="post" action="/admin/editProduct?id=<%= productData._id %>" enctype="multipart/form-data"
+                    <form method="post" action="/admin/editProduct?id=<%= productData[0]._id %>" enctype="multipart/form-data"
                         onsubmit="return validateAndSubmit()">
                        
                         <div class="mb-4">
                             <label for="product_name" class="form-label">Product Name</label>
                             <input type="text" placeholder="Type here" name="productName" class="form-control border"
-                            id="productNameX" value="<%= productData.productName %>">
+                            id="productNameX" value="<%= productData[0].productName %>">
                                 <div id="productName-error" class="error-message"></div>
                         </div>
                         <div class="col-lg-4 mb-4">
                             
                             <label for="product_name" class="form-label">Brand</label>
-                            <input type="text" id="brandX" placeholder="Type here" name="brandName" class="form-control border" value="<%= productData.brand %>">
+                            <input type="text" id="brandX" placeholder="Type here" name="brandName" class="form-control border" value="<%= productData[0].brand %>">
                             <div id="brand-error" class="error-message"></div>
                             
                         </div>
                         <div class="mb-4">
                             <label class="form-label">Full description</label>
                             <textarea  id="descriptionX" placeholder="Type here" name="description"
-                                class="form-control border" rows="4" ><%= productData.description %></textarea>
+                                class="form-control border" rows="4" ><%= productData[0].description %></textarea>
                                 <div id="description-error" class="error-message"></div>
                         </div>
                         <div class="row">
                             <div class="col-lg-4">
                                 <div class="mb-4">
                                     <label class="form-label">Regular price</label>
-                                    <input placeholder="₹" id="regularPriceX" name="regularPrice" type="text" class="form-control border" value="<%=productData.regularPrice  %>">
+                                    <input placeholder="₹" id="regularPriceX" name="regularPrice" type="text" class="form-control border" value="<%=productData[0].regularPrice  %>">
                                     <div id="regularPrice-error" class="error-message"></div>
 
                                 </div>
@@ -167,39 +167,39 @@
                             <div class="col-lg-4">
                                 <div class="mb-4">
                                     <label class="form-label">Sale price</label>
-                                    <input placeholder="₹" id="salePriceX" name="salePrice" type="text" class="form-control border" value="<%=productData.salePrice  %>">
+                                    <input placeholder="₹" id="salePriceX" name="salePrice" type="text" class="form-control border" value="<%=productData[0].salePrice  %>">
                                     <div id="salePrice-error" class="error-message"></div>
 
                                 </div>
                             </div>
-                            <div class="col-lg-4">
+                            <!-- <div class="col-lg-4">
                                 <div class="mb-4">
                                     <label class="form-label"> Total Quantity</label>
-                                    <input placeholder="" name="totalQuantity" type="text" class="form-control border" value="<%=productData.totalQuantity  %>">
+                                    <input placeholder="" name="totalQuantity" type="text" class="form-control border" value="<%=productData[0].totalQuantity  %>">
                                     <div id="sSize-error" class="error-message"></div>
 
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                         <div class="row">
                             <div class="col-lg-4">
                                 <div class="mb-4">
                                     <label class="form-label"> Small Size quantity</label>
-                                    <input placeholder="" id="sSizeQuantityX" name="ssize" type="text" class="form-control border" value="<%=productData.size.s.quantity  %>">
+                                    <input placeholder="" id="sSizeQuantityX" name="ssize" type="text" class="form-control border" value="<%=productData[0].size.s.quantity  %>">
                                           <div id="sSize-error" class="error-message"></div>
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="mb-4">
                                     <label class="form-label"> Medium Size quantity</label>
-                                    <input placeholder="" name="msize" id="mSizeQuantityX" type="text" class="form-control border" value="<%=productData.size.m.quantity  %>">
+                                    <input placeholder="" name="msize" id="mSizeQuantityX" type="text" class="form-control border" value="<%=productData[0].size.m.quantity  %>">
                                     <div id="mSize-error" class="error-message"></div>
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="mb-4">
                                     <label class="form-label"> Large Size quantity</label>
-                                    <input placeholder="" id="lSizeQuantityX" name="lsize" type="text" class="form-control border" value="<%=productData.size.l.quantity  %>">
+                                    <input placeholder="" id="lSizeQuantityX" name="lsize" type="text" class="form-control border" value="<%=productData[0].size.l.quantity  %>">
                                     <div id="lSize-error" class="error-message"></div>
                                  
 
@@ -209,7 +209,7 @@
                             <div class="col-lg-4">
                                 <div class="mb-4">
                                     <label class="form-label">Color</label>
-                                    <input placeholder="" id="colorX" name="color" type="text" class="form-control border" value="<%=productData.color  %>">
+                                    <input placeholder="" id="colorX" name="color" type="text" class="form-control border" value="<%=productData[0].color  %>">
                                     <div id="color-error" class="error-message"></div>
                                 </div>
                             </div>
@@ -220,12 +220,13 @@
                                       <div class="col-sm-6 mb-3">
                                           <label class="form-label">Category</label>
                                           <select class="form-select border" style="width: 150px;" name="category">
-                                             <% for (let i=0; i < categoryData.length; i++) { %>
-                                                  <option value="<%= categoryData[i]._id %>" >
-                                                      <%= categoryData[i].name %>
-                                                  </option>
-                                                  <% } %>
-                                          </select>
+                                            <% for (let i=0; i < categoryData.length; i++) { %>
+                                                <%- console.log(selectedCat.name) %>
+                                                <option value="<%= categoryData[i].id %>"<% if (categoryData[i].name === selectedCat.name) { %>selected<% } %> >
+                                                    <%= categoryData[i].name %>
+                                                </option>
+                                                     <% } %>
+                                         </select>
                                       </div>
                                   </div>
                               </div>
@@ -233,6 +234,15 @@
                             <div class="card mb-2">
                                 <div class="card-header">
                                     <h4>Choose images</h4>
+                                    <div id="addedImagesContainer" class="col-md-6" style="display: flex;">
+                                        <% for (let i = 0; i < productData[0].productImage.length; i++) { %>
+                                            <div class="mb-4" style="display: inline-block;">
+                                                <img class="rounded" style="width: 50px; height: 60px;" src="/public/uploads/product-images/<%= productData[0].productImage[i] %>" alt="image" data-filename="<%= productData[0].productImage[i] %>" id="imgCount">
+                                                <span class="delete-icon" onclick="deleteImage('<%= productData[0]._id %>', '<%= productData[0].productImage[i] %>')">❌</span>
+                                            </div>
+                                        <% } %>
+                                   
+                                    </div>
                                 </div>
                                 <div class="border row">
                                     <div id="addedImagesContainer" class="thumbnails-container"
@@ -240,8 +250,8 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="input-upload">
-                                        <img src="assets/imgs/theme/upload.svg" alt="">
-                                        <input value="<%= productData.productImage %>" class="form-control border" name="images" id="imageInput" type="file"
+                                        <img src="/public/assets/imgs/theme/upload.svg" alt="">
+                                        <input value="<%= productData[0].productImage %>" class="form-control border" name="images" id="imageInput" type="file"
                                             multiple>
                                     </div>
                                 </div>
@@ -279,7 +289,7 @@
             document.getElementById('errorMessage').style.display = "none";
         },2000)
     </script>
-    <script>
+    <!-- <script>
         function unlist(id, clicked) {
             let confirmationMessage;
             if (clicked === 'Unlist') {
@@ -335,6 +345,11 @@
           }, 5000);
           
           
+    </script> -->
+    <script>
+        function deleteImage(id, imageIndex){
+            
+        }
     </script>
     <script src="/public/js/productValidation.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
