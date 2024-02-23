@@ -196,19 +196,19 @@
                                                 <p class="font-xs"><br>
                                                 </p>
                                             </td>
-                                            <td class="size"><%= products[i].size %></td>
+                                            <td class="size"><%= products[i].size.toUpperCase() %></td>
                                             <td class="price" data-title="Price"><span><%= products[i].salePrice %></span></td>
                                             <td class="text-center" data-title="Stock">
                                                 <div class="detail-qty border radius  m-auto">
                                                     <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
-                                                    <span class="qty-val"><%= products[i].quantity %></span>
+                                                    <span class="qty-val"  ><%= products[i].quantity %></span>
                                                     <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
                                                 </div>
                                             </td>
                                             <td class="text-right" data-title="Cart">
                                                 <span>$65.00 </span>
                                             </td>
-                                            <td class="action" data-title="Remove"><a href="#" class="text-muted"><i class="fi-rs-trash"></i></a></td>
+                                            <td class="action" data-title="Remove"><a href="#" class="text-muted"><i class="fi-rs-trash hover" id="deleteCartButton" onclick="deleteCart('<%= products[i]._id %>', '<%= products[i].size %>', '<%= products[i].userId %>')"></i></a></td>
                                         </tr>
                                     
                                     <% } %>
@@ -679,6 +679,8 @@
         </div>
     </div>
     <!-- Vendor JS-->
+    
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="/public/assets/js/vendor/modernizr-3.6.0.min.js"></script>
     <script src="/public/assets/js/vendor/jquery-3.6.0.min.js"></script>
     <script src="/public/assets/js/vendor/jquery-migrate-3.3.0.min.js"></script>
@@ -701,7 +703,30 @@
     <script src="/public/assets/js/maind134.js?v=3.4"></script>
     <script src="/public/assets/js/shopd134.js?v=3.4"></script>
 </body>
+<script>
+    function deleteCart(productId, size, userId){
 
+        $.ajax({
+            url:`/deleteCartItems?id=${productId}&size=${size}&userId=${userId}`,
+            method:'GET',
+            contentType:'application/json',
+            success:function(respose){
+                  if(respose.respose){
+                    console.log("A response is received from deleteCartItems")
+                    location.reload()
+                  }else{
+                    console.log("Cart data is not deleted")
+                    location.reload()
+                  }
+            }
+            
+        })
+
+        
+    }
+
+
+</script>
 
 <!-- Mirrored from wp.alithemes.com/html/evara/evara-frontend/shop-cart.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 15 Jul 2023 10:10:07 GMT -->
 </html>

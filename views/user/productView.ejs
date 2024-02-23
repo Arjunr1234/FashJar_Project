@@ -635,7 +635,7 @@
                                         
                                         <div class="bt-1 border-color-1 mt-30 mb-30"></div>
                                         <div class="detail-extralink">
-                                            <div class="detail-qty border radius">
+                                            <div class="detail-qty border radius" id="quantityElement">
                                                 <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
                                                 <span class="qty-val">1</span>
                                                 <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
@@ -1141,26 +1141,40 @@
              })
         }
 
-        function isProductWithThisSize(productId, sizeClicked){
-
-           $.ajax({
-                url:`/productWithSizeCartCheck?id=${productId}&size=${sizeClicked}`,
-                method:'GET',
-                contentType:'application/json',
-                success:function(response){
-                    if(response.success===true){
+        function isProductWithThisSize(productId, sizeClicked) {
+            $.ajax({
+                url: `/productWithSizeCartCheck?id=${productId}&size=${sizeClicked}`,
+                method: 'GET',
+                contentType: 'application/json',
+                success: function(response) {
+                    const quantityButton = document.getElementById('quantityElement')
+                    const addToCartButton = document.getElementById("addToCartButton");
+        
+                    if (response.response === true) {
                         console.log("product in cart");
-                        location.reload()
-                    }else{
+                        
+                        addToCartButton.textContent = "View Cart";
+                        quantityButton.style.display = "none"
+                        addToCartButton.style.backgroundColor = "orange";
+                        // Add an onclick event to redirect to the cart page
+                        addToCartButton.onclick = function() {
+                            window.location.href = "/loadCartPage"; // Change "/cart" to your actual cart page URL
+                        };
+                    } else {
                         console.log("product not in");
-                       // const addToCartButton = document.getElementById("viewCart");
-                       // addToCartButton.textContent = "Add to Cart"
-                       // addToCartButton.setAttribute("onclick", addToCart(`${productId}`));
-                       // addToCartButton.style.backgroundColor = "black"
+                        // Change button content back to "Add to Cart"
+                        addToCartButton.textContent = "Add to Cart";
+                        // Change button color back to its original color (you may need to set the original color)
+                        addToCartButton.style.backgroundColor = ""; // Set your original color here
+                        // Remove the onclick event to prevent redirection
+                        addToCartButton.onclick = function() {
+                            addToCart(`${productId}`);
+                        };
                     }
                 }
-            })
+            });
         }
+        
 
 
           function sizeClick(id, size){
@@ -1191,7 +1205,7 @@
                     }else{
                         messageDisplay.innerHTML = "";
                     }
-                   isProductWithThisSize(id, size)
+                   isProductWithThisSize(id, sizeClicked)
                 },
                 error:function(error){
                     console.error("AJAX error :",error)

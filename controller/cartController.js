@@ -18,10 +18,12 @@ const loadCartPage = async (req, res) => {
       if (userCart) {
         for (let i = 0; i < userCart.items.length; i++) {
           const cartProduct = await product.findById(userCart.items[i].productId); // Renamed the loop variable
-          const size = userCart.items[i].size.toUpperCase();
+          const size = userCart.items[i].size;
           const quantity = userCart.items[i].quantity;
           const finalProduct = Object.assign({}, cartProduct.toObject(), {
             size: size
+          },{
+            userId:userId
           },
             { quantity: quantity })
           if (products) {
@@ -105,12 +107,81 @@ const addToCart = async (req, res) => {
  const productWithSizeCartCheck = async(req, res)=>{
 
               console.log("Entered into productWithSizeCartCheck");
+              const id = req.query.id;
+              const size = req.query.size
+              console.log(id);
+              console.log(size);
+              const checkProduct = await cart.findOne({
+                        
+                          "items":{
+                            $elemMatch:{
+                              productId:id,
+                              size:size
+                            }
+                          
+                        }
+              },{
+                "items":{
+                  $elemMatch:{
+                    productId:id,
+                    size:size
+                  }
+                }
+              })
+              console.log(checkProduct)
+
+              if(checkProduct){
+                console.log("respone:true is sended")
+                res.json({response:true})
+              }else{
+                console.log("response false is sended")
+                res.json({response:false})
+              }
               
+ }
+
+ const deleteCartedItems = async(req, res)=>{
+     try {
+
+      console.log("Entered into deleteCartItems");
+
+     const productId = req.query.id;
+     const size = req.query.size;
+     const receivedUserId = req.query.userId;
+     console.log(productId);
+     console.log(size);;
+     console.log("This is userId: ",receivedUserId);
+
+     const deletedProduct = await cart.updateOne(
+               {userId:receivedUserId},
+               {
+                $pull:{
+                  "items":{
+                    productId:productId,
+                    size:size
+                  }
+                }
+               }
+     )
+     console.log("This is deleted Products: " ,deletedProduct)
+        if(deletedProduct){
+          res.json({response:true})
+        }else{
+          res.json({response:false})
+        }
+
+      
+     } catch (error) {
+      console.log(error)
+      
+     }
+
  }
 
 
 module.exports = {
               loadCartPage,
               addToCart,
-              productWithSizeCartCheck
+              productWithSizeCartCheck,
+              deleteCartedItems
 }

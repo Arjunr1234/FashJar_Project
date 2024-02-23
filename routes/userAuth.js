@@ -32,7 +32,8 @@ router.post('/size/:id/:size', userController.displaySize)
 router.get('/loadCartPage',cartController.loadCartPage)
 
 router.post('/addToCart', cartController.addToCart);
-router.get('/productWithSizeCartCheck',cartController.productWithSizeCartCheck)
+router.get('/productWithSizeCartCheck',cartController.productWithSizeCartCheck);
+router.get('/deleteCartItems',cartController.deleteCartedItems)
 
 module.exports = router;
 
