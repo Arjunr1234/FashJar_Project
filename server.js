@@ -3,7 +3,8 @@ const path = require("path");
 const nocache = require("nocache");
 const session = require("express-session");
 const flash = require("express-flash");
-const nodemailer = require("nodemailer")
+const nodemailer = require("nodemailer");
+const bodyParser = require("body-parser")
 
 
 const userAuthRoute = require("./routes/userAuth");
@@ -30,7 +31,7 @@ app.use(
     saveUninitialized:true
   })
 )
-
+app.use(bodyParser.json());
 app.use("/", nocache());
 app.use(flash())
 app.use((req,res,next)=>{

@@ -20,6 +20,13 @@
 </head>
 
 <body>
+    <style>
+        .hover-class:hover {
+            /* Add your hover styles here */
+            color: rgb(0, 255, 68); /* Change the text color on hover */
+            cursor: pointer; /* Change the cursor to a pointer on hover */
+        }
+    </style>
     <div class="screen-overlay"></div>
     <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
@@ -238,7 +245,7 @@
                                         <% for (let i = 0; i < productData[0].productImage.length; i++) { %>
                                             <div class="mb-4" style="display: inline-block;">
                                                 <img class="rounded" style="width: 50px; height: 60px;" src="/public/uploads/product-images/<%= productData[0].productImage[i] %>" alt="image" data-filename="<%= productData[0].productImage[i] %>" id="imgCount">
-                                                <span class="delete-icon" onclick="deleteImage('<%= productData[0]._id %>', '<%= productData[0].productImage[i] %>')">❌</span>
+                                                <span class="delete-icon hover-class" onclick="deleteImage('<%= productData[0]._id %>', '<%= productData[0].productImage[i] %>')">❌</span>
                                             </div>
                                         <% } %>
                                    
@@ -346,11 +353,7 @@
           
           
     </script> -->
-    <script>
-        function deleteImage(id, imageIndex){
-            
-        }
-    </script>
+    
     <script src="/public/js/productValidation.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="/public/admin-assets/js/vendors/jquery-3.6.0.min.js"></script>
@@ -360,6 +363,30 @@
     <script src="/public/admin-assets/js/vendors/jquery.fullscreen.min.js"></script>
     <!-- Main Script -->
     <script src="/public/admin-assets/js/main.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+    <script>
+        function deleteImage(id, imageName){
+            console.log("Entered into deleteImage script");
+
+           
+            $.ajax({
+                url:'/admin/deleteImage',
+                method:'POST',
+                contentType:'application/json',
+                data: JSON.stringify({ id: id, imageName: imageName }),
+                success:function(response){
+                    if(response.message){
+                        location.reload()
+                    }
+                }
+
+
+            })
+
+        }
+    </script>
 </body>
 
 

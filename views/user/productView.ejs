@@ -18,6 +18,9 @@
     <link rel="shortcut icon" type="image/x-icon" href="/public/assets/imgs/theme/favicon.svg">
     <!-- Template CSS -->
     <link rel="stylesheet" href="/public/assets/css/maind134.css?v=3.4">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
 </head>
 
 <body>
@@ -623,7 +626,7 @@
                                             <strong class="mr-10">Size</strong>
                                             <ul class="list-filter size-filter font-small">
                                                 <li><a  onclick="sizeClick('<%= products[0]._id %>','s')">S</a></li>
-                                                <li class="active"><a  onclick="sizeClick('<%= products[0]._id %>','m')">M</a></li>
+                                                <li ><a  onclick="sizeClick('<%= products[0]._id %>','m')">M</a></li>
                                                 <li><a  onclick="sizeClick('<%= products[0]._id %>','l')">L</a></li>
                                                
                                             </ul>
@@ -639,13 +642,13 @@
                                             </div>
                                             <div class="col-md-6"> <!-- Adjust the column size based on your layout -->
                                              
-                                                <button onclick="addtoCartBtn('<%= products[0]._id %>')" id="addToCartButton" type="submit" class="btn btn-primary">Add to cart</button>
+                                                <button onclick="addToCart('<%= products[0]._id %>')" id="addToCartButton" type="submit" class="btn btn-primary">Add to cart</button>
                                             </div>
                                         </div>
                                         <ul class="product-meta font-xs color-grey mt-50">
                                             <li class="mb-5">SKU: <a href="#">FWM15VKT</a></li>
                                             <li class="mb-5">Tags: <a href="#" rel="tag">Cloth</a>, <a href="#" rel="tag">Women</a>, <a href="#" rel="tag">Dress</a> </li>
-                                            <li>Availability:<span class="in-stock  ml-5" id="messageDisplay"></span></li>
+                                            <li>Availability:<span class="in-stock  ml-5 " style="font-weight: bold;" id="messageDisplay"></span></li>
                                         </ul>
                                     </div>
                                     <!-- Detail Info -->
@@ -1063,6 +1066,8 @@
               </div>
           </div>
           <!-- Vendor JS-->
+          <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+          <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
           <script src="/public/assets/js/vendor/modernizr-3.6.0.min.js"></script>
           <script src="/public/assets/js/vendor/jquery-3.6.0.min.js"></script>
           <script src="/public/assets/js/vendor/jquery-migrate-3.3.0.min.js"></script>
@@ -1095,6 +1100,69 @@
       </html>
       
       <script>
+        
+        let sizeClicked = null;
+        
+        function addToCart(productId){
+             console.log("add to cart is jhgjh clicked");
+             if (sizeClicked === null) {
+                console.error("Please select a size before adding to cart");
+                Toastify({
+                                text: "Please select a size before adding to cart",
+                                backgroundColor: "red",
+                                duration: 3000,
+                                position: "center" 
+                            }).showToast();
+        
+                return;
+             }
+             
+             console.log("This is before ajax enter")
+             $.ajax({
+                url:'/addToCart',
+                type:'POST',
+                contentType:'application/json',
+                data: JSON.stringify({ id: productId, size: sizeClicked }),
+                success:function(response){
+                    console.log(response)
+                    if(response.response){
+                        window.location.reload()
+                    }
+                    if(!response.response){
+                        console.log("Some error is found : !response.response")
+                        window.location.href = '/'
+                    }
+                },
+                error:function(error){
+                    console.log("some error is found: error below response is not ")
+                    window.location.href = '/'
+                }
+
+             })
+        }
+
+        function isProductWithThisSize(productId, sizeClicked){
+
+           $.ajax({
+                url:`/productWithSizeCartCheck?id=${productId}&size=${sizeClicked}`,
+                method:'GET',
+                contentType:'application/json',
+                success:function(response){
+                    if(response.success===true){
+                        console.log("product in cart");
+                        location.reload()
+                    }else{
+                        console.log("product not in");
+                       // const addToCartButton = document.getElementById("viewCart");
+                       // addToCartButton.textContent = "Add to Cart"
+                       // addToCartButton.setAttribute("onclick", addToCart(`${productId}`));
+                       // addToCartButton.style.backgroundColor = "black"
+                    }
+                }
+            })
+        }
+
+
           function sizeClick(id, size){
             console.log("Entered in to sizeClick function")
             sizeClicked = size;
@@ -1123,7 +1191,7 @@
                     }else{
                         messageDisplay.innerHTML = "";
                     }
-                    isProductWithThisSize(id, size)
+                   isProductWithThisSize(id, size)
                 },
                 error:function(error){
                     console.error("AJAX error :",error)

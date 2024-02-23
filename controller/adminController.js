@@ -419,8 +419,8 @@ const loadCategoryPage = async (req, res) => {
 
         const productId = req.query.id;
         const receivedproductData = req.body;
-        console.log("This is the productId:", productId);
-        console.log("This is the received data:", receivedproductData);
+        
+        
 
         // Validate ObjectId
         if (!mongoose.Types.ObjectId.isValid(productId)) {
@@ -469,6 +469,29 @@ const loadCategoryPage = async (req, res) => {
     }
 };
 
+const deleteImage = async(req, res)=>{
+                  try {
+
+                    console.log("Enter into delete image in adminController");
+                  
+                  const { id, imageName } = req.body;
+    
+    const productData = await product.findByIdAndUpdate(
+      { _id: id },
+      { $pull: { productImage: imageName } },
+      { new: true } // Optional: Return the updated document
+    );
+    
+    res.json({message:true})
+                    
+                  } catch (error) {
+                    console.log(error)
+                    
+                  }
+
+                  
+              
+}
 
 
 
@@ -491,6 +514,7 @@ module.exports =  {
                     addingProduct,
                     listUnlistProduct,
                     loadProductEdit,
-                    editProducts
+                    editProducts,
+                    deleteImage
                     
                  }

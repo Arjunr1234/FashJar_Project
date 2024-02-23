@@ -191,7 +191,7 @@ const loadVeiwProduct = async(req, res)=>{
          
          const products =await product.find({_id:productId})
          
-         console.log(products[0].size.s.quantity)
+         
          
          res.render("productView",{products});
 
@@ -203,11 +203,10 @@ const displaySize = async(req, res)=>{
     if(req.session.user){
       const id = req.params.id;
       const size = req.params.size;
-      console.log(id);
-      console.log(size);
+     
 
       const productData = await product.find({_id:id})
-      console.log("This is product data :" , productData)
+      //console.log("This is product data :" , productData)
 
       const small = productData[0].size.s.quantity
       const medium = productData[0].size.m.quantity
