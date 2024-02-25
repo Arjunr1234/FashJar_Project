@@ -2,6 +2,7 @@ const user = require("../models/userModel");
 const cart = require('../models/cartModel');
 const category = require("../models/categoryModel");
 const product = require("../models/productModel");
+const bcrypt = require("bcrypt")
 
 
 const loadProfile = async (req, res)=>{
@@ -82,10 +83,65 @@ const deleteAddress = async (req, res) => {
   }
 };
 
+const changePassword = async (req, res) => {
+  console.log('Entered into changePassword in profileController');
+
+  try {
+    const userId = req.session.user._id;
+    const currentPassword = req.body.currentpassword;
+    const newPassword = req.body.newpassword;
+    const confirmPassword = req.body.confirmpassword;
+
+    console.log('Request Body:', req.body);
+
+    const userData = await user.findById({ _id: userId });
+    console.log('User Data:', userData);
+
+    if (!userData) {
+      console.log('User not found');
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    console.log('Hashed Password:', userData.password);
+
+    const currentPasswordMatches = await bcrypt.compare(currentPassword, userData.password);
+    console.log('Current Password Matches:', currentPasswordMatches);
+
+    if (currentPasswordMatches) {
+      if(newPassword === confirmPassword){
+        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+        console.log('Hashed New Password:', hashedNewPassword);
+  
+        var savePasswordAndCheck = await user.updateOne({ _id: userId }, { password: hashedNewPassword });
+      }else{
+        console.log("confirmpassword not same newPassword");
+        return res.json({ success: true, message: 'confirm password not same newPassword' });
+      }
+      
+
+      
+
+      if (savePasswordAndCheck.modifiedCount === 1) {
+        console.log('Password changed successfully');
+        return res.json({ success: true, message: 'Password changed successfully' });
+      } else {
+        console.log('Password not changed');
+        return res.json({ success: false, message: 'Password not changed' });
+      }
+    } else {
+      console.log('Current password is incorrect');
+      return res.status(401).json({ success: false, message: 'Current password is incorrect' });
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
 
 module.exports = {
   loadProfile,
   saveUserAdress,
-  deleteAddress
+  deleteAddress,
+  changePassword
 
 }

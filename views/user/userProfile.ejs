@@ -169,6 +169,7 @@
                                         </div>
                                     </div>
                                 </div>
+                               
                                 <div class="tab-pane fade" id="account-details" role="tabpanel" aria-labelledby="account-detail-tab">
                                     <div class="card">
                                         <div class="card-header" style="background-color: black;">
@@ -226,7 +227,8 @@
                                                             <strong>Country:</strong> <%= userData.address[i].country %>
                                                         </address>
                                                         <div class="d-flex justify-content-end">
-                                                            <button type="button" class="btn btn-warning btn-small mr-20" onclick="editAddress()">Edit</button>
+                                                          
+                                                            <button  type="button" class="btn btn-warning btn-small mr-20" onclick="editAddress()">Edit</button>
                                                             <button type="button" class="btn btn-danger btn-small mr-15" onclick="deleteAddress('<%= userData._id %>', '<%= userData.address[i]._id%>', event)">Delete</button>
                                                         </div>
                                                     </div>
@@ -244,6 +246,7 @@
                                     <div class="row">
                                         <div class="col-lg-6">
                                             <div class="card  black-border">
+                                              
                                                 <div class="card-header" style="background-color: black;">
                                                     <h5 style="color: white;">Edit Password</h5>
                                                 </div>
@@ -392,20 +395,7 @@
     </div>
 </footer>
 <!-- Preloader Start -->
-<div id="preloader-active">
-    <div class="preloader d-flex align-items-center justify-content-center">
-        <div class="preloader-inner position-relative">
-            <div class="text-center">
-                <h5 class="mb-5">Now Loading</h5>
-                <div class="loader">
-                    <div class="bar bar1"></div>
-                    <div class="bar bar2"></div>
-                    <div class="bar bar3"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+
 <!-- Vendor JS-->
 <script>
     feather.replace(); // Run Feather Icons
@@ -437,7 +427,7 @@
 <script>
 
   function deleteAddress(userId, addressId,event){
-    event.preventDefault();
+        event.preventDefault();
 
     $.ajax({
       url:`/deleteAddress?userId=${userId}&addressId=${addressId}`,
