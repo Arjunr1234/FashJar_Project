@@ -377,6 +377,7 @@
                 contentType:'application/json',
                 data: JSON.stringify({ id: id, imageName: imageName }),
                 success:function(response){
+                    console.log(response)
                     if(response.message){
                         location.reload()
                     }

@@ -25,7 +25,7 @@
                                         <a class="nav-link" id="orders-tab" data-bs-toggle="tab" href="#orders" role="tab" aria-controls="orders" aria-selected="false" style="color: white; font-weight:bold"><i class="fi-rs-shopping-bag mr-10"></i>Orders</a>
                                     </li>
                                     <li class="nav-item" style="background-color: black;">
-                                        <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="#track-orders" role="tab" aria-controls="track-orders" aria-selected="false" style="color: white; font-weight:bold"><i class="fi-rs-shopping-cart-check mr-10"></i>Add Adress</a>
+                                        <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="#add-address" role="tab" aria-controls="track-orders" aria-selected="false" style="color: white; font-weight:bold"><i class="fi-rs-shopping-cart-check mr-10"></i>Add Adress</a>
                                     </li>
                                     <li class="nav-item" style="background-color: black;">
                                         <a class="nav-link" id="address-tab" data-bs-toggle="tab" href="#address" role="tab" aria-controls="address" aria-selected="true" style="color: white; font-weight:bold"><i class="fi-rs-marker mr-10"></i>My Address</a>
@@ -106,7 +106,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="tab-pane fade" id="track-orders" role="tabpanel" aria-labelledby="account-detail-tab">
+                                <div class="tab-pane fade" id="add-address" role="tabpanel" aria-labelledby="account-detail-tab">
                                     <div class="card">
                                         <div class="card-header" style="background-color: black;">
                                             <h5 style="color: white;" >Add Address <span style="color: yellow;">+</span></h5>
@@ -206,35 +206,43 @@
                                         </div>
                                     </div>
                                 </div>    
-                                <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <div class="card mb-3 mb-lg-0">
-                                                <div class="card-header">
-                                                    <h5 class="mb-0">Billing Address</h5>
+                                <% if(locals.userData) {%>
+                                    <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
+                                        <div class="row">
+                                            <% for (let i = 0; i < userData.address.length; i++) { %>
+                                                <div class="col-lg-6">
+                                                    <div class="card mb-3 mb-lg-0">
+                                                        <div class="card-header">
+                                                            <h5 class="mb-0">Billing Address</h5>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <address>
+                                                                <strong>Name:</strong><%=  userData.address[i].name %><br>
+                                                                <strong>Mobile:</strong> <%= userData.address[i].mobile %><br>
+                                                                <strong>House Name:</strong><%= userData.address[i].houseName %><br>
+                                                                <strong>Pincode:</strong> <%= userData.address[i].pincode %><br>
+                                                                <strong>City/Town:</strong> <%= userData.address[i].cityOrTown %><br>
+                                                                <strong>District:</strong> <%= userData.address[i].district %><br>
+                                                                <strong>State:</strong> <%= userData.address[i].state %><br>
+                                                                <strong>Country:</strong> <%= userData.address[i].country %>
+                                                            </address>
+                                                            <div class="d-flex justify-content-end">
+                                                                <button type="button" class="btn btn-warning btn-small mr-20" onclick="editAddress()">Edit</button>
+                                                                <button type="button" class="btn btn-danger btn-small mr-15" onclick="deleteAddress('<%= userData._id %>', '<%= userData.address[i]._id%>', event)">Delete</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="card-body">
-                                                    <address>3522 Interstate<br> 75 Business Spur,<br> Sault Ste. <br>Marie, MI 49783</address>
-                                                    <p>New York</p>
-                                                    <a href="#" class="btn-small">Edit</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <div class="card">
-                                                <div class="card-header">
-                                                    <h5 class="mb-0">Shipping Address</h5>
-                                                </div>
-                                                <div class="card-body">
-                                                    <address>4299 Express Lane<br>
-                                                        Sarasota, <br>FL 34249 USA <br>Phone: 1.941.227.4444</address>
-                                                    <p>Sarasota</p>
-                                                    <a href="#" class="btn-small">Edit</a>
-                                                </div>
-                                            </div>
+                                            <% } %>
                                         </div>
                                     </div>
-                                </div>
+                                    <%} %>
+                                
+                                
+                                    
+                                    
+                                    
+                                
                                 <div class="tab-pane fade" id="manage-password" role="tabpanel" aria-labelledby="address-tab">
                                     <div class="row">
                                         <div class="col-lg-6">
@@ -427,6 +435,26 @@
 <script src="/public/assets/js/plugins/jquery.theia.sticky.js"></script>
 <!-- Template  JS -->
 <script src="/public/assets/js/maind134.js?v=3.4"></script>
+
+
+<script>
+
+  function deleteAddress(userId, addressId,event){
+    event.preventDefault();
+
+    $.ajax({
+      url:`/deleteAddress?userId=${userId}&addressId=${addressId}`,
+      method:'GET',
+      contentType:'application/json',
+      success:function(response){
+         location.reload()
+      }
+    });
+   
+  }
+</script>
+
+
 </body>
 
 

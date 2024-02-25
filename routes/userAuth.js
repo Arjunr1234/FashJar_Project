@@ -40,6 +40,8 @@ router.patch('/changeQuantity',cartController.changeQuantity)
 //================profiles==============================
 
 router.get('/profile',profileController.loadProfile)
+router.post('/addaddress',profileController.saveUserAdress);
+router.get('/deleteAddress',profileController.deleteAddress)
 
 module.exports = router;
 
