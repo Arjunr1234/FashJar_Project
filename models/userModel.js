@@ -18,6 +18,16 @@ const userSchema = new mongoose.Schema({
     type:String,
     required:true
    },
+   address:[{
+    name:{type:String},
+    mobile:{type:Number},
+    houseName:{type:String},
+    pincode:{type:Number},
+    cityOrTown:{type:String},
+    district:{type:String},
+    state:{type:String},
+    country:{type:String}
+   }],
    isActive:{
     type:Boolean,
     default:true

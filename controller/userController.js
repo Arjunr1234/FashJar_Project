@@ -7,6 +7,7 @@ const { response } = require("express")
 const bcrypt = require("bcrypt")
 const product = require("../models/productModel")
 const category = require("../models/categoryModel")
+const cart = require("../models/cartModel");
 
 
 
@@ -116,12 +117,13 @@ const loadUserHome = async function (req, res) {
       if (req.session.user) {
           const userData = await User.findOne({ _id: req.session.user });
           const name = userData.name;
+          
 
           const productData = await product.aggregate([
               {
                   $match: {
                       "isBlocked": false
-                  }
+                  }  
               },
               {
                   $lookup: {
@@ -133,6 +135,23 @@ const loadUserHome = async function (req, res) {
               }
           ]);
           const categoryData = await category.find({isListed:true})
+
+          const cartData = await cart.findOne({userId:userData._id})
+         
+          
+         const cartCount =  await cart.aggregate([
+            {
+              $match: {
+                "userId": userData._id
+              }
+            },
+            {
+              $project: {
+                itemCount: { $size: "$items" }
+              }
+            }
+          ])
+
           
 
           

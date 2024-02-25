@@ -3,7 +3,8 @@ const router = express.Router();
 const userController = require("../controller/userController");
 const otpHelper = require("../helper/otpHelper");
 const userHelper = require("../helper/userHelper");
-const cartController = require("../controller/cartController")
+const cartController = require("../controller/cartController");
+const profileController = require("../controller/profileController")
 
 router.get('/', userController.loginLoad);
 router.post('/userloging', userController.loginHome);
@@ -33,7 +34,12 @@ router.get('/loadCartPage',cartController.loadCartPage)
 
 router.post('/addToCart', cartController.addToCart);
 router.get('/productWithSizeCartCheck',cartController.productWithSizeCartCheck);
-router.get('/deleteCartItems',cartController.deleteCartedItems)
+router.get('/deleteCartItems',cartController.deleteCartedItems);
+router.patch('/changeQuantity',cartController.changeQuantity)
+
+//================profiles==============================
+
+router.get('/profile',profileController.loadProfile)
 
 module.exports = router;
 

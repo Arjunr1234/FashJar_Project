@@ -176,6 +176,53 @@ const addToCart = async (req, res) => {
       
      }
 
+
+ }
+
+ const changeQuantity = async(req, res)=>{
+
+                    console.log("Entered in to changeQuantity in Cartcontroller")
+                    const receivedUserId = new ObjectId(req.query.userId);
+                    const receivedProductId = req.query.productId;
+                    const alpha = parseInt(req.query.alpha);
+                    const receivedSize = req.query.productSize;
+                    console.log("This is received userId: ",receivedUserId);
+                    console.log("This is receivedProdcutId : ",receivedProductId);
+                    console.log("This is alpha : ",alpha);
+                    console.log("This is received productSize :",receivedSize);
+
+
+                    const user = await cart.find({userId:receivedUserId})
+                    if(alpha === 1){
+                      const updateQuantity1 = await cart.updateOne({userId:receivedUserId,"items":{
+                        $elemMatch:{
+                          productId:receivedProductId,
+                          size:receivedSize
+                        }
+                    }},
+                    {$inc: {
+                      "items.$.quantity": 1
+                    }})
+                    res.json({response:true})
+
+                    }else if(alpha === -1){
+                      const updateQuantity2 = await cart.updateOne({userId:receivedUserId,"items":{
+                        $elemMatch:{
+                          productId:receivedProductId,
+                          size:receivedSize
+                        }
+                    }},
+                    {$inc: {
+                      "items.$.quantity": -1
+                    }})
+                    res.json({response:true})
+
+                    }
+                    
+                   
+
+
+                    
  }
 
 
@@ -183,5 +230,6 @@ module.exports = {
               loadCartPage,
               addToCart,
               productWithSizeCartCheck,
-              deleteCartedItems
+              deleteCartedItems,
+              changeQuantity
 }
