@@ -17,7 +17,8 @@ const loadCartPage = async (req, res) => {
 
       if (userCart) {
         for (let i = 0; i < userCart.items.length; i++) {
-          const cartProduct = await product.findById(userCart.items[i].productId); // Renamed the loop variable
+          const cartProduct = await product.findById(userCart.items[i].productId); 
+          console.log("This is the items in the cartProduct", cartProduct)
           const size = userCart.items[i].size;
           const quantity = userCart.items[i].quantity;
           const finalProduct = Object.assign({}, cartProduct.toObject(), {
@@ -30,8 +31,15 @@ const loadCartPage = async (req, res) => {
             products.push(finalProduct)
           }
         }
-        console.log("This is the product that is sending to CartPage: ", products)
-        res.render("cartPage", { products });
+        const cartData = await cart.findOne({userId:userId})
+             var TotalPriceOfCart = 0
+        for(let i=0;i<cartData.items.length;i++){
+             TotalPriceOfCart = TotalPriceOfCart +  (cartData.items[i].quantity * cartData.items[i].price)
+        }
+        console.log("This si the total Price:",TotalPriceOfCart);
+        console.log("This is the cartData from cartRednderPage:",cartData)
+       // console.log("This is the product that is sending to CartPage: ", products)
+        res.render("cartPage", { products,TotalPriceOfCart });
       } else {
         res.render("cartPage")
       }

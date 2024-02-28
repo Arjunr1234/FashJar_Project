@@ -195,7 +195,7 @@
                                                 <td class="text-center" data-title="Stock">
                                                     <div class="detail-qty border radius  m-auto">
                                                         <a href="#" class="qty-down"><i class="fi-rs-angle-small-down" onclick="changeQuantity('<%= products[i].userId %>','<%= products[i]._id %>',-1,'<%= products[i].size %>')"></i></a>
-                                                        <span class="qty-val"  ><%= products[i].quantity %></span>
+                                                        <span class="qty-val"  id="productQuantity"><%= products[i].quantity %></span>
                                                         <a href="#" class="qty-up" ><i class="fi-rs-angle-small-up" onclick="changeQuantity('<%= products[i].userId %>','<%= products[i]._id %>',1,'<%= products[i].size %>')"></i></a>
                                                     </div>
                                                 </td>
@@ -220,59 +220,8 @@
                             <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div>
                             <div class="row mb-50">
                                 <div class="col-lg-6 col-md-12">
-                                    <div class="heading_s1 mb-3">
-                                        <h4>Calculate Shipping</h4>
                                     </div>
-                                    <p class="mt-15 mb-30">Flat rate: <span class="font-xl text-brand fw-900">5%</span></p>
-                                    <form class="field_form shipping_calculator">
-                                        <div class="form-row">
-                                            <div class="form-group col-lg-12">
-                                                <div class="custom_select">
-                                                    <select class="form-control select-active">
-                                                        <option value="">Choose a option...</option>
-                                                        
-                                                        <option value="ZM">Zambia</option>
-                                                        <option value="ZW">Zimbabwe</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-row row">
-                                            <div class="form-group col-lg-6">
-                                                <input required="required" placeholder="State / Country" name="name" type="text">
-                                            </div>
-                                            <div class="form-group col-lg-6">
-                                                <input required="required" placeholder="PostCode / ZIP" name="name" type="text">
-                                            </div>
-                                        </div>
-                                        <div class="form-row">
-                                            <div class="form-group col-lg-12">
-                                                <button class="btn  btn-sm"><i class="fi-rs-shuffle mr-10"></i>Update</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                    <div class="mb-30 mt-50">
-                                        <div class="heading_s1 mb-3">
-                                            <h4>Apply Coupon</h4>
-                                        </div>
-                                        <div class="total-amount">
-                                            <div class="left">
-                                                <div class="coupon">
-                                                    <form action="#" target="_blank">
-                                                        <div class="form-row row justify-content-center">
-                                                            <div class="form-group col-lg-6">
-                                                                <input class="font-medium" name="Coupon" placeholder="Enter Your Coupon">
-                                                            </div>
-                                                            <div class="form-group col-lg-6">
-                                                                <button class="btn  btn-sm"><i class="fi-rs-label mr-10"></i>Apply</button>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            
                                 <div class="col-lg-6 col-md-12">
                                     <div class="border p-md-4 p-30 border-radius cart-totals">
                                         <div class="heading_s1 mb-3">
@@ -283,7 +232,12 @@
                                                 <tbody>
                                                     <tr>
                                                         <td class="cart_total_label">Cart Subtotal</td>
-                                                        <td class="cart_total_amount"><span class="font-lg fw-900 text-brand">$240.00</span></td>
+                                                        <td class="cart_total_amount"><span class="font-lg fw-900 text-brand">
+                                                            <% if(locals.TotalPriceOfCart){%>
+                                                                         
+                                                                <%= TotalPriceOfCart %>
+                                                                <%} %>
+                                                        </span></td>
                                                     </tr>
                                                     <tr>
                                                         <td class="cart_total_label">Shipping</td>
@@ -291,7 +245,10 @@
                                                     </tr>
                                                     <tr>
                                                         <td class="cart_total_label">Total</td>
-                                                        <td class="cart_total_amount"><strong><span class="font-xl fw-900 text-brand">$240.00</span></strong></td>
+                                                        <td class="cart_total_amount"><strong><span class="font-xl fw-900 text-brand"> <% if(locals.TotalPriceOfCart){%>
+                                                                         
+                                                            <%= TotalPriceOfCart %>
+                                                            <%} %></span></strong></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -424,7 +381,7 @@
     <!-- Preloader Start -->
     
     <!-- Vendor JS-->
-    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="/public/assets/js/vendor/modernizr-3.6.0.min.js"></script>
     <script src="/public/assets/js/vendor/jquery-3.6.0.min.js"></script>
@@ -449,26 +406,31 @@
     <script src="/public/assets/js/shopd134.js?v=3.4"></script>
 </body>
 <script>
-    function deleteCart(productId, size, userId){
+    function deleteCart(productId, size, userId) {
 
-        $.ajax({
-            url:`/deleteCartItems?id=${productId}&size=${size}&userId=${userId}`,
-            method:'GET',
-            contentType:'application/json',
-            success:function(respose){
-                  if(respose.respose){
-                    console.log("A response is received from deleteCartItems")
-                    location.reload()
-                  }else{
-                    console.log("Cart data is not deleted")
-                    location.reload()
-                  }
+        Swal.fire({
+            text: "Do you want to delete the item from the cart?",
+            buttons: ["cancel", true],
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/deleteCartItems?id=${productId}&size=${size}&userId=${userId}`,
+                    method: 'GET',
+                    contentType: 'application/json',
+                    success: function (response) {
+                        if (response.response) {
+                            console.log("A response is received from deleteCartItems");
+                            location.reload();
+                        } else {
+                            console.log("Cart data is not deleted");
+                            location.reload();
+                        }
+                    }
+                });
             }
-            
-        })
-
-        
+        });
     }
+    
 
     function changeQuantity(userId, productId, alpha,productSize){
 

@@ -30,19 +30,23 @@ router.post('/size/:id/:size', userController.displaySize)
 
 // ================cart===============================
 
-router.get('/loadCartPage',cartController.loadCartPage)
-
+router.get('/loadCartPage',cartController.loadCartPage);
 router.post('/addToCart', cartController.addToCart);
 router.get('/productWithSizeCartCheck',cartController.productWithSizeCartCheck);
 router.get('/deleteCartItems',cartController.deleteCartedItems);
-router.patch('/changeQuantity',cartController.changeQuantity)
+router.patch('/changeQuantity',cartController.changeQuantity);
 
-//================profiles==============================
+
+//================profiles=========================================
 
 router.get('/profile',profileController.loadProfile)
 router.post('/addaddress',profileController.saveUserAdress);
 router.get('/deleteAddress',profileController.deleteAddress);
-router.post('/changepassword',profileController.changePassword)
+router.post('/changepassword',profileController.changePassword);
+router.post('/editUserDetails',profileController.editUserDetails);
+router.get('/addressEdit',profileController.loadAddressEdit);
+router.post('/updateAddressData',profileController.updateUserAddress)
+
 
 module.exports = router;
 

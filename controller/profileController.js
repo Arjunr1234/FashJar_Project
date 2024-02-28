@@ -3,17 +3,31 @@ const cart = require('../models/cartModel');
 const category = require("../models/categoryModel");
 const product = require("../models/productModel");
 const bcrypt = require("bcrypt")
+const objectId = require("mongoose").Types.objectId
 
 
 const loadProfile = async (req, res)=>{
    
-   const userId = req.session.user._id;
+   try {
+  
+
+    if(req.session.user){
+      const userId = req.session.user._id;
+   console.log("This is the req.session.user :",req.session.user)
    console.log('This is userId : ',userId);
    const userData = await user.findOne({_id:userId})
    console.log("This is userData :",userData)
 
 
     res.render("userProfile",{userData})
+    }else{
+      console.log("req.session.user is not found in loadprofile profileController")
+    }
+    
+   } catch (error) {
+    console.log(error)
+    
+   }
 } 
 
 const   saveUserAdress= async (req, res) => {
@@ -79,7 +93,7 @@ const deleteAddress = async (req, res) => {
       }
   } catch (error) {
       console.error("Error deleting address:", error);
-      res.status(500).json({ response: false, message: "Internal server error" });
+     
   }
 };
 
@@ -123,25 +137,98 @@ const changePassword = async (req, res) => {
 
       if (savePasswordAndCheck.modifiedCount === 1) {
         console.log('Password changed successfully');
-        return res.json({ success: true, message: 'Password changed successfully' });
+        res.redirect('/profile')
+       
       } else {
         console.log('Password not changed');
-        return res.json({ success: false, message: 'Password not changed' });
+        
       }
     } else {
       console.log('Current password is incorrect');
-      return res.status(401).json({ success: false, message: 'Current password is incorrect' });
+      res.redirect('/profile')
+     
     }
   } catch (error) {
     console.error('Error:', error);
-    return res.status(500).json({ success: false, message: 'Internal server error' });
+   
   }
 };
+
+const editUserDetails = async (req, res)=>{
+
+        console.log("Entered in editUserDetails in profileController");
+        const receivedPassword = req.body.password;
+
+        const userData = await user.findOne({_id:req.session.user._id})
+        console.log("This is the userData : ",userData)
+
+        const receivedData = {
+                 name:req.body.name,
+                 mobile:parseInt(req.body.mobile)
+        }
+         console.log("This is receiveData : ",receivedData);
+
+
+         const checkPassword = await bcrypt.compare(receivedPassword, userData.password);
+         console.log(checkPassword);
+
+         if(checkPassword){
+          const updateUserData = await user.updateOne({_id:req.session.user._id},{$set:receivedData})
+         }else{
+          console.log("password is incorrect")
+         }
+
+}
+
+const loadAddressEdit = async(req, res)=>{
+        const receivedAddressId = req.query.addressId
+        console.log(receivedAddressId);
+        const addressData = await user.findOne({_id:req.session.user._id},{"address":{$elemMatch:{_id:receivedAddressId}}})
+        console.log("This is the addressData :",addressData)
+             
+         res.render("userAddressEdit",{addressData})
+            
+} 
+
+const updateUserAddress = async (req, res)=>{
+
+
+       try {
+         
+        console.log("Entered into updateUserAddress of profileController");
+        const addressId = req.query.addressId
+        console.log(addressId)
+        const userId = req.session.user._id;
+
+        const receivedAddress = {
+          name: req.body.addresName,
+          mobile: req.body.addressmobile,
+          houseName: req.body.housename,
+          pincode: req.body.pincode,
+          cityOrTown: req.body.townOrCity,
+          district: req.body.district,
+          state: req.body.state,
+          country: req.body.country
+        }
+
+       const updatingAddress = await user.updateOne({_id:userId,"address._id":addressId},{$set:{"address.$":receivedAddress}});
+       console.log(updatingAddress);
+       res.redirect('/profile')
+        
+       } catch (error) {
+        console.log(error)
+        
+       }
+
+}
 
 module.exports = {
   loadProfile,
   saveUserAdress,
   deleteAddress,
-  changePassword
+  changePassword,
+  editUserDetails,
+  loadAddressEdit,
+  updateUserAddress
 
 }

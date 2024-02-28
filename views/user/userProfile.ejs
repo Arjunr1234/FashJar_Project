@@ -1,5 +1,6 @@
 <%- include("../partials/userHeader") %>
 <main class="main">
+  
     <div class="page-header breadcrumb-wrap">
         <div class="container">
             <div class="breadcrumb">
@@ -44,23 +45,32 @@
                                         </a>
                                     </li>
                                     <li class="nav-item" style="background-color: black;">
-                                        <a class="nav-link" href="/logout" style="color: white; font-weight:bold"><i class="fi-rs-sign-out mr-10" style="color: white; font-weight:1rem"></i>Logout</a>
+                                        <a class="nav-link" onclick="makeLogout()" style="color: white; font-weight:bold"><i class="fi-rs-sign-out mr-10" style="color: white; font-weight:1rem"></i>Logout</a>
                                     </li>
                                 </ul>
                             </div>
                         </div>
                         <div class="col-md-8">
                             <div class="tab-content dashboard-content">
-                                <div class="tab-pane fade active show" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h5 class="mb-0">Hello Arjun! </h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <p>From your account dashboard. you can easily check &amp; view your <a href="#">recent orders</a>, manage your <a href="#">shipping and billing addresses</a> and <a href="#">edit your password and account details.</a></p>
-                                        </div>
+                              <div class="tab-pane fade active show" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
+                                <div class="rounded-image-container d-flex justify-content-center align-items-center">
+                                    <!-- Replace 'your-image-url.jpg' with the URL of your image -->
+                                    <img class="rounded-image" style="height: 100px; width: 100px;" src="/public/uploads/product-images/user_image.jpg" alt="User Image">
+                                </div>
+                                <div class="card mt-4">
+                                    <div class="card-header ">
+                                        <h5 class="mb-0 ">Hello <%= userData.name %> </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p>From your account dashboard, you can easily check &amp; view your <a href="#">recent orders</a>,
+                                            manage your <a href="#">shipping and billing addresses</a> and <a href="#">edit your password and
+                                                account details.</a></p>
                                     </div>
                                 </div>
+                            </div>
+                            
+                            
+                            
                                 <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
                                     <div class="card">
                                         <div class="card-header">
@@ -112,11 +122,11 @@
                                             <h5 style="color: white;" >Add Address <span style="color: yellow;">+</span></h5>
                                         </div>
                                         <div class="card-body">
-                                            <form class="" method="post" action="/addaddress" id="addaddressForm">
+                                            <form class="" method="post" action="/addaddress" id="addressForm">
                                                 <div class="row">
                                                     <div class="form-group col-md-6">
                                                         <label><span class="required"></span></label>
-                                                        <input required="" class="form-control square" id="addresName" name="addresName" type="text" placeholder="Name" style="border: 1px solid black;">
+                                                        <input  class="form-control square" id="addresName" name="addresName" type="text" placeholder="Name" style="border: 1px solid black;">
                                                         <div id="addresName-error" class="error-message"></div>
                                                     </div>
                                                     <div class="form-group col-md-6">
@@ -142,12 +152,12 @@
                                                     <div class="form-group col-md-6">
                                                         <label><span class="required"></span></label>
                                                         <input required="" class="form-control square" name="district" type="text"  id="district" placeholder="District*" style="border: 1px solid black;">
-                                                        <div  id="district-error" ></div>
+                                                        <div  id="district-error" class="error-message"></div>
                                                     </div>
                                                     <div class="form-group col-md-6">
                                                         <label><span class="required"></span></label>
                                                         <input required="" class="form-control square"  id="state" name="state" type="text" placeholder="State*" style="border: 1px solid black;">
-                                                        <div id="state-error"></div>
+                                                        <div id="state-error" class="error-message"></div>
                                                     </div>
                                                     <div class="form-group col-md-6">
                                                         <label><span class="required"></span></label>
@@ -158,7 +168,7 @@
                                                         
                                                     </div>
                                                     <div class="col-md-10">
-                                                        <button type="submit" class="btn btn-fill-out " style="background-color: black;" name="submit" value="Submit">Save</button>
+                                                        <input type="submit" class="btn btn-fill-out " style="background-color: black;" name="submit" value="Save">
                                                     </div>
                                                     <div class="col-md-2">
                                                         <input type="reset" class="btn btn-clear" value="Cancel" style="background-color: black; width: 100px;">
@@ -176,23 +186,23 @@
                                             <h5 style="color: white;">Account Details</h5><span><p style="color: white;">Also You Can Edit</p></span>
                                         </div>
                                         <div class="card-body">
-                                            <form class="" method="post" action="/editprofile" id="">
+                                            <form class="" method="post" action="/editUserDetails" id="">
 
                                                 <div class="row">
                                                     <div class="form-group col-md-6">
                                                         <label> Name <span class="required">*</span></label>
-                                                        <input required="" class="form-control square black-border" id="proname" name="name" type="text" value="">
+                                                        <input required="" class="form-control square black-border" id="proname" name="name" type="text" value="<%= userData.name %>">
                                                     </div>
                                                     <div style="color: red;" id="proname-error"></div>
                                                     <div class="form-group col-md-6">
                                                         <label>Mobile Number <span class="required">*</span></label>
-                                                        <input required="" class="form-control square black-border" id="pronumber" name="mobile" type="number" value=" ">
+                                                        <input required="" class="form-control square black-border" id="pronumber" name="mobile" type="number" value="<%= userData.mobile %>">
                                                     </div>
                                                     <div style="color: red;" id="pronumber-error"></div>
                                 
                                                     <div class="form-group col-md-12">
                                                         <label>Email Address <span class="required">*</span></label>
-                                                        <input required="" class="form-control square black-border" name="email" type="email"  readonly>
+                                                        <input required="" class="form-control square black-border" name="email" type="email" value="<%= userData.email %>"  readonly>
                                                     </div>
                                 
                                                     <div class="form-group col-md-12">
@@ -228,7 +238,7 @@
                                                         </address>
                                                         <div class="d-flex justify-content-end">
                                                           
-                                                            <button  type="button" class="btn btn-warning btn-small mr-20" onclick="editAddress()">Edit</button>
+                                                            <a href="/addressEdit?addressId=<%= userData.address[i]._id %>"> <button  type="button" class="btn btn-warning btn-small mr-20" >Edit</button></a>
                                                             <button type="button" class="btn btn-danger btn-small mr-15" onclick="deleteAddress('<%= userData._id %>', '<%= userData.address[i]._id%>', event)">Delete</button>
                                                         </div>
                                                     </div>
@@ -251,22 +261,22 @@
                                                     <h5 style="color: white;">Edit Password</h5>
                                                 </div>
                                                 <div class="card-body" style="color: white;">
-                                                    <form class="" method="post" action="/changepassword" id="passform">
+                                                    <form class="" method="post" action="/changepassword" id="editPasswordForm">
                                                         <div class="row">
                                                             <div class="form-group col-md-12">
                                                                 <label>Current Password <span class="required">*</span></label>
                                                                 <input required="" id="currentpassword" class="form-control square black-border" name="currentpassword" type="password" placeholder="currentpassword">
-                                                                <div id="error1"></div>
+                                                                <div id="error1" class="error-message"></div>
                                                             </div>
                                                             <div class="form-group col-md-12">
                                                                 <label>New Password <span class="required">*</span></label>
                                                                 <input required="" id="newpassword" class="form-control square black-border" name="newpassword" type="password" placeholder="newpassword">
-                                                                <div id="error2"></div>
+                                                                <div id="error2" class="error-message"></div>
                                                             </div>
                                                             <div class="form-group col-md-12">
                                                                 <label>Confirm Password <span class="required">*</span></label>
-                                                                <input required="" id="confrmpass" class="form-control square black-border" name="confirmpassword" type="password" placeholder="confirm password">
-                                                                <div id="error3"></div>
+                                                                <input required="" id="conformPass" class="form-control square black-border" name="confirmpassword" type="password" placeholder="confirm password">
+                                                                <div id="error3" class="error-message"></div>
                                                             </div>
                                                             <div class="col-md-12">
                                                                 <button type="submit" class="btn btn-fill-out " style="background-color: black;" name="submit" value="Submit">change</button>
@@ -397,9 +407,9 @@
 <!-- Preloader Start -->
 
 <!-- Vendor JS-->
-<script>
-    feather.replace(); // Run Feather Icons
-  </script>
+<script src="/public/js/editPasswordValidation.js"></script>
+<script src="/public/js/addressValidation.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"></script>
 <script src="/public/assets/js/vendor/modernizr-3.6.0.min.js"></script>
 <script src="/public/assets/js/vendor/jquery-3.6.0.min.js"></script>
@@ -422,6 +432,10 @@
 <script src="/public/assets/js/plugins/jquery.theia.sticky.js"></script>
 <!-- Template  JS -->
 <script src="/public/assets/js/maind134.js?v=3.4"></script>
+<script>
+
+   
+</script>
 
 
 <script>
@@ -439,6 +453,36 @@
     });
    
   }
+
+
+  function makeLogout() {
+    Swal.fire({
+      text: "Are you sure you want to logout?",
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+      cancelButtonText: "Cancel"
+    }).then((result) => {
+      if (result.value) {
+        $.ajax({
+          url: "/logout",
+          method: 'GET',
+          contentType: 'application/json',
+          success: function(response) {
+            if(response){
+              window.location.href = '/'
+              
+            }
+            
+          },
+          error: function(error) {
+            console.error("Logout failed:", error);
+            // Handle error appropriately, e.g., show an error message to the user
+          }
+        });
+      }
+    });
+  }
+  
 </script>
 
 

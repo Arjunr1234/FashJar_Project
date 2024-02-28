@@ -1,153 +1,74 @@
-
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add/Edit Address</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .card-body {
-            width: 100%;
-            max-width: 600px;
-            background-color: #fff;
-            padding: 30px; /* Increased padding */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 15px; /* Increased border-radius */
-        }
-
-        .form-group {
-            margin-bottom: 20px; /* Increased margin-bottom */
-        }
-
-        .form-group.inline {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 15px; /* Increased padding */
-            box-sizing: border-box;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px; /* Increased font-size */
-        }
-
-        .error-message {
-            color: red;
-            margin-top: 10px; /* Increased margin-top */
-            font-size: 14px; /* Increased font-size */
-        }
-
-        .btn {
-            padding: 15px;
-            border: none;
-            cursor: pointer;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .btn-fill-out {
-            background-color: #333;
-            color: #fff;
-        }
-
-        .btn-clear {
-            background-color: #ddd;
-            width: 100px;
-            color: #333;
-        }
-
-        @media screen and (max-width: 768px) {
-            .card-body {
-                max-width: 100%;
-            }
-        }
-    </style>
-</head>
-
-
-<body>
-    <div class="card-body">
-        <form method="post" action="/addaddress" id="addaddressForm">
-            <div class="row">
-                <!-- Name and Phone Number in the same row -->
-                <div class="form-group inline">
-                    <div style="width: 48%;">
-                        <label>Name</label>
-                        <input required="" class="form-control square" id="addresName" name="addresName" type="text" placeholder="Name">
-                        <div id="addresName-error" class="error-message"></div>
-                    </div>
-                    <div style="width: 48%;">
-                        <label>Phone Number</label>
-                        <input required="" class="form-control square" id="addressmobile" name="addressmobile" type="number" placeholder="Phone Number">
-                        <div id="addressmobile-error" class="error-message"></div>
-                    </div>
-                </div>
-
-                <!-- House Name and PINCODE in the same row -->
-                <div class="form-group inline">
-                    <div style="width: 48%;">
-                        <label>House Name</label>
-                        <input required="" class="form-control square" id="housename" name="housename" type="text" placeholder="House Name">
-                        <div id="housename-error" class="error-message"></div>
-                    </div>
-                    <div style="width: 48%;">
-                        <label>PINCODE</label>
-                        <input required="" class="form-control square" id="pincode" name="pincode" type="number" placeholder="PINCODE">
-                        <div id="pincode-error" class="error-message"></div>
-                    </div>
-                </div>
-
-                <!-- City/Town, District, and State in the same row -->
-                <div class="form-group inline">
-                    <div style="width: 30%;">
-                        <label>City/Town</label>
-                        <input required="" class="form-control square" name="townOrCity" id="townOrCity" type="text" placeholder="City/Town">
-                        <div id="townOrCity-error" class="error-message"></div>
-                    </div>
-                    <div style="width: 30%;">
-                        <label>District</label>
-                        <input required="" class="form-control square" name="district" type="text" id="district" placeholder="District">
-                        <div id="district-error" class="error-message"></div>
-                    </div>
-                    <div style="width: 30%;">
-                        <label>State</label>
-                        <input required="" class="form-control square" id="state" name="state" type="text" placeholder="State">
-                        <div id="state-error" class="error-message"></div>
-                    </div>
-                </div>
-
-                <!-- Country -->
-                <div class="form-group">
-                    <label>Country</label>
-                    <input required="" class="form-control square" id="country" name="country" type="text" placeholder="Country">
-                    <div id="country-error" class="error-message"></div>
-                </div>
-
-                <!-- Save and Cancel Buttons -->
-                <div class="col-md-12" style="display: flex; justify-content: space-between; align-items: center;">
-                    <button type="submit" class="btn btn-fill-out" name="submit" value="Submit">Save</button>
-                    <input type="reset" class="btn btn-clear" value="Cancel">
-                </div>
-            </div>
-        </form>
-    </div>
-</body>
-
-</html>
+<%- include("../partials/userHeader") %>
+    <main class="main">
+        
+        <section class="pt-100 pb-120">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-10 m-auto">
+                        <div class="row">
+                           
+                            <div class="col-md-8">
+                                <div class="tab-content dashboard-content">
+                                    
+                                    
+                                    
+                                   
+                                        <div class="card">
+                                            <div class="card-header" style="background-color: black;">
+                                                <h5 style="color: white;" >Edit Address<span style="color: yellow;">+</span></h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <form class="" method="post" action="/addaddress" id="addaddressForm">
+                                                    <div class="row">
+                                                        <div class="form-group col-md-6">
+                                                            <label><span class="required"></span></label>
+                                                            <input required="" class="form-control square" id="addresName" name="addresName" type="text" placeholder="Name" style="border: 1px solid black;">
+                                                            <div id="addresName-error" class="error-message"></div>
+                                                        </div>
+                                                        <div class="form-group col-md-6">
+                                                            <label> <span class="required"></span></label>
+                                                            <input required="" class="form-control square" id="addressmobile" name="addressmobile" type="number" placeholder="10-Digit-Phone-Number" style="border: 1px solid black;">
+                                                            <div id="addressmobile-error" class="error-message"></div>
+                                                        </div>
+                                                        <div class="form-group col-md-6">
+                                                            <label> <span class="required"></span></label>
+                                                            <input required="" class="form-control square" id="housename" name="housename" type="text" placeholder="House Name" style="border: 1px solid black;">
+                                                            <div id="housename-error" class="error-message"></div>
+                                                        </div>
+                                                        <div class="form-group col-md-6">
+                                                            <label><span class="required"></span></label>
+                                                            <input required="" class="form-control square" id="pincode" name="pincode" type="number" placeholder="PINCODE*" style="border: 1px solid black;">
+                                                            <div id="pincode-error" class="error-message"></div>
+                                                        </div>
+                                                        <div class="form-group col-md-16">
+                                                            <label><span class="required"></span></label>
+                                                            <input required="" class="form-control square" name="townOrCity" id="townOrCity" type="text" placeholder="City/Town*" style="border: 1px solid black;">
+                                                            <div id="townOrCity-error" class="error-message"></div>
+                                                        </div>
+                                                        <div class="form-group col-md-6">
+                                                            <label><span class="required"></span></label>
+                                                            <input required="" class="form-control square" name="district" type="text"  id="district" placeholder="District*" style="border: 1px solid black;">
+                                                            <div  id="district-error" ></div>
+                                                        </div>
+                                                        <div class="form-group col-md-6">
+                                                            <label><span class="required"></span></label>
+                                                            <input required="" class="form-control square"  id="state" name="state" type="text" placeholder="State*" style="border: 1px solid black;">
+                                                            <div id="state-error"></div>
+                                                        </div>
+                                                        <div class="form-group col-md-6">
+                                                            <label><span class="required"></span></label>
+                                                            <input required="" class="form-control square" id="country" name="country" type="text" placeholder="Country*" style="border: 1px solid black;">
+                                                            <div id="country-error" class="error-message"></div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            
+                                                        </div>
+                                                        <div class="col-md-10">
+                                                            <button type="submit" class="btn btn-fill-out " style="background-color: black;" name="submit" value="Submit">Save</button>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <input type="reset" class="btn btn-clear" value="Cancel" style="background-color: black; width: 100px;">
+                                                        </div>
+                                                        
+                                                    </div>
+                                                </form>

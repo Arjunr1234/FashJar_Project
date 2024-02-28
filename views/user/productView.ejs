@@ -1122,7 +1122,9 @@
                 success:function(response){
                     console.log(response)
                     if(response.response){
-                        window.location.reload()
+                        
+                        window.location.reload();
+                       
                     }
                     if(!response.response){
                         console.log("Some error is found : !response.response")
@@ -1193,9 +1195,10 @@
                             messageDisplay.style.color = 'red';
                             document.getElementById("addToCartButton").disabled = false;
                         }else{
-                            document.getElementById("addToCartButton").disabled = false;
+                           
                             messageDisplay.innerHTML = `${size} item Avaliable in Stock`;
                             messageDisplay.style.color = 'green'
+                            document.getElementById("addToCartButton").disabled = false;
                         }
                     }else{
                         messageDisplay.innerHTML = "";

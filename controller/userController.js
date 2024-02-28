@@ -165,22 +165,24 @@ const loadUserHome = async function (req, res) {
 };
 
 
-const loadLogout = (req,res)=>{
-  
-  if(req.session.user){
-    req.session.destroy((err)=>{
-      if(err){
-        console.log("Error in login");
+const loadLogout = (req, res) => {
+  if (req.session.user) {
+    req.session.destroy((err) => {
+      if (err) {
+        console.log("Error in logout:", err);
+        res.status(500).json({ response: false, error: "Logout failed" });
+      } else {
+        // Only one response should be sent, either redirect or JSON
+        res.json({ response: true });
+        // or
+        // res.redirect("/");
       }
-      else{
-        res.redirect("/")
-      }
-    })
-  }else{
-    res.redirect("/")
+    });
+  } else {
+    res.redirect("/");
   }
+};
 
-}
 
 const loadOtpVerify = async function(req,res,next){
      
