@@ -4,7 +4,8 @@ const userController = require("../controller/userController");
 const otpHelper = require("../helper/otpHelper");
 const userHelper = require("../helper/userHelper");
 const cartController = require("../controller/cartController");
-const profileController = require("../controller/profileController")
+const profileController = require("../controller/profileController");
+
 
 router.get('/', userController.loginLoad);
 router.post('/userloging', userController.loginHome);
@@ -35,6 +36,7 @@ router.post('/addToCart', cartController.addToCart);
 router.get('/productWithSizeCartCheck',cartController.productWithSizeCartCheck);
 router.get('/deleteCartItems',cartController.deleteCartedItems);
 router.patch('/changeQuantity',cartController.changeQuantity);
+router.get('/proceedToCheckOut',cartController.loadCheckOutPage)
 
 
 //================profiles=========================================

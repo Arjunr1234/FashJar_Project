@@ -3,6 +3,7 @@ const category = require("../models/categoryModel")
 const user = require("../models/userModel")
 const cart = require("../models/cartModel")
 const ObjectId = require("mongoose").Types.ObjectId
+const order = require("../models/orderModel")
 
 
 
@@ -226,12 +227,55 @@ const addToCart = async (req, res) => {
                     res.json({response:true})
 
                     }
-                    
-                   
-
-
-                    
+                                 
  }
+
+  const loadCheckOutPage = async(req, res)=>{
+           console.log("Entered in to loadCheckOutPage in the cartController");
+            try {
+
+              if(req.session.user){
+                const userId = req.session.user._id;
+                const cartData = await cart.findOne({userId:userId});
+                console.log("This is the cartData in loadCheckoutPage :",cartData);
+                let products = [];
+                if(cartData){
+                  for(let i=0; i<cartData.items.length; i++){
+                    const productData = await product.findById(cartData.items[i].productId)
+                    const cartSize = cartData.items[i].size;
+                    const cartQuantity = cartData.items[i].quantity;
+                    const cartPrice = cartData.items[i].price;
+                    const finalProduct = Object.assign({},productData.toObject(),
+                    {size:cartSize},
+                    {price:cartPrice},
+                    {quantity:cartQuantity}
+                    )
+                    if(products){
+                      products.push(finalProduct);
+                    }
+                  }
+                  
+                  var TotalPriceOfCart = 0
+                  for(let i=0;i<cartData.items.length;i++){
+                  TotalPriceOfCart = TotalPriceOfCart +  (cartData.items[i].quantity * cartData.items[i].price)
+        }  
+                  console.log("This is the final proudcts: ",products);
+                  console.log("This is the total price of the cart: ",TotalPriceOfCart)
+                }
+                 const userAddress = await user.findOne({_id:userId},{address:1})
+                 console.log("This is the userAddress in loadCheckOutPage ", userAddress)
+              
+                  res.render("checkOutPage",{products, TotalPriceOfCart, userAddress})
+              }else{
+                console.log("req.session.user is not found in loadCheckOutPage");
+                res.redirect('/')
+              }
+              
+            } catch (error) {
+              console.log(error)
+              
+            }
+  }
 
 
 module.exports = {
@@ -239,5 +283,6 @@ module.exports = {
               addToCart,
               productWithSizeCartCheck,
               deleteCartedItems,
-              changeQuantity
+              changeQuantity,
+              loadCheckOutPage
 }
