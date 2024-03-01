@@ -5,6 +5,7 @@ const otpHelper = require("../helper/otpHelper");
 const userHelper = require("../helper/userHelper");
 const cartController = require("../controller/cartController");
 const profileController = require("../controller/profileController");
+const orderController = require("../controller/orderController")
 
 
 router.get('/', userController.loginLoad);
@@ -29,6 +30,10 @@ router.get('/viewProduct',userController.loadVeiwProduct)
 
 router.post('/size/:id/:size', userController.displaySize)
 
+//===============GuestUser===========================
+
+router.get('/guestUser',userController.loadGuestUserHome)
+
 // ================cart===============================
 
 router.get('/loadCartPage',cartController.loadCartPage);
@@ -48,7 +53,12 @@ router.post('/changepassword',profileController.changePassword);
 router.post('/editUserDetails',profileController.editUserDetails);
 router.get('/addressEdit',profileController.loadAddressEdit);
 router.post('/updateAddressData',profileController.updateUserAddress)
+router.get('/viewOrders',profileController.loadOrderDetails)
 
+//===================Order============================================
+
+router.post('/placeOrder',orderController.placeOrder);
+router.get('/orderIsPlaced',orderController.loadSuccessPage);
 
 module.exports = router;
 

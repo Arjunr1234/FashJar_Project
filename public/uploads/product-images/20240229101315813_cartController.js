@@ -37,10 +37,6 @@ const loadCartPage = async (req, res) => {
         for(let i=0;i<cartData.items.length;i++){
              TotalPriceOfCart = TotalPriceOfCart +  (cartData.items[i].quantity * cartData.items[i].price)
         }
-        if(cartData){
-          const saveTotalPrice = await cart.updateOne({userId:userId},{$set:{totalAmount:TotalPriceOfCart}})
-
-        }
         console.log("This si the total Price:",TotalPriceOfCart);
         console.log("This is the cartData from cartRednderPage:",cartData)
        // console.log("This is the product that is sending to CartPage: ", products)

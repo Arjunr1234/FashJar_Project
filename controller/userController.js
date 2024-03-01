@@ -164,6 +164,12 @@ const loadUserHome = async function (req, res) {
   }
 };
 
+const loadGuestUserHome = async (req, res)=>{
+          
+            
+            res.render("userHome")
+}
+
 
 const loadLogout = (req, res) => {
   if (req.session.user) {
@@ -270,7 +276,8 @@ module.exports = {
               loadOtpVerify,
               loginHome,
               loadVeiwProduct,
-              displaySize
+              displaySize,
+              loadGuestUserHome
 
               
               

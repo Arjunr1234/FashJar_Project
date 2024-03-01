@@ -222,13 +222,6 @@ const updateUserAddress = async (req, res)=>{
 
 }
 
-const loadOrderDetails = async (req, res)=>{
-               console.log("Entered into loadOrderDetails");
-               res.render("orderPage")
-
-
-}
-
 module.exports = {
   loadProfile,
   saveUserAdress,
@@ -236,7 +229,6 @@ module.exports = {
   changePassword,
   editUserDetails,
   loadAddressEdit,
-  updateUserAddress,
-  loadOrderDetails
+  updateUserAddress
 
 }

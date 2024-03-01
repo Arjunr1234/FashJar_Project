@@ -153,9 +153,9 @@
                                                   <tr>
                                                     <td class="image product-thumbnail"><img src="/public/uploads/product-images/<%= products[i].productImage[0] %>" alt="#"></td>
                                                     <td>
-                                                        <h5><a href="shop-product-full.html"><%= products[i].productName %></a></h5> <span class="product-qty">x <%= products[i].quantity %></span>
+                                                        <h5><a href="shop-product-full.html"><%= products[i].productName %></a></h5> <span class="product-qty text-primary">Size: <%= products[i].size.toUpperCase()%> x <%= products[i].quantity %></span>
                                                         <br>
-                                                        <h6 class="text-primary">Size:<%= products[i].size.toUpperCase() %></h6>
+                                                        <!-- <h6 class="text-primary">Size:<%= //products[i].size.toUpperCase() %></h6> -->
                                                     </td>
                                                     <td><%= products[i].quantity * products[i].price  %></td>
                                                 </tr>
@@ -175,7 +175,7 @@
                                         </tr>
                                         <tr>
                                             <th>Total</th>
-                                            <td colspan="2" class="product-subtotal"><span class="font-xl text-brand fw-900">₹<%= TotalPriceOfCart %></span></td>
+                                            <td colspan="2" class="product-subtotal"><span class="font-xl text-brand fw-900">₹ <%= TotalPriceOfCart %></span></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -187,21 +187,21 @@
                                 </div>
                                 <div class="payment_option">
                                     <div class="custome-radio">
-                                        <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios3" checked="">
-                                        <label class="form-check-label" for="exampleRadios3" data-bs-toggle="collapse" data-target="#bankTranfer" aria-controls="bankTranfer">Direct Bank Transfer</label>
+                                        <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios3" checked="" value="razorPay">
+                                        <label class="form-check-label" for="exampleRadios3" data-bs-toggle="collapse" data-target="#bankTranfer" aria-controls="bankTranfer">Razorpay</label>
                                         <div class="form-group collapse in" id="bankTranfer">
                                             <p class="text-muted mt-5">There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration. </p>
                                         </div>
                                     </div>
                                     <div class="custome-radio">
-                                        <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios4" checked="">
-                                        <label class="form-check-label" for="exampleRadios4" data-bs-toggle="collapse" data-target="#checkPayment" aria-controls="checkPayment">Check Payment</label>
+                                        <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios4" checked="" value="cod">
+                                        <label class="form-check-label" for="exampleRadios4" data-bs-toggle="collapse" data-target="#checkPayment" aria-controls="checkPayment">Cash on Delivery</label>
                                         <div class="form-group collapse in" id="checkPayment">
                                             <p class="text-muted mt-5">Please send your cheque to Store Name, Store Street, Store Town, Store State / County, Store Postcode. </p>
                                         </div>
                                     </div>
                                     <div class="custome-radio">
-                                        <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios5" checked="">
+                                        <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios5" checked="" value="paypal">
                                         <label class="form-check-label" for="exampleRadios5" data-bs-toggle="collapse" data-target="#paypal" aria-controls="paypal">Paypal</label>
                                         <div class="form-group collapse in" id="paypal">
                                             <p class="text-muted mt-5">Pay via PayPal; you can pay with your credit card if you don't have a PayPal account.</p>
@@ -209,7 +209,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <a href="#" class="btn btn-fill-out btn-block mt-30">Place Order</a>
+                            <a  id="placeOrderButton" class="btn btn-fill-out btn-block mt-30">Place Order</a>
                         </div>
                     </div>
                 </div>
@@ -343,6 +343,7 @@
         </div>
     </div>
     <!-- Vendor JS-->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="/public/assets/js/vendor/modernizr-3.6.0.min.js"></script>
     <script src="/public/assets/js/vendor/jquery-3.6.0.min.js"></script>
     <script src="/public/assets/js/vendor/jquery-migrate-3.3.0.min.js"></script>
@@ -364,6 +365,58 @@
     <!-- Template  JS -->
     <script src="/public/assets/js/maind134.js?v=3.4"></script>
     <script src="/public/assets/js/shopd134.js?v=3.4"></script>
+
+    <script>
+      document.getElementById("placeOrderButton").addEventListener("click", function(){
+        const selectedAddress = document.querySelector('input[name="addressSelected"]:checked').value;
+        const selectPaymentMethod = document.querySelector('input[name="payment_option"]:checked').value
+
+        console.log("This is selected Address: ",selectedAddress);
+        console.log("This is the payment option: ",selectPaymentMethod);
+
+        const data = {
+          address:selectedAddress,
+          paymentMethod:selectPaymentMethod
+        }
+
+        $.ajax({
+          url:"/placeOrder",
+          method:'POST',
+          data:JSON.stringify(data),
+          contentType:'application/json',
+          success:function(response){
+               console.log("This is response: ",response)
+                if(response.success){
+                    console.log("This is response: ",response)
+                    window.location.href=response.url
+                }else {
+                    console.log("This is response: ",response)
+                    console.log("Entered in to else tostrify")
+                    Toastify({
+                        text: response.message,
+                         backgroundColor: "red",
+                     duration: 6000,
+                     position: "center" 
+                 }).showToast();
+             //    window.location.href = response.url
+        
+                
+                }
+                
+
+        
+                
+          },
+          error:function(error){
+            console.log("some error is happened in ajax placeOrder");
+            window.location.href = "/login"
+           }
+        })
+       
+
+      })
+      
+    </script>
 </body>
 
 
