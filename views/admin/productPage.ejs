@@ -53,6 +53,9 @@
                     <i class="icon material-icons md-add_box"></i>
                     <span class="text">Products</span>
                 </a>
+                <a class="menu-link" href="/admin/orders" style="margin-right: 15px;">
+                    <i class="fi-rs-shopping-bag mr-10"></i>
+                    <span class="text">Orders</span>
                 
                
         </ul>
@@ -141,12 +144,12 @@
                             <thead>
                                 <tr>
                                     <th class="col-md-2">Images</th>
-                                    <th class="col-md-2">Name</th>
-                                    <th class="col-md-2">Category</th>
-                                    <th class="col-md-1">Regular Price</th>
-                                    <th class="col-md-1">Sale Price</th>
+                                    <th class="col-md-2 ">Name</th>
+                                    <th class="col-md-2 ">Category</th>
+                                    <th class="col-md-1 text-center">Regular Price</th>
+                                    <th class="col-md-1 text-center">Sale Price</th>
                                     <!-- <th class="col-md-1 text-center">Quantity</th> -->
-                                    <th class="col-md-2">List/Unlist</th>
+                                    <th class="col-md-2 text-center">List/Unlist</th>
                                     <th class="text-center col-md-1">Edit</th>
                                 </tr>
                             </thead>
@@ -177,12 +180,12 @@
                                         <td class="col-md-1 text-center"><%= productDetails[i].salePrice  %></td>
                                         <!-- <td class="col-md-2 text-center"><%=// productDetails[i].regularPrice  %></td> -->
                                        
-                                        <td class="col-md-2 col-action">
+                                        <td class="col-md-2 col-action text-center">
                                             <div class="">
                                                 <% if (productDetails[i].isBlocked) { %>
-                                                     <a  class="btn btn-sm font-sm btn-action" style="width: 55%; background-color: rgb(54, 138, 198); color: white;" onclick="unlist('<%= productDetails[i]._id %>', 'Unlist')">List</a> 
+                                                     <a  class="btn btn-sm font-sm btn-action" style="width: 45%; background-color: rgb(54, 138, 198); color: white;" onclick="unlist('<%= productDetails[i]._id %>', 'Unlist')">List</a> 
                                                 <% } else { %>
-                                                    <a  class="btn btn-sm font-sm btn-action" style="width: 55%; background-color: rgb(252, 0, 0); color: white;" onclick="unlist('<%= productDetails[i]._id %>','list')">UnList</a>
+                                                    <a  class="btn btn-sm font-sm btn-action" style="width: 45%; background-color: rgb(252, 0, 0); color: white;" onclick="unlist('<%= productDetails[i]._id %>','list')">UnList</a>
                                                 <% } %>
                                             </div>
                                         </td>

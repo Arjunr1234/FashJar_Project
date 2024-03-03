@@ -155,7 +155,7 @@ const loadUserHome = async function (req, res) {
           
 
           
-          res.render("userHome", { productData,categoryData });
+          res.render("userHome", { productData,categoryData,userData });
       } else {
           res.redirect("/");
       }
@@ -165,9 +165,25 @@ const loadUserHome = async function (req, res) {
 };
 
 const loadGuestUserHome = async (req, res)=>{
-          
+
+           const productData = await product.aggregate([
+              {
+                  $match: {
+                      "isBlocked": false
+                  }  
+              },
+              {
+                  $lookup: {
+                      from: "categories",
+                      localField: "category",
+                      foreignField: "_id",
+                      as: "newField"
+                  }
+              }
+          ]);
+          const categoryData = await category.find({isListed:true})
             
-            res.render("userHome")
+            res.render("userHome",{productData,categoryData})
 }
 
 
@@ -179,9 +195,9 @@ const loadLogout = (req, res) => {
         res.status(500).json({ response: false, error: "Logout failed" });
       } else {
         // Only one response should be sent, either redirect or JSON
-        res.json({ response: true });
+      //  res.json({ response: true });
         // or
-        // res.redirect("/");
+         res.redirect("/");
       }
     });
   } else {
@@ -215,12 +231,13 @@ const loadSample = async (req, res)=>{
 const loadVeiwProduct = async(req, res)=>{
         console.log("Entered to the loadview product");
          const productId = req.query.id;
+         const userData = req.session.user
          
          const products =await product.find({_id:productId})
          
          
          
-         res.render("productView",{products});
+         res.render("productView",{products,userData});
 
 }
 
@@ -230,7 +247,7 @@ const displaySize = async(req, res)=>{
     if(req.session.user){
       const id = req.params.id;
       const size = req.params.size;
-     
+      
 
       const productData = await product.find({_id:id})
       //console.log("This is product data :" , productData)

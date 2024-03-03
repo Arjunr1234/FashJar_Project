@@ -5,6 +5,8 @@ const User = require("../models/userModel");
 const category = require("../models/categoryModel")
 const product = require("../models/productModel")
 const mongoose = require('mongoose'); 
+const order = require("../models/orderModel");
+const cart = require("../models/cartModel")
 
 
 
@@ -493,6 +495,48 @@ const deleteImage = async(req, res)=>{
               
 }
 
+const loadOrderPage = async (req, res)=>{
+      console.log("Entered into loadOrderPage in adminController")
+       
+       try {
+        const orderData = await order.aggregate([
+          {
+            $lookup: {
+              from: "users",
+              localField: "userId",
+              foreignField: "_id",
+              as: "userDetails"
+            }
+          },
+          {
+            $unwind: "$userDetails" // If needed, unwind the array created by the $lookup stage
+          },
+          {
+            $project: {
+              "paymentMethod":1,
+              "orderId": 1,
+              "status": 1,
+              "totalAmount": 1,
+              "orderedOn": 1,
+              "userDetails.name": 1,
+              "userDetails.email": 1,
+              "userDetails.mobile": 1,
+              "userDetails.address": 1
+              // Include other fields as needed
+            }
+          }
+        ]);
+        
+        
+
+        res.render("orderDetails",{orderData})
+        
+       } catch (error) {
+        console.log(error)
+        
+       }
+}
+
 
 
 
@@ -515,6 +559,7 @@ module.exports =  {
                     listUnlistProduct,
                     loadProductEdit,
                     editProducts,
-                    deleteImage
+                    deleteImage,
+                    loadOrderPage
                     
                  }

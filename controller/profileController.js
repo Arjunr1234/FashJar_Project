@@ -2,7 +2,8 @@ const user = require("../models/userModel");
 const cart = require('../models/cartModel');
 const category = require("../models/categoryModel");
 const product = require("../models/productModel");
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcrypt");
+const order = require("../models/orderModel")
 const objectId = require("mongoose").Types.objectId
 
 
@@ -223,8 +224,16 @@ const updateUserAddress = async (req, res)=>{
 }
 
 const loadOrderDetails = async (req, res)=>{
-               console.log("Entered into loadOrderDetails");
-               res.render("orderPage")
+               console.log("Entered into loadOrderDetails in orderController");
+               if(req.session.user){
+                const userData = req.session;
+               const orderData = await order.find({userId:req.session.user._id})
+               console.log("This is orderData",orderData)
+               res.render("orderPage",{orderData,userData})
+               }else{
+                console.log("User is not found in loadorderDetais")
+                res.redirect("/")
+               }
 
 
 }

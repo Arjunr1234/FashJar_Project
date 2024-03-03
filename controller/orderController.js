@@ -1,5 +1,7 @@
 const order = require('../models/orderModel');
-const placeOrderHelper = require("../helper/placeOrderHelper")
+const product = require('../models/productModel')
+const placeOrderHelper = require("../helper/placeOrderHelper");
+const objectId = require("mongoose").Types.ObjectId
 
 
 
@@ -34,7 +36,51 @@ const placeOrderHelper = require("../helper/placeOrderHelper")
  }
 
 
+ const loadViewOrderDetails = async(req, res)=>{
+  console.log("Entered into loadViewOrderDetails in orderController");
+
+           try {     
+                    const orderId = new objectId(req.query.orderId)
+                  //  console.log("This is orderId : ",orderId)
+                    const userData = req.session.user
+                    const orderData = await order.findOne({_id:orderId})
+                   // console.log("This is orderData: ",orderData);
+                    const productId = orderData.products[0].product;
+                   // console.log("This is product Id:,",productId)
+                   const orders = [];
+                   if(orderData){
+                    for(let i=0; i<orderData.products.length; i++){
+                        
+                        const productData = await product.findOne({_id:orderData.products[i].product});
+                        const orderDetails = orderData.products[i]
+                        const productImage = productData.productImage;
+                        const productName = productData.productName;
+                      //  console.log("This is the product detais of each products:",productData);
+                        const finalOrder = Object.assign({},
+                          {image:productImage},
+                          {name:productName},
+                          {orderDetails:orderDetails} )
+                          if(orders){
+                            orders.push(finalOrder)
+                          }
+                       //   console.log("This is the final Order: ",orders)
+                    }
+                    
+                   }
+                    
+                    
+                    res.render("viewOrderDetails",{orders,userData});
+                    
+             } catch (error) {
+                    console.log(error)
+                    
+              }
+             
+ }
+
+
 module.exports = {
   placeOrder,
-  loadSuccessPage
+  loadSuccessPage,
+  loadViewOrderDetails
 }

@@ -1,0 +1,128 @@
+<%- include("../partials/userHeader") %>
+<style>
+   .cart-container {
+       margin-bottom: 20%; /* Adjust the value as needed */
+   }
+</style>
+
+   <main class="main">
+       <div class="page-header breadcrumb-wrap">
+           <div class="container">
+               <div class="breadcrumb">
+                   <a href="index.html" rel="nofollow">Home</a>
+                   <span></span> Shop
+                   <span></span> Your Cart
+               </div>
+           </div>
+       </div>
+      
+        <div class="card">
+              <div class="text-center ">
+                <h2 class="mt-30 ">Details</h1>
+              </div>
+          <div class="card-body">
+            <div class="col-md-12">
+               
+             
+      
+              <div class="table-responsive">
+                  <table class="table table-hover">
+                      <thead>
+                          <tr>
+                              <th class="col-md-2 text-center" >Image</th>
+                              <th class="col-md-3 text-center">Name</th>
+                              <th class="col-md-1 text-center">Price</th>
+                              <th class="col-md-1 text-center">Size</th>
+                              <th class="col-md-1 text-center">Quantity</th>
+                              <th class="col-md-2 text-center">Status</th>
+                              <th class="col-md-2 text-center">Cancell</th>
+                              
+                          </tr>
+                      </thead>
+                      <tbody>
+                                   <% for(let i=0; i<orders.length;i++) {%>
+                                    <tr>
+                                      <td class="col-image col-md-2 text-center">
+                                        <div class="itemside">
+                                          <div class="left">
+                                              <img  style="max-width:30%; height: auto;" src="/public/uploads/product-images/<%= orders[i].image[0]%>" 
+                                                   class="img-sm img-thumbnail" 
+                                                   alt="Item" 
+                                                   width="100" 
+                                                   height="100" 
+                                                   
+                                              >
+                                          </div>
+                                      </div>
+                                      
+                                      </td>
+                                      <td class="col-name col-md-3 text-center"><%= orders[i].name %></td>
+                                      <td class="col-price col-md-1 text-center">₹<%= orders[i].orderDetails.productPrice %> </td>
+                                      <td class="col-size col-md-1 text-center"><%= orders[i].orderDetails.size.toUpperCase() %></td>
+                                      <td class="col-quantity col-md-1 text-center"><%= orders[i].orderDetails.quantity %></td>
+                                      <td class="col-status col-md-2 text-center"><%= orders[i].orderDetails.status %></td>
+                                      <td class="col-cancell col-md-2 text-center">
+                                        <a href="/cancellOrder" class="btn btn-sm font-sm btn-action btn-warning" style="width: 50%; padding: 5px; font-size: 12px;">Cancell</a>
+                                    </td>
+                                    
+                                     
+                                  </tr>
+                                    
+                                    <%} %>
+      
+                             
+                                     
+                                      
+                                          
+                      </tbody>
+                    </table>
+                </div>
+              </div>      
+           <!-- .row // -->
+          </div> 
+      </div> <!-- card .// -->
+      
+      
+       
+       
+       
+   </main>
+   
+   <!-- Preloader Start -->
+   
+   <!-- Vendor JS-->
+   <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+   <script src="/public/assets/js/vendor/modernizr-3.6.0.min.js"></script>
+   <script src="/public/assets/js/vendor/jquery-3.6.0.min.js"></script>
+   <script src="/public/assets/js/vendor/jquery-migrate-3.3.0.min.js"></script>
+   <script src="/public/assets/js/vendor/bootstrap.bundle.min.js"></script>
+   <script src="/public/assets/js/plugins/slick.js"></script>
+   <script src="/public/assets/js/plugins/jquery.syotimer.min.js"></script>
+   <script src="/public/assets/js/plugins/wow.js"></script>
+   <script src="/public/assets/js/plugins/jquery-ui.js"></script>
+   <script src="/public/assets/js/plugins/perfect-scrollbar.js"></script>
+   <script src="/public/assets/js/plugins/magnific-popup.js"></script>
+   <script src="/public/assets/js/plugins/select2.min.js"></script>
+   <script src="/public/assets/js/plugins/waypoints.js"></script>
+   <script src="/public/assets/js/plugins/counterup.js"></script>
+   <script src="/public/assets/js/plugins/jquery.countdown.min.js"></script>
+   <script src="/public/assets/js/plugins/images-loaded.js"></script>
+   <script src="/public/assets/js/plugins/isotope.js"></script>
+   <script src="/public/assets/js/plugins/scrollup.js"></script>
+   <script src="/public/assets/js/plugins/jquery.vticker-min.js"></script>
+   <!-- Template  JS -->
+   <script src="/public/assets/js/maind134.js?v=3.4"></script>
+   <script src="/public/assets/js/shopd134.js?v=3.4"></script>
+</body>
+<script>
+   
+   
+
+   
+
+</script>
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-frontend/shop-cart.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 15 Jul 2023 10:10:07 GMT -->
+</html>

@@ -59,6 +59,7 @@ router.get('/viewOrders',profileController.loadOrderDetails)
 
 router.post('/placeOrder',orderController.placeOrder);
 router.get('/orderIsPlaced',orderController.loadSuccessPage);
+router.get('/viewOrderDetails',orderController.loadViewOrderDetails);
 
 module.exports = router;
 

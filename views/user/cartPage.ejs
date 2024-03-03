@@ -196,7 +196,7 @@
                                                     <td class="price" data-title="Price"><span><%=products[i].salePrice %></span></td>
                                                     <td class="text-center" data-title="Stock">
                                                         <div class="detail-qty border radius  m-auto">
-                                                            <a href="#" class="qty-down"><i class="fi-rs-angle-small-down" onclick="changeQuantity('<%= products[i].userId %>','<%= products[i]._id %>',-1,'<%= products[i].size %>')"></i></a>
+                                                            <a href="#" class="qty-down"><i class="fi-rs-angle-small-down" onclick="changeQuantity('<%= products[i].userId %>','<%= products[i]._id %>',-1,'<%= products[i].size %>')" <%= cartData.items[i].quantity === 1 ? 'disabled' : '' %>></i></a>
                                                             <span class="qty-val"  id="productQuantity"><%= products[i].quantity %></span>
                                                             <a href="#" class="qty-up" ><i class="fi-rs-angle-small-up" onclick="changeQuantity('<%= products[i].userId %>','<%= products[i]._id %>',1,'<%= products[i].size %>')"></i></a>
                                                         </div>

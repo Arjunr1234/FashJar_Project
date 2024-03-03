@@ -44,7 +44,7 @@ const loadCartPage = async (req, res) => {
         console.log("This si the total Price:",TotalPriceOfCart);
         console.log("This is the cartData from cartRednderPage:",cartData)
        // console.log("This is the product that is sending to CartPage: ", products)
-        res.render("cartPage", { products,TotalPriceOfCart });
+        res.render("cartPage", { products,TotalPriceOfCart,cartData });
       } else {
         res.render("cartPage")
       }

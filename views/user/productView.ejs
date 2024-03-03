@@ -289,6 +289,9 @@
                                         
                                         
                                         <div class="bt-1 border-color-1 mt-30 mb-30"></div>
+                                       
+                                  <% if(locals.userData) {%>         
+                                           
                                         <div class="detail-extralink">
                                            
                                             <div class="col-md-6"> <!-- Adjust the column size based on your layout -->
@@ -296,6 +299,18 @@
                                                 <button onclick="addToCart('<%= products[0]._id %>')" id="addToCartButton" type="submit" class="btn btn-primary">Add to cart</button>
                                             </div>
                                         </div>
+                                  <%} else {%>
+                                    <div class="detail-extralink">
+                                           
+                                        <div class="col-md-6"> 
+                                         
+                                            <a href="/" class="btn btn-primary">Add to cart</a>
+                                            <!-- <button  id="addToCartButton" type="submit" class="btn btn-primary">Add to cart</button> -->
+                                        </div>
+                                    </div>
+                                            
+                                              
+                                    <%} %>
                                         <ul class="product-meta font-xs color-grey mt-50">
                                             <li class="mb-5">SKU: <a href="#">FWM15VKT</a></li>
                                             <li class="mb-5">Tags: <a href="#" rel="tag">Cloth</a>, <a href="#" rel="tag">Women</a>, <a href="#" rel="tag">Dress</a> </li>

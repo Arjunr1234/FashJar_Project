@@ -36,7 +36,11 @@ router.post('/productAdd',isAdmin,uploads.array("images",4) ,adminController.add
 router.patch('/listUnlistProduct',isAdmin,adminController.listUnlistProduct);
 router.get('/productEdit',isAdmin,adminController.loadProductEdit);
 router.post('/editProduct',isAdmin,uploads.array("images"),adminController.editProducts);
-router.post('/deleteImage',adminController.deleteImage)
+router.post('/deleteImage',adminController.deleteImage);
+
+//==============================Orders==========================================
+
+router.get('/orders',isAdmin,adminController.loadOrderPage);
 
 
 

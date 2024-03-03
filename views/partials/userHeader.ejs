@@ -64,7 +64,10 @@
                                         <li><a href="#"><img src="/public/assets/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
                                     </ul>
                                 </li>
-                                <li><i class="fi-rs-user"></i><a href="page-login-register.html">Log In / Sign Up</a></li>
+                                <% if(!locals.userData) {%>
+                                    <li><i class="fi-rs-user"></i><a href="/">Log In</a>/ <a href="/register">Sign Up</a></li>
+                                    <%} %>
+                               
                             </ul>
                         </div>
                     </div>
@@ -96,6 +99,9 @@
                                 <input type="text" placeholder="Search for items...">
                             </form>
                         </div>
+                        <% if(locals.userData) {%>
+                            
+                           
                         <div class="header-action-right">
                             <div class="header-action-2 ml-115">
                                 <div class="header-action-icon-2">
@@ -121,6 +127,7 @@
                                 </div>
                             </div>
                         </div>
+                        <%} %>
                     </div>
                 </div>
             </div>
@@ -146,27 +153,13 @@
                                                     <ul class="d-lg-flex">
                                                         <li class="mega-menu-col col-lg-6">
                                                             <ul>
-                                                                <li><span class="submenu-title">Hot & Trending</span></li>
-                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Dresses</a></li>
-                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Blouses & Shirts</a></li>
-                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Hoodies & Sweatshirts</a></li>
-                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Women's Sets</a></li>
-                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Suits & Blazers</a></li>
-                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Bodysuits</a></li>
-                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Tanks & Camis</a></li>
+                                                                
                                                                 <li><a class="dropdown-item nav-link nav_item" href="#">Coats & Jackets</a></li>
                                                             </ul>
                                                         </li>
                                                         <li class="mega-menu-col col-lg-6">
                                                             <ul>
-                                                                <li><span class="submenu-title">Bottoms</span></li>
-                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Leggings</a></li>
-                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Skirts</a></li>
-                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Shorts</a></li>
-                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Jeans</a></li>
-                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Pants & Capris</a></li>
-                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Bikini Sets</a></li>
-                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Cover-Ups</a></li>
+                                                                
                                                                 <li><a class="dropdown-item nav-link nav_item" href="#">Swimwear</a></li>
                                                             </ul>
                                                         </li>
@@ -201,14 +194,7 @@
                                                     <ul class="d-lg-flex">
                                                         <li class="mega-menu-col col-lg-6">
                                                             <ul>
-                                                                <li><span class="submenu-title">Jackets & Coats</span></li>
-                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Down Jackets</a></li>
-                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Jackets</a></li>
-                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Parkas</a></li>
-                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Faux Leather Coats</a></li>
-                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Trench</a></li>
-                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Wool & Blends</a></li>
-                                                                <li><a class="dropdown-item nav-link nav_item" href="#">Vests & Waistcoats</a></li>
+                                                                
                                                                 <li><a class="dropdown-item nav-link nav_item" href="#">Leather Coats</a></li>
                                                             </ul>
                                                         </li>
@@ -325,18 +311,15 @@
                                     <li><a href="#">Shop </a>
                                        
                                     </li>
-                                    <li class="position-static"><a href="#">Mega menu</a>
-                                      
-                                    </li>
-                                    <li><a href="/sampleForCheck">check</a>
-                                       
-                                    </li>
-                                    <li><a href="#">Pages </a>
-                                        
-                                    </li>
                                     <li>
                                         <a href="#">Contact</a>
                                     </li>
+                                   
+                                    <li><a href="/sampleForCheck">check</a>
+                                       
+                                    </li>
+                                    
+                                    
                                 </ul>
                             </nav>
                         </div>
