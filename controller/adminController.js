@@ -6,7 +6,11 @@ const category = require("../models/categoryModel")
 const product = require("../models/productModel")
 const mongoose = require('mongoose'); 
 const order = require("../models/orderModel");
-const cart = require("../models/cartModel")
+const cart = require("../models/cartModel");
+const objectId = require("mongoose").Types.ObjectId
+
+
+
 
 
 
@@ -513,6 +517,7 @@ const loadOrderPage = async (req, res)=>{
           },
           {
             $project: {
+              "products":1,
               "paymentMethod":1,
               "orderId": 1,
               "status": 1,
@@ -528,15 +533,127 @@ const loadOrderPage = async (req, res)=>{
         ]);
         
         
-
+       console.log("This is order Data :",orderData)
         res.render("orderDetails",{orderData})
         
        } catch (error) {
         console.log(error)
         
        }
-}
 
+      }
+
+const loadViewOrderPage = async(req, res)=>{
+                console.log("Entered into loadViewOrderPage in adminControll");
+                
+                try {  
+                  const orderId = req.query.orderId;
+                  console.log(orderId);
+
+                  
+                  const orderData = await order.aggregate([
+                    {
+                      $match: { _id: new mongoose.Types.ObjectId(orderId) }
+                    },
+                    {
+                      $unwind: "$products"
+                    },
+                    {
+                      $lookup: {
+                        from: "products",
+                        localField: "products.product",
+                        foreignField: "_id",
+                        as: "productDetails"
+                      }
+                    },
+                    {
+                      $unwind: "$productDetails"
+                    },
+                    {
+                      $project: {
+                      _id: 1,
+                      userId: 1,
+                      products: 1,
+                      paymentMethod: 1,
+                      status: 1,
+                      totalAmount: 1,
+                      orderedOn: 1,
+                      orderId: 1,
+                      quantity: "$products.quantity", // Include quantity from the products array
+                      productImage: "$productDetails.productImage",
+                      productName: "$productDetails.productName"
+                      }
+                    }
+                  ]);
+                  
+                  
+                 console.log("This is the checkData :", orderData);
+                  
+                  res.render("viewOrderDetailsAdmin",{orderData});
+                  
+                  
+                } catch (error) {
+                  console.log(error)
+                  
+                }
+              
+}      
+//const { ObjectId } = require('mongodb');
+
+const changeOrderStatus = async (req, res) => {
+  console.log("Entered into changeorderStatus in adminController");
+
+  try {
+      const { orderId, productId, productSize, status } = req.body;
+      console.log("This is orderId: ", new mongoose.Types.ObjectId(orderId));
+      console.log("This is status: ", status);
+      console.log("This is productId:",productId)
+      console.log("This is productSize: ",productSize)
+
+      // const changingData = await order.updateOne(
+      //     {
+      //         "_id": new mongoose.Types.ObjectId(orderId),
+      //         "products.product": new mongoose.Types.ObjectId(productId),
+      //         "products.size": productSize
+      //     },
+      //     {
+      //         $set: {
+      //             "products.$.status": status
+      //         }
+      //     }
+      // );
+      const changingData = await order.updateOne(
+        {
+            "_id": new mongoose.Types.ObjectId(orderId),
+            "products": {
+                $elemMatch: {
+                    "product": new mongoose.Types.ObjectId(productId),
+                    "size": productSize
+                }
+            }
+        },
+        {
+            $set: {
+                "products.$.status": status
+            }
+        }
+    );
+    
+
+      console.log("This is changingData: ", changingData);
+      if (changingData.modifiedCount > 0) {
+        console.log('Product status updated successfully.');
+        res.json({ success: true });
+    } else {
+        console.log('No matching order or product found.');
+        res.json({ success: false });
+    }
+    
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
 
 
 
@@ -560,6 +677,8 @@ module.exports =  {
                     loadProductEdit,
                     editProducts,
                     deleteImage,
-                    loadOrderPage
+                    loadOrderPage,
+                    loadViewOrderPage,
+                    changeOrderStatus
                     
                  }

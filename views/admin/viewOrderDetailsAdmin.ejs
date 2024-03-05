@@ -140,7 +140,7 @@
         <section class="content-main">
           <div class="content-header">
               <div>
-                  <h2 class="content-title card-title">Orders </h2>
+                  <h2 class="content-title card-title">Order Details </h2>
                   
                  
               </div>
@@ -157,64 +157,91 @@
                       <table class="table table-hover">
                           <thead>
                               <tr>
-                                  <th class="col-md-1 text-center">#ID</th>
-                                  <th class="col-md-2 text-center">Name</th>
-                                  <th class="col-md-2 text-center">Email</th>
-                                  <th class="col-md-2 text-center">Payment Method</th>
-                                  <th class="col-md-1 text-center">Total</th>
-                                  <!-- <th class="col-md-1 text-center">Quantity</th> -->
-                                  <th class="col-md-1 text-center">Date</th>
-                                  <th class="text-center col-md-1">Status</th>
-                                 
-                                  <th class="col-md-1 text-center">View Details</th>
+                                  <th class="col-md-2">Image</th>
+                                  <th class="col-md-3 text-center ">Product</th>
+                                  <th class="col-md-1 text-center">Unit Price</th>
+                                  <th class="col-md-1 text-center">Quantity</th>
+                                  <th class="col-md-1 text-center">Size</th>
+                                  <th class="col-md-2 text-center">Status</th>
+                                  <th class="col-md-2 text-center">Change Status</th>
+                                
                               </tr>
                           </thead>
                           <tbody>
-                       <% if (orderData && orderData.length > 0) { %>
-                           <% for (let i = orderData.length - 1; i >= 0; i--) { %>
-                          
+
+                            <% if(orderData){%>
+                                  <% for(i=0;i<orderData.length;i++){%>
+                                    <tr>
+                                      <td class="col-image col-md-2 ">
+                                        <div class="itemside ">
+                                          <div class="left ">
+                                              <img  style="max-width:100%; height: auto;" src="/public/uploads/product-images/<%= orderData[i].productImage[0] %>" 
+                                                   class="img-sm img-thumbnail" 
+                                                   alt="Item" 
+                                                   width="100%" 
+                                                   height="100%" 
+                                                   
+                                              >
+                                          </div>
+                                      </div>
+                                      
+                                      </td>
+                                      <th class="col-md-3 text-center text-primary bold"><h5 class="text-primary"><%= orderData[i].productName %></h5></th>
+                                      <th class="col-md-2 text-center"><%= orderData[i].products.productPrice %></th>
+                                      <th class="col-md-1 text-center"><%= orderData[i].products.quantity %></th>
+                                      <th class= "col-md-1 text-center"><%= orderData[i].products.size.toUpperCase() %></th>
+                                      <th class="col-md-2 text-center">
+                                        <% if (orderData[i].products.status == 'Pending') { %>
+                                          <span id="status" class="badge rounded-pill alert-warning"><%= orderData[i].products.status %></span>
+                                      <% } else if (orderData[i].products.status == 'Processing') {%>
+                                          <span id="status" class="badge rounded-pill alert-secondary"><%= orderData[i].products.status %></span>
+                                      <% } else if (orderData[i].products.status == 'Confirmed') {%>
+                                          <span id="status" class="badge rounded-pill alert-dark"><%=orderData[i].products.status %></span>
+                                      <% } else if (orderData[i].products.status == 'Shipped') {%>
+                                          <span id="status" class="badge rounded-pill alert-info"><%= orderData[i].products.status %></span>
+                                      <% } else if (orderData[i].products.status == 'OutForDelivery') {%>
+                                          <span id="status" class="badge rounded-pill alert-warning"><%= orderData[i].products.status %></span>
+                                      <% } else if (orderData[i].products.status == 'Delivered') {%>
+                                          <span id="status" class="badge rounded-pill alert-success"><%= orderData[i].products.status %></span>
+                                      <% } else if (orderData[i].products.status == 'cancelPending') {%>
+                                          <span id="status" class="badge rounded-pill alert-warning"><%= orderData[i].products.status %></span>
+                                      <% } else {%>
+                                          <span id="status" class="badge rounded-pill alert-danger"><%= orderData[i].products.status %></span>
+                                      <% } %>
+                                      </th>
+                                      <td width="10%" >
+                                        <% if (orderData[i].products.status == 'Pending') { %>
+                                            <a id="changeStatus<%= orderData[i].products.product %>" onclick="changeOrderStatus('<%= orderData[i]._id %>','<%= orderData[i].products.size %>','<%= orderData[i].products.product %>','Processing')" class="btn btn-outline-primary rounded font-sm">Processing</a>
+                                        <% } else if (orderData[i].products.status == 'Processing') { %>
+                                            <a id="changeStatus<%= orderData[i].products.product %>" onclick="changeOrderStatus('<%= orderData[i]._id %>','<%= orderData[i].products.size %>','<%= orderData[i].products.product %>','Confirmed')" class="btn btn-outline-primary rounded font-sm">Confirmed</a>
+                                        <% } else if (orderData[i].products.status == 'Confirmed') { %>
+                                            <a id="changeStatus<%= orderData[i].products.product %>" onclick="changeOrderStatus('<%= orderData[i]._id %>','<%= orderData[i].products.size %>','<%= orderData[i].products.product %>','Shipped')" class="btn btn-outline-primary rounded font-sm">Shipped</a>
+                                        <% } else if (orderData[i].products.status == 'Shipped') { %>
+                                            <a id="changeStatus<%= orderData[i].products.product %>" onclick="changeOrderStatus('<%= orderData[i]._id %>','<%= orderData[i].products.size %>','<%= orderData[i].products.product %>','OutForDelivery')" class="btn  btn-outline-primary rounded font-sm">Out for delivery</a>
+                                        <% } else if (orderData[i].products.status == 'OutForDelivery') { %>
+                                            <a id="changeStatus<%= orderData[i].products.product %>" onclick="changeOrderStatus('<%= orderData[i]._id %>','<%= orderData[i].products.size %>','<%= orderData[i].products.product %>','Delivered')" class="btn btn-outline-primary rounded font-sm">Delivered</a>
+                                        <% } else if (orderData[i].products.status == 'Return pending') { %>
+                                            <a id="changeStatus<%= orderData[i].products.product %>" onclick="changeOrderStatus('<%= orderData[i]._id %>','<%= orderData[i].products.size %>','<%= orderData[i].products.product %>','Returned','d-none')" class="btn btn-outline-primary rounded font-sm">Approve Return</a>
+                                        <% } %>
+                                    </td>
+                                     
+                                     
+                                      
+                                    </tr>
+                                    
+                                      
 
 
-                                  <tr>
-                                    <th class="col-md-1 text-center"><%= orderData[i].orderId %></th>
-                                    <th class="col-md-2 text-center"><%= orderData[i].userDetails.name %></th>
-                                    <th class="col-md-2 text-center"><%= orderData[i].userDetails.email %></th>
-                                    <th class="col-md-2 text-center"><%= orderData[i].paymentMethod %></th>
-                                    <th class="col-md-1 text-center">₹<%= orderData[i].totalAmount %></th>
-                                    <th class="col-md-1 text-center"><%= orderData[i].orderedOn.toLocaleDateString() %></th>
-                                    <th class="text-center col-md-1">
-                                      <% if (orderData[i].status === 'pending') { %>
-                                        <span id="status<%= orderData[i]._id %>" class="badge rounded-pill alert-warning"><%= orderData[i].status %></span>
-                                      <% }else if(orderData[i].status === 'processing'){%>
-                                        <span id="status<%= orderData[i]._id %>" class="badge rounded-pill alert-secondary"><%= orderData[i].status %></span>
-                                      <%}else if(orderData[i].status === 'confirmed'){%>
-                                        <span id="status<%= orderData[i]._id %>" class="badge rounded-pill alert-dark"><%= orderData[i].status %></span>
-                                      <%}else if(orderData[i].status === 'shipped'){%>
-                                        <span id="status<%= orderData[i]._id %>" class="badge rounded-pill alert-info"><%= orderData[i].status %></span>
-                                      <%}else if(orderData[i].status === 'outForDelivery'){%>
-                                        <span id="status<%= orderData[i]._id %>" class="badge rounded-pill alert-warning"><%= orderData[i].status %></span>
-                                      <%}else if(orderData[i].status === 'delivered'){%>
-                                         <span id="status<%= orderData[i]._id %>" class="badge rounded-pill alert-success"><%= orderData[i].status %></span>
-                                      <%}else if(orderData[i].status === 'cancelPending'){%>
-                                        <span id="status<%= orderData[i]._id %>" class="badge rounded-pill alert-warning"><%= orderData[i].status %></span>
-                                      <%}else{%>
-                                        <span id="status<%= orderData[i]._id %>" class="badge rounded-pill alert-danger"><%= orderData[i].status %></span>
-                                      <%}
-                                       %>
-                                    </th>
-                                   
-                                    <td class="text-center">
-                                      <a href="/admin/viewOrderDetails?orderId=<%= orderData[i]._id %>"><button class="btn btn-primary">View </button></a>
-                                     </td>
-                                  </tr>
-                                  
+                                    <%} %>  
+
+
+                              <%} %>
+                      
+
+                                
                                   
                                 
-                              <% } %>
-                            <% } %>
-                            
-
-                           
+                          
                                   
                             
                           
@@ -249,6 +276,40 @@
     <!-- Main Script -->
     <script src="/public/admin-assets/js/main.js" type="text/javascript"></script>
     <script src="/public/admin-assets/js/custom-chart.js" type="text/javascript"></script>
+
+
+
+
+    <script>
+              
+      function changeOrderStatus(orderId,productSize, prdId, newStatus) {
+        const requestData = {
+            orderId:orderId,
+            productSize: productSize,
+            productId: prdId, 
+            status: newStatus
+        };
+        console.log(requestData)
+        $.ajax({
+            url: '/admin/changeOrderStatus',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(requestData),
+            success: function (data) {
+              if(data.success){
+                location.reload()
+              }
+                
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                
+                console.error('Error:', errorThrown);
+            }
+        });
+    }
+    
+
+    </script>
 </body>
 
 

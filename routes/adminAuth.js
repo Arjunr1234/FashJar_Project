@@ -41,6 +41,8 @@ router.post('/deleteImage',adminController.deleteImage);
 //==============================Orders==========================================
 
 router.get('/orders',isAdmin,adminController.loadOrderPage);
+router.get('/viewOrderDetails',isAdmin,adminController.loadViewOrderPage);
+router.post('/changeOrderStatus',isAdmin,adminController.changeOrderStatus)
 
 
 
