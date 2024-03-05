@@ -1,7 +1,9 @@
 const order = require('../models/orderModel');
 const product = require('../models/productModel')
 const placeOrderHelper = require("../helper/placeOrderHelper");
-const objectId = require("mongoose").Types.ObjectId
+const objectId = require("mongoose").Types.ObjectId;
+//const { ObjectId } = require('mongodb');
+
 
 
 
@@ -52,6 +54,7 @@ const objectId = require("mongoose").Types.ObjectId
                     for(let i=0; i<orderData.products.length; i++){
                         
                         const productData = await product.findOne({_id:orderData.products[i].product});
+                        const orderedId = orderData._id
                         const orderDetails = orderData.products[i]
                         const productImage = productData.productImage;
                         const productName = productData.productName;
@@ -59,15 +62,16 @@ const objectId = require("mongoose").Types.ObjectId
                         const finalOrder = Object.assign({},
                           {image:productImage},
                           {name:productName},
+                          {orderId:orderedId},
                           {orderDetails:orderDetails} )
                           if(orders){
                             orders.push(finalOrder)
                           }
-                       //   console.log("This is the final Order: ",orders)
+                       //  
                     }
                     
                    }
-                    
+                   console.log("This is the final Order: ",orders)
                     
                     res.render("viewOrderDetails",{orders,userData});
                     
@@ -78,9 +82,88 @@ const objectId = require("mongoose").Types.ObjectId
              
  }
 
+ const deleteOrder = async (req, res) => {
+  console.log("Entered into delete order in the orderController");
+
+  const { orderId, productId, size } = req.body;
+  console.log("This is orderId: ", orderId);
+  console.log("This is product id: ", productId);
+  console.log("This is size: ", size);
+
+  const deletingOrder = await order.updateOne(
+    {
+        "_id": new objectId(orderId),
+        "products": {
+            $elemMatch: {
+                "product": new objectId(productId),
+                "size": size
+            }
+        }
+    },
+    {
+        $set: {
+            "products.$.status": "Cancelled"
+        }
+    }
+);
+   console.log(deletingOrder)
+
+   if(deletingOrder.modifiedCount>0){
+    console.log("The order is cancelled!!");
+    res.json({success:true})
+   }else{
+    console.log("The modified count is 0");
+    res.json({success:false})
+   }
+  }
+
+  const returnProduct = async(req, res)=>{
+       console.log("Entered in to return Product of orderController");
+
+       try {
+            const {orderId, productId, size} = req.body;
+            console.log("This is orderId : ",orderId);
+            console.log("This is productId: ",productId);
+            console.log("This is the size: ",size)
+
+            const returnProduct = await order.updateOne(
+              {
+                  "_id": new objectId(orderId),
+                  "products": {
+                      $elemMatch: {
+                          "product": new objectId(productId),
+                          "size": size
+                      }
+                  }
+              },
+              {
+                  $set: {
+                      "products.$.status": "Return pending"
+                  }
+              }
+          );
+
+          console.log("This is return product:",returnProduct);
+
+          if(returnProduct.modifiedCount>0){
+            console.log("Product is updated to returned");
+            res.json({success:true})
+          }else{
+            console.log("modified count is less than zero");
+            res.json({success:false})
+          }
+        
+       } catch (error) {
+        console.log(error)
+        
+       }
+             
+  }
 
 module.exports = {
   placeOrder,
   loadSuccessPage,
-  loadViewOrderDetails
+  loadViewOrderDetails,
+  deleteOrder,
+  returnProduct
 }

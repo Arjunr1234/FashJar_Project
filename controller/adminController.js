@@ -572,6 +572,7 @@ const loadViewOrderPage = async(req, res)=>{
                     {
                       $project: {
                       _id: 1,
+                      address:1,
                       userId: 1,
                       products: 1,
                       paymentMethod: 1,

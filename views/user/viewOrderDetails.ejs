@@ -35,7 +35,7 @@
                               <th class="col-md-1 text-center">Size</th>
                               <th class="col-md-1 text-center">Quantity</th>
                               <th class="col-md-2 text-center">Status</th>
-                              <th class="col-md-2 text-center">Cancell</th>
+                              <th class="col-md-2 text-center">Cancell/Return</th>
                               
                           </tr>
                       </thead>
@@ -60,9 +60,43 @@
                                       <td class="col-price col-md-1 text-center">₹<%= orders[i].orderDetails.productPrice %> </td>
                                       <td class="col-size col-md-1 text-center"><%= orders[i].orderDetails.size.toUpperCase() %></td>
                                       <td class="col-quantity col-md-1 text-center"><%= orders[i].orderDetails.quantity %></td>
-                                      <td class="col-status col-md-2 text-center"><%= orders[i].orderDetails.status %></td>
+                                      <th class="col-md-2 text-center">
+                                        <% if (orders[i].orderDetails.status == 'Pending') { %>
+                                          <span id="status" class="badge rounded-pill alert-warning"><%= orders[i].orderDetails.status %></span>
+                                      <% } else if (orders[i].orderDetails.status == 'Processing') {%>
+                                          <span id="status" class="badge rounded-pill alert-secondary"><%= orders[i].orderDetails.status %></span>
+                                      <% } else if (orders[i].orderDetails.status == 'Confirmed') {%>
+                                          <span id="status" class="badge rounded-pill alert-dark"><%=orders[i].orderDetails.status %></span>
+                                      <% } else if (orders[i].orderDetails.status == 'Shipped') {%>
+                                          <span id="status" class="badge rounded-pill alert-info"><%= orders[i].orderDetails.status %></span>
+                                      <% } else if (orders[i].orderDetails.status == 'OutForDelivery') {%>
+                                          <span id="status" class="badge rounded-pill alert-warning"><%= orders[i].orderDetails.status %></span>
+                                      <% } else if (orders[i].orderDetails.status == 'Delivered') {%>
+                                          <span id="status" class="badge rounded-pill alert-success"><%= orders[i].orderDetails.status %></span>
+                                      <% } else if (orders[i].orderDetails.status == 'cancelPending') {%>
+                                          <span id="status" class="badge rounded-pill alert-warning"><%= orders[i].orderDetails.status %></span>
+                                      <% } else {%>
+                                          <span id="status" class="badge rounded-pill alert-danger"><%= orders[i].orderDetails.status %></span>
+                                      <% } %>
+                                      </th>
+                                      </td>
                                       <td class="col-cancell col-md-2 text-center">
-                                        <a href="/cancellOrder" class="btn btn-sm font-sm btn-action btn-warning" style="width: 50%; padding: 5px; font-size: 12px;">Cancell</a>
+                                        <% if(orders[i].orderDetails.status === 'Delivered') {%>
+                                          <a  class="btn btn-sm font-sm btn-action btn-warning" style="width: 50%; padding: 5px; font-size: 12px; background:rgb(255, 200, 0)" onclick="returnProduct('<%= orders[i].orderId %>','<%= orders[i].orderDetails.product %>','<%= orders[i].orderDetails.size %>')">Return</a>
+
+                                          <%} else if( orders[i].orderDetails.status ===  "Cancelled"){%>
+
+                                            <%} else if( orders[i].orderDetails.status ===  "Return pending"){%>
+  
+                                              <%}else if( orders[i].orderDetails.status ===  "Returned"){%>
+  
+                                                <%}
+
+                                            else {%>
+                                              <a class="btn btn-sm font-sm btn-action btn-warning" style="width: 50%; padding: 5px; font-size: 12px; background:red" onclick="cancelProduct('<%= orders[i].orderId %>','<%= orders[i].orderDetails.product %>','<%= orders[i].orderDetails.size %>')">Cancel</a>
+  
+                                              <%}
+                                             %>
                                     </td>
                                     
                                      
@@ -91,6 +125,7 @@
    <!-- Preloader Start -->
    
    <!-- Vendor JS-->
+   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
@@ -118,8 +153,90 @@
 </body>
 <script>
    
-   
+  function cancelProduct(orderId, productId, size) {
+    const requestedData = {
+      orderId: orderId,
+      productId: productId,
+      size: size
+    };
+   // const cancelledButton = document.getElementById("buttonCancelled")
+  
+    Swal.fire({
+      text: "Do you want to Cancell your Order?",
+      buttons: ["cancel", true],
+  }).then((result) => {
+    if(result.isConfirmed){
 
+      $.ajax({
+        url: '/deleteOrder',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(requestedData),
+        success: function (data) {
+          if(data.success){
+           
+           swal("Order is Cancelled", {
+            icon: "success",
+        }).then(() => {
+            location.reload();
+            document.getElementById("buttonCancelled").disable = true
+          })
+          }else{
+            console.log("delete order is failed")
+            
+          }
+  
+        },
+        error: function (xhr, textStatus, errorThrown) {
+          console.error("Error: ", errorThrown);
+        }
+      });
+
+    }
+  }) 
+
+    
+  }
+  
+
+ function returnProduct(orderId, productId, size){
+
+        const requestedData = {
+          orderId : orderId,
+          productId: productId,
+          size, size
+        }
+
+        Swal.fire({
+          text: "Do you want to Return your Product?",
+          buttons: ["cancel", true],
+      }).then((result)=>{
+         if(result.isConfirmed){
+          $.ajax({
+            url:"/retrunProduct",
+            method:"POST",
+            contentType:'application/json',
+            data:JSON.stringify(requestedData),
+            success:function(data){
+                 if(data.success){
+                 console.log("Entered in to success is true")
+                  swal("Return request is Accepted", {
+                   icon: "success",
+               }).then(() => {
+                   location.reload();
+                   
+                 })
+                 }
+ 
+            }
+         })
+
+         }
+      })
+
+       
+
+ }
    
 
 </script>

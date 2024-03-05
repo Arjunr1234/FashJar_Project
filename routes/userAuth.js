@@ -60,6 +60,8 @@ router.get('/viewOrders',profileController.loadOrderDetails)
 router.post('/placeOrder',orderController.placeOrder);
 router.get('/orderIsPlaced',orderController.loadSuccessPage);
 router.get('/viewOrderDetails',orderController.loadViewOrderDetails);
+router.post('/deleteOrder',orderController.deleteOrder);
+router.post('/retrunProduct',orderController.returnProduct)
 
 module.exports = router;
 

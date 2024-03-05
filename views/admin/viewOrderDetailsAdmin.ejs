@@ -221,7 +221,7 @@
                                         <% } else if (orderData[i].products.status == 'OutForDelivery') { %>
                                             <a id="changeStatus<%= orderData[i].products.product %>" onclick="changeOrderStatus('<%= orderData[i]._id %>','<%= orderData[i].products.size %>','<%= orderData[i].products.product %>','Delivered')" class="btn btn-outline-primary rounded font-sm">Delivered</a>
                                         <% } else if (orderData[i].products.status == 'Return pending') { %>
-                                            <a id="changeStatus<%= orderData[i].products.product %>" onclick="changeOrderStatus('<%= orderData[i]._id %>','<%= orderData[i].products.size %>','<%= orderData[i].products.product %>','Returned','d-none')" class="btn btn-outline-primary rounded font-sm">Approve Return</a>
+                                            <a id="changeStatus<%= orderData[i].products.product %>" onclick="changeOrderStatus('<%= orderData[i]._id %>','<%= orderData[i].products.size %>','<%= orderData[i].products.product %>','Returned')" class="btn btn-outline-primary rounded font-sm">Approve Return</a>
                                         <% } %>
                                     </td>
                                      
@@ -259,6 +259,87 @@
                <!-- .row // -->
               </div> <!-- card body .// -->
           </div> <!-- card .// -->
+          <!-- <div class="row mb-50">
+            <div class="col-lg-6 col-md-12">
+              <div class="col-md-6">
+                <div class="mb-25">
+                    <h4>Address Details</h4>
+                </div>
+                
+                <div class="row mb-25">
+                  <div class="col">
+                    
+                      <ul class="list-group">
+                        
+                          <li class="list-group-item">
+                              <div>
+                                  <span><strong>Name:</strong>
+                                    
+                                  </span>
+                              </div>
+                              <div>
+                                  <span><strong>Mobile:</strong>
+                                    
+                                  </span>
+                              </div>
+                              <div>
+                                  <span><strong>House:</strong>
+                                      Oruvelil House
+                                  </span>
+                              </div>
+                              <div>
+                                  <span><strong>City:</strong>
+                                      Town
+                                  </span>
+                              </div>
+                              <div>
+                                  <span><strong>Pincode:</strong>
+                                    
+                                  </span>
+                              </div>
+                              
+                          </li>
+                      
+                      
+                      </ul>
+                     
+                  </div>
+              </div>
+                
+            </div>
+                </div>
+        
+                <div class="col-lg-6 col-md-12">
+                  <div class="border p-md-4 p-3 border-radius cart-totals">
+                      <div class="heading_s1 mb-3">
+                          <h4> Totals</h4>
+                      </div>
+                      <div class="table-responsive">
+                          <table class="table table-bordered">
+                              <tbody>
+                                  <tr>
+                                      <td class="cart_total_label"> Subtotal</td>
+                                      <td class="cart_total_amount"><span class="font-lg fw-900 text-brand">$price</span></td>
+                                  </tr>
+                                  <tr>
+                                      <td class="cart_total_label">Shipping</td>
+                                      <td class="cart_total_amount"><i class="ti-gift mr-2"></i> Free Shipping</td>
+                                  </tr>
+                                  <tr>
+                                      <td class="cart_total_label">Total</td>
+                                      <td class="cart_total_amount">
+                                          <strong><span class="font-xl fw-900 text-brand">$price</span></strong>
+                                      </td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+              </div>
+              
+              
+              
+        </div> -->
       </section>
 
     
