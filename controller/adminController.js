@@ -580,7 +580,7 @@ const loadViewOrderPage = async(req, res)=>{
                       totalAmount: 1,
                       orderedOn: 1,
                       orderId: 1,
-                      quantity: "$products.quantity", // Include quantity from the products array
+                      quantity: "$products.quantity", 
                       productImage: "$productDetails.productImage",
                       productName: "$productDetails.productName"
                       }
@@ -599,7 +599,7 @@ const loadViewOrderPage = async(req, res)=>{
                 }
               
 }      
-//const { ObjectId } = require('mongodb');
+
 
 const changeOrderStatus = async (req, res) => {
   console.log("Entered into changeorderStatus in adminController");
@@ -611,18 +611,7 @@ const changeOrderStatus = async (req, res) => {
       console.log("This is productId:",productId)
       console.log("This is productSize: ",productSize)
 
-      // const changingData = await order.updateOne(
-      //     {
-      //         "_id": new mongoose.Types.ObjectId(orderId),
-      //         "products.product": new mongoose.Types.ObjectId(productId),
-      //         "products.size": productSize
-      //     },
-      //     {
-      //         $set: {
-      //             "products.$.status": status
-      //         }
-      //     }
-      // );
+     
       const changingData = await order.updateOne(
         {
             "_id": new mongoose.Types.ObjectId(orderId),

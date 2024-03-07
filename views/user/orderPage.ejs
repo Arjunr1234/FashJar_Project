@@ -42,14 +42,14 @@
                       <tbody>
       
                              
-                                     <% for(let i=0; i<orderData.length; i++) {%>
+                                     <% for(let i=orderData.length-1; i>=0; i--) {%>
                                       <tr>
                                         <td class="col-md-1 text-center"><%= orderData[i].orderId %></td>
-                                        <td class="col-md-2 text-center"><%= orderData[i].orderedOn.toLocaleDateString() %></td>
+                                        <td class="col-md-2 text-center"><%= orderData[i].orderedOn.toLocaleDateString('en-GB') %></td>
                                         <td class="col-md-2 text-center">₹<%= orderData[i].totalAmount %> </td>
                                         <td class="col-md-2 text-center"><%= orderData[i].paymentMethod %></td>
                                         <td class="col-edit col-md-1 text-center  ">
-                                            <a href="/viewOrderDetails?orderId=<%= orderData[i]._id %>" class="btn btn-sm  font-sm btn-action btn-warning" style="width: 100%">View</a>
+                                            <a href="/viewOrderDetails?orderId=<%= orderData[i]._id %>" class="btn btn-sm  font-sm btn-action btn-warning" style="width: 65%">View</a>
                                         </td>
                                     </tr>
                                     <%} %>         

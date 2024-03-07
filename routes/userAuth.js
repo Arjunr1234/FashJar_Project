@@ -5,7 +5,8 @@ const otpHelper = require("../helper/otpHelper");
 const userHelper = require("../helper/userHelper");
 const cartController = require("../controller/cartController");
 const profileController = require("../controller/profileController");
-const orderController = require("../controller/orderController")
+const orderController = require("../controller/orderController");
+const isUser = require("../middlewares/userLoggingMiddleware");
 
 
 router.get('/', userController.loginLoad);
@@ -17,18 +18,22 @@ router.get('/userHome', userController.loadUserHome);
 router.get('/register', userController.loadRegister);
 // router.post('/register', userController.insertUser);
 
-router.get('/logout', userController.loadLogout);
-router.get('/sampleForCheck',userController.loadSample)
+router.get('/logout',isUser, userController.loadLogout);
+router.get('/sampleForCheck',isUser,userController.loadSample)
 
-router.get('/sendotp', userController.loadOtpVerify);
-router.post('/otp',userHelper.checkUserExist, otpHelper.sendOtp);
+router.get('/sendotp',isUser, userController.loadOtpVerify);
+router.post('/otp',isUser,userHelper.checkUserExist, otpHelper.sendOtp);
 
-router.post('/verify-otp', userController.insertUserWithVerify);
+router.post('/verify-otp',isUser, userController.insertUserWithVerify);
 // router.get('/resendOtp', otpHelper.sendOtp);
-router.get('/resendOtp', userController.loadOtpVerify);
-router.get('/viewProduct',userController.loadVeiwProduct)
+router.get('/resendOtp',isUser, userController.loadOtpVerify);
+router.get('/viewProduct',isUser,userController.loadVeiwProduct)
 
-router.post('/size/:id/:size', userController.displaySize)
+router.post('/size/:id/:size',isUser, userController.displaySize);
+
+//==================Shop==============================
+router.get('/shop',isUser,userController.loadShopProduct);
+router.get('/filterCategory',isUser,userController.filterCatergoryProducts)
 
 //===============GuestUser===========================
 
@@ -36,32 +41,32 @@ router.get('/guestUser',userController.loadGuestUserHome)
 
 // ================cart===============================
 
-router.get('/loadCartPage',cartController.loadCartPage);
-router.post('/addToCart', cartController.addToCart);
-router.get('/productWithSizeCartCheck',cartController.productWithSizeCartCheck);
-router.get('/deleteCartItems',cartController.deleteCartedItems);
-router.patch('/changeQuantity',cartController.changeQuantity);
-router.get('/proceedToCheckOut',cartController.loadCheckOutPage)
+router.get('/loadCartPage',isUser,cartController.loadCartPage);
+router.post('/addToCart',isUser, cartController.addToCart);
+router.get('/productWithSizeCartCheck',isUser,cartController.productWithSizeCartCheck);
+router.get('/deleteCartItems',isUser,cartController.deleteCartedItems);
+router.patch('/changeQuantity',isUser,cartController.changeQuantity);
+router.get('/proceedToCheckOut',isUser,cartController.loadCheckOutPage)
 
 
 //================profiles=========================================
 
-router.get('/profile',profileController.loadProfile)
-router.post('/addaddress',profileController.saveUserAdress);
-router.get('/deleteAddress',profileController.deleteAddress);
-router.post('/changepassword',profileController.changePassword);
-router.post('/editUserDetails',profileController.editUserDetails);
-router.get('/addressEdit',profileController.loadAddressEdit);
-router.post('/updateAddressData',profileController.updateUserAddress)
-router.get('/viewOrders',profileController.loadOrderDetails)
+router.get('/profile',isUser, profileController.loadProfile)
+router.post('/addaddress',isUser,profileController.saveUserAdress);
+router.get('/deleteAddress',isUser,profileController.deleteAddress);
+router.post('/changepassword',isUser,profileController.changePassword);
+router.post('/editUserDetails',isUser,profileController.editUserDetails);
+router.get('/addressEdit',isUser,profileController.loadAddressEdit);
+router.post('/updateAddressData',isUser,profileController.updateUserAddress)
+router.get('/viewOrders',isUser,profileController.loadOrderDetails)
 
 //===================Order============================================
 
-router.post('/placeOrder',orderController.placeOrder);
-router.get('/orderIsPlaced',orderController.loadSuccessPage);
-router.get('/viewOrderDetails',orderController.loadViewOrderDetails);
-router.post('/deleteOrder',orderController.deleteOrder);
-router.post('/retrunProduct',orderController.returnProduct)
+router.post('/placeOrder',isUser,orderController.placeOrder);
+router.get('/orderIsPlaced',isUser,orderController.loadSuccessPage);
+router.get('/viewOrderDetails',isUser,orderController.loadViewOrderDetails);
+router.post('/deleteOrder',isUser,orderController.deleteOrder);
+router.post('/retrunProduct',isUser,orderController.returnProduct)
 
 module.exports = router;
 

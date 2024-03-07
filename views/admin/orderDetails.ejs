@@ -181,7 +181,7 @@
                                     <th class="col-md-2 text-center"><%= orderData[i].userDetails.email %></th>
                                     <th class="col-md-2 text-center"><%= orderData[i].paymentMethod %></th>
                                     <th class="col-md-1 text-center">₹<%= orderData[i].totalAmount %></th>
-                                    <th class="col-md-1 text-center"><%= orderData[i].orderedOn.toLocaleDateString() %></th>
+                                    <th class="col-md-1 text-center"><%= orderData[i].orderedOn.toLocaleDateString('en-GB') %></th>
                                     <th class="text-center col-md-1">
                                       <% if (orderData[i].status === 'pending') { %>
                                         <span id="status<%= orderData[i]._id %>" class="badge rounded-pill alert-warning"><%= orderData[i].status %></span>

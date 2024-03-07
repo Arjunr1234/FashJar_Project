@@ -8,7 +8,7 @@ const bcrypt = require("bcrypt")
 const product = require("../models/productModel")
 const category = require("../models/categoryModel")
 const cart = require("../models/cartModel");
-
+const {ObjectId} = require("mongoose").Types
 
 
 const loginLoad = function (req, res) {
@@ -152,10 +152,12 @@ const loadUserHome = async function (req, res) {
             }
           ])
 
-          
+          const newAddedProducts = await product.find().sort({creationOn:-1})
 
           
-          res.render("userHome", { productData,categoryData,userData });
+          console.log("This is new Added Products:" ,newAddedProducts)
+          
+          res.render("userHome", { productData,categoryData,userData,newAddedProducts });
       } else {
           res.redirect("/");
       }
@@ -223,8 +225,23 @@ const loadOtpVerify = async function(req,res,next){
 const loadSample = async (req, res)=>{
   console.log("Entered into loadSample");
   const products  = await product.find({_id:'65cdd01b55d639d38a200df2'})
+  const productData = await product.aggregate([
+    {
+        $match: {
+            "isBlocked": false
+        }  
+    },
+    {
+        $lookup: {
+            from: "categories",
+            localField: "category",
+            foreignField: "_id",
+            as: "newField"
+        }
+    }
+]);
   
-  res.render("sample",{products});
+  res.render("sample",{productData});
 }
 
 
@@ -274,8 +291,25 @@ const displaySize = async(req, res)=>{
   }
 }
 
-   
+const loadShopProduct = async(req, res)=>{
 
+                const categoryData = await category.find()
+                console.log("This is category data: ",categoryData)
+                const filteredProduct = await product.find()
+                res.render("shop",{categoryData, filteredProduct})
+}
+
+const filterCatergoryProducts = async(req, res)=>{
+                    console.log("Entered into fileterCategory in userController");
+                    const categoryId = req.query.catId;
+                    const categoryData = await category.find();
+                    console.log("This is category Id:",categoryId);
+                    const filteredProduct = await product.find({category:new ObjectId(categoryId)})
+                    console.log("This is filtered Product: ",filteredProduct);
+
+                    res.render("shop",{filteredProduct,categoryData})
+               
+}
 
 
 
@@ -294,7 +328,9 @@ module.exports = {
               loginHome,
               loadVeiwProduct,
               displaySize,
-              loadGuestUserHome
+              loadGuestUserHome,
+              loadShopProduct,
+              filterCatergoryProducts
 
               
               

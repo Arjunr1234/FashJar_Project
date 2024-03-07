@@ -128,6 +128,8 @@ const changePassword = async (req, res) => {
         console.log('Hashed New Password:', hashedNewPassword);
   
         var savePasswordAndCheck = await user.updateOne({ _id: userId }, { password: hashedNewPassword });
+        console.log("Password is updated");
+       // res.redirect("/profile")
       }else{
         console.log("confirmpassword not same newPassword");
         return res.json({ success: true, message: 'confirm password not same newPassword' });
