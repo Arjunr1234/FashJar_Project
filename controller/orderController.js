@@ -3,6 +3,7 @@ const product = require('../models/productModel')
 const placeOrderHelper = require("../helper/placeOrderHelper");
 const objectId = require("mongoose").Types.ObjectId;
 //const { ObjectId } = require('mongodb');
+const user = require("../models/userModel")
 
 
 
@@ -160,10 +161,54 @@ const objectId = require("mongoose").Types.ObjectId;
              
   }
 
+  const loadAddressEditCheckout = async(req, res)=>{
+      console.log("Entered in to loadAddressEditCheckout in orderController");
+      const addressId = req.query.addressId;
+      
+      
+      console.log("This is the address Id: ",new objectId(addressId));
+      const addressData = await user.findOne({_id:req.session.user._id},{"address":{$elemMatch:{_id:new objectId(addressId)}}})
+      console.log("This is addressData :", addressData)
+       res.render("EditAddressInCheckoutPage",{addressData})
+                    
+  }
+
+  const updateAddress = async(req, res)=>{
+    try {
+         
+      console.log("Entered into updateUserAddress of profileController");
+      const addressId = req.query.addressId
+      console.log(addressId)
+      const userId = req.session.user._id;
+
+      const receivedAddress = {
+        name: req.body.addresName,
+        mobile: req.body.addressmobile,
+        houseName: req.body.housename,
+        pincode: req.body.pincode,
+        cityOrTown: req.body.townOrCity,
+        district: req.body.district,
+        state: req.body.state,
+        country: req.body.country
+      }
+
+     const updatingAddress = await user.updateOne({_id:userId,"address._id":addressId},{$set:{"address.$":receivedAddress}});
+     console.log(updatingAddress);
+     res.redirect('/proceedToCheckOut')
+      
+     } catch (error) {
+      console.log(error)
+      
+     }
+
+  }
+
 module.exports = {
   placeOrder,
   loadSuccessPage,
   loadViewOrderDetails,
   deleteOrder,
-  returnProduct
+  returnProduct,
+  loadAddressEditCheckout,
+  updateAddress
 }

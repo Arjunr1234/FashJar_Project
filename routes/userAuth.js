@@ -21,12 +21,12 @@ router.get('/register', userController.loadRegister);
 router.get('/logout',isUser, userController.loadLogout);
 router.get('/sampleForCheck',isUser,userController.loadSample)
 
-router.get('/sendotp',isUser, userController.loadOtpVerify);
-router.post('/otp',isUser,userHelper.checkUserExist, otpHelper.sendOtp);
+router.get('/sendotp', userController.loadOtpVerify);
+router.post('/otp',userHelper.checkUserExist, otpHelper.sendOtp);
 
-router.post('/verify-otp',isUser, userController.insertUserWithVerify);
-// router.get('/resendOtp', otpHelper.sendOtp);
-router.get('/resendOtp',isUser, userController.loadOtpVerify);
+router.post('/verify-otp', userController.insertUserWithVerify);
+ router.get('/resendOtp', otpHelper.resendOtp);
+//router.get('/resendOtp', userController.loadOtpVerify);
 router.get('/viewProduct',isUser,userController.loadVeiwProduct)
 
 router.post('/size/:id/:size',isUser, userController.displaySize);
@@ -66,7 +66,9 @@ router.post('/placeOrder',isUser,orderController.placeOrder);
 router.get('/orderIsPlaced',isUser,orderController.loadSuccessPage);
 router.get('/viewOrderDetails',isUser,orderController.loadViewOrderDetails);
 router.post('/deleteOrder',isUser,orderController.deleteOrder);
-router.post('/retrunProduct',isUser,orderController.returnProduct)
+router.post('/retrunProduct',isUser,orderController.returnProduct);
+router.get('/editAddressCheckout',isUser, orderController.loadAddressEditCheckout);
+router.post('/updateAddressInCheckoutPage',isUser,orderController.updateAddress)
 
 module.exports = router;
 

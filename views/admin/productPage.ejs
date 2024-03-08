@@ -136,21 +136,21 @@
                 
                 <div class="card-body">
                   <div class="col-md-13">
-                     
-                   
-
+                    
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th class="col-md-2">Images</th>
-                                    <th class="col-md-2 ">Name</th>
-                                    <th class="col-md-2 ">Category</th>
-                                    <th class="col-md-1 text-center">Regular Price</th>
+                                    <th class="col-md-1">Images</th>
+                                    <th class="col-md-2 text-center ">Name</th>
+                                    <th class="col-md-2 text-center">Category</th>
+                                    <th class="col-md-1 text-center">Small</th>
+                                    <th class="col-md-1 text-center">Medium</th>
+                                    <th class="col-md-1 text-center">Large</th>
                                     <th class="col-md-1 text-center">Sale Price</th>
                                     <!-- <th class="col-md-1 text-center">Quantity</th> -->
                                     <th class="col-md-2 text-center">List/Unlist</th>
-                                    <th class="text-center col-md-1">Edit</th>
+                                    <th class=" col-md-1 text-center col-md-1">Edit</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -158,7 +158,7 @@
                               <% if (locals.productDetails  ) { %>
                                 <% for (let i = 0; i < productDetails.length; i++) { %>
                                     <tr>
-                                        <td class="col-md-2 ">
+                                        <td class="col-md-1 ">
                                           <div class="itemside">
                                             <div class="left">
                                                 <img src="/public/uploads/product-images/<%=productDetails[i].productImage[0] %>" class="img-sm img-thumbnail" alt="Item">
@@ -166,9 +166,9 @@
                                             
                                         </div>
                                         </td>
-                                        <td class="col-md-2 align-self-center align-items-center"><%= productDetails[i].productName %></td>
+                                        <td class="col-md-2 align-self-center align-items-center text-center"><%= productDetails[i].productName %></td>
                                         <!-- <td class="col-md-2 "><//%= productDetails[i].newfield[0].name %></td> -->
-                                        <td class="col-md-2 ">
+                                        <td class="col-md-2 text-center ">
                                           <% if (productDetails[i].newfield && productDetails[i].newfield.length > 0) { %>
                                               <%= productDetails[i].newfield[0].name %>
                                           <% } else { %>
@@ -176,7 +176,28 @@
                                               No Category
                                           <% } %>
                                       </td>
-                                        <td class="col-md-1 text-center"><%= productDetails[i].regularPrice %></td>
+                                      <th class="col-md-1 text-center">
+                                        <% if( productDetails[i].size.s.quantity === 0){%>
+                                                  <span style="color: red;"><%= productDetails[i].size.s.quantity %></span>
+                                            <%}else{%>
+                                                <span><%= productDetails[i].size.s.quantity %></span>
+                                                <%} %>
+                                      </th>
+                                      <th class="col-md-1 text-center">
+                                        <% if( productDetails[i].size.m.quantity === 0){%>
+                                            <span style="color: red;"><%= productDetails[i].size.m.quantity %></span>
+                                      <%}else{%>
+                                          <span><%= productDetails[i].size.m.quantity %></span>
+                                          <%} %>
+                                      </th>
+                                      <th class="col-md-1 text-center">
+
+                                        <% if( productDetails[i].size.l.quantity === 0){%>
+                                            <span style="color: red;"><%= productDetails[i].size.l.quantity %></span>
+                                      <%}else{%>
+                                          <span><%= productDetails[i].size.l.quantity %></span>
+                                          <%} %>
+                                      </th>
                                         <td class="col-md-1 text-center"><%= productDetails[i].salePrice  %></td>
                                         <!-- <td class="col-md-2 text-center"><%=// productDetails[i].regularPrice  %></td> -->
                                        

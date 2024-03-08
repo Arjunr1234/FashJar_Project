@@ -1,0 +1,72 @@
+<%- include("../partials/userHeader") %>
+    <main class="main">
+        
+        <section class="pt-100 pb-120">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-10 m-auto">
+                        <div class="row">
+                           
+                            <div class="col-md-8">
+                                <div class="tab-content dashboard-content">
+                                    
+                                    
+                                    
+                                   
+                                        <div class="card">
+                                            <div class="card-header" style="background-color: black;">
+                                                <h5 style="color: white;" >Edit Address<span style="color: yellow;">+</span></h5>
+                                            </div>
+                                            <div class="card-body">
+                                              <form class="" method="post" action="/updateAddressInCheckoutPage?addressId=<%= addressData.address[0]._id %>" id="addressForm">
+                                                <div class="row">
+                                                    <div class="form-group col-md-6">
+                                                        <label><span class="required"></span></label>
+                                                        <input required="" class="form-control square" id="addresName" name="addresName" type="text" placeholder="Name" style="border: 1px solid black;" value="<%= addressData.address[0].name %>">
+                                                        <div id="addresName-error" class="error-message"></div>
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+                                                        <label> <span class="required"></span></label>
+                                                        <input required="" class="form-control square" id="addressmobile" name="addressmobile" type="number" placeholder="10-Digit-Phone-Number" style="border: 1px solid black;" value="<%= addressData.address[0].mobile %>">
+                                                        <div id="addressmobile-error" class="error-message"></div>
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+                                                        <label> <span class="required"></span></label>
+                                                        <input required="" class="form-control square" id="housename" name="housename" type="text" placeholder="House Name" style="border: 1px solid black;" value="<%= addressData.address[0].houseName %>">
+                                                        <div id="housename-error" class="error-message"></div>
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+                                                        <label><span class="required"></span></label>
+                                                        <input required="" class="form-control square" id="pincode" name="pincode" type="number" placeholder="PINCODE*" style="border: 1px solid black;" value="<%= addressData.address[0].pincode %>">
+                                                        <div id="pincode-error" class="error-message"></div>
+                                                    </div>
+                                                    <div class="form-group col-md-16">
+                                                        <label><span class="required"></span></label>
+                                                        <input required="" class="form-control square" name="townOrCity" id="townOrCity" type="text" placeholder="City/Town*" style="border: 1px solid black;" value="<%= addressData.address[0].cityOrTown %>">
+                                                        <div id="townOrCity-error" class="error-message"></div>
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+                                                        <label><span class="required"></span></label>
+                                                        <input required="" class="form-control square" name="district" type="text"  id="district" placeholder="District*" style="border: 1px solid black;" value="<%= addressData.address[0].district %>">
+                                                        <div  id="district-error" class="error-message" ></div>
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+                                                        <label><span class="required"></span></label>
+                                                        <input required="" class="form-control square"  id="state" name="state" type="text" placeholder="State*" style="border: 1px solid black;" value="<%= addressData.address[0].state %>">
+                                                        <div id="state-error" class="error-message"></div>
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+                                                        <label><span class="required"></span></label>
+                                                        <input required="" class="form-control square" id="country" name="country" type="text" placeholder="Country*" style="border: 1px solid black;" value="<%= addressData.address[0].country %>">
+                                                        <div id="country-error" class="error-message"></div>
+                                                    </div>
+                                                    
+                                                    <div class="col-md-10">
+                                                        <button type="submit" class="btn btn-fill-out " style="background-color: black;" name="submit" value="Submit">Update</button>
+                                                    </div>
+                                                    
+                                                </div>
+                                            </form>
+                                            </div>
+                                            </div>
+                                            <script src="/public/js/addressValidation.js"></script>

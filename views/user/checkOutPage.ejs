@@ -122,8 +122,8 @@
                                                   checked>
                                           </div>
                                           <label for="address<%= userAddress.address[i]._id %>" class= "mt-2 pl-10">Select Address</label>
-                                          <a href="/editAddress/<%= userAddress.address[i]._id %>"
-                                              class="btn btn-secondary btn-sm ml-15 text-white ">Edit Address</a>
+                                          <a href="/editAddressCheckout?addressId=<%= userAddress.address[i]._id %>"
+                                              class="btn btn-secondary btn-sm ml-15 text-white " style="width: 20%; height:min-content">Edit </a>
                                       </div>
                                   </li>
                               <% } %>

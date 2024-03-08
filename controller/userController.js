@@ -38,7 +38,7 @@ const loadRegister = function(req, res){
 
 const insertUserWithVerify = async function(req, res) {
   try {
-    const resendedOtp = req.session.resendedOtp;
+    
     const sendedOtp = req.session.otp;
     const verifyOtp = req.body.otp;
     console.log(sendedOtp);

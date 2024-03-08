@@ -204,6 +204,42 @@ const addToCart = async (req, res) => {
                     console.log("This is alpha : ",alpha);
                     console.log("This is received productSize :",receivedSize);
 
+                    let products = await product.findOne({ _id: receivedProductId });
+
+                    if (products && products.size && products.size[receivedSize]) {
+                      var sizeQuantityInProduct = products.size[receivedSize].quantity;
+                      console.log(`Quantity for size ${receivedSize}: ${sizeQuantityInProduct}`);
+                    } else {
+                      console.log(`Product with ID ${receivedProductId} or size ${receivedSize} not found.`);
+                    }
+                    const cartD = await cart.findOne({ userId: receivedUserId }, { _id: 0, items: 1 });
+                    console.log("The cartData: ", cartD);
+                    
+                    function getQuantity(productId, size, cart) {
+                      const item = cart.items.find(item =>
+                        item.productId.equals(productId) && item.size === size
+                      );
+                    
+                      return item ? item.quantity : 0;
+                    }
+                    
+                    const result = getQuantity(
+                      new ObjectId(receivedProductId), // replace with your actual productId
+                      receivedSize, // replace with your actual size
+                      cartD
+                    );
+                    
+                  //  console.log("This is the cart quantity size: ", result);
+                    
+                   
+                  const cartSizeQuantity = result;
+                  const productSizeQuantity = parseInt(sizeQuantityInProduct);
+                  console.log("Thsi is cartsize Quantity : ",cartSizeQuantity);
+                  console.log("This is productsize Quanttiy ;  ",productSizeQuantity);
+
+                  if(productSizeQuantity > cartSizeQuantity || alpha === -1){
+
+                    console.log("Entered into else of quatity exceed");
 
                     const user = await cart.find({userId:receivedUserId})
                     if(alpha === 1){
@@ -231,6 +267,18 @@ const addToCart = async (req, res) => {
                     res.json({response:true})
 
                     }
+                    
+                  }else{
+
+                    console.log("Entered in to quantity exceed")
+                    res.json({response:false})
+                   
+
+
+                  }
+
+
+                   
                                  
  }
 
@@ -268,7 +316,7 @@ const addToCart = async (req, res) => {
                 }
                  const userAddress = await user.findOne({_id:userId},{address:1})
                  console.log("This is the userAddress in loadCheckOutPage ", userAddress)
-              
+                  
                   res.render("checkOutPage",{products, TotalPriceOfCart, userAddress})
               }else{
                 console.log("req.session.user is not found in loadCheckOutPage");
