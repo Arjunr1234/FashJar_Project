@@ -13,7 +13,8 @@ const cartSchema = mongoose.Schema({
     },
     quantity:{type:Number, default:1},
     price:{type:Number, required:true},
-    size:{type:String, required:true}
+    size:{type:String, required:true},
+    subTotal:{type:Number, required:true}
   }],
   createdOn:{type:Date, default:Date.now},
   totalAmount:{

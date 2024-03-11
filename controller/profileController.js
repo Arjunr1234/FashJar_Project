@@ -123,39 +123,38 @@ const changePassword = async (req, res) => {
     console.log('Current Password Matches:', currentPasswordMatches);
 
     if (currentPasswordMatches) {
-      if(newPassword === confirmPassword){
-        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
-        console.log('Hashed New Password:', hashedNewPassword);
-  
-        var savePasswordAndCheck = await user.updateOne({ _id: userId }, { password: hashedNewPassword });
-        console.log("Password is updated");
-       // res.redirect("/profile")
-      }else{
-        console.log("confirmpassword not same newPassword");
-        return res.json({ success: true, message: 'confirm password not same newPassword' });
-      }
-      
+      if (newPassword === confirmPassword) {
+        try {
+          const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+          const savePasswordAndCheck = await user.updateOne({ _id: userId }, { password: hashedNewPassword });
 
-      
-
-      if (savePasswordAndCheck.modifiedCount === 1) {
-        console.log('Password changed successfully');
-        res.redirect('/profile')
-       
+          if (savePasswordAndCheck.modifiedCount === 1) {
+            console.log('Password changed successfully');
+            return res.json({ success: true, url: "/profile" });
+          } else {
+            console.log('Password not changed');
+            return res.json({ success: false, message: 'Password not changed' });
+          }
+        } catch (error) {
+          console.error('Error updating password:', error);
+          return res.json({ success: false, message: 'Internal server error' });
+        }
       } else {
-        console.log('Password not changed');
-        
+        console.log("confirm password not same newPassword");
+        return res.json({ success: false, message: 'Confirm password not same as new password' });
       }
     } else {
       console.log('Current password is incorrect');
-      res.redirect('/profile')
-     
+      return res.json({ success: false, message: 'Enter your correct password' });
     }
   } catch (error) {
     console.error('Error:', error);
-   
+    return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
+
+
+
 
 const editUserDetails = async (req, res)=>{
 
@@ -177,8 +176,11 @@ const editUserDetails = async (req, res)=>{
 
          if(checkPassword){
           const updateUserData = await user.updateOne({_id:req.session.user._id},{$set:receivedData})
+          res.json({success:true})
+        // res.redirect('/profile')
          }else{
-          console.log("password is incorrect")
+          console.log("password is incorrect");
+          res.json({success:false, message:"Enter the correct Password"})
          }
 
 }

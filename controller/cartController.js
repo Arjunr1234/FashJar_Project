@@ -21,11 +21,20 @@ const loadCartPage = async (req, res) => {
           const cartProduct = await product.findById(userCart.items[i].productId); 
           console.log("This is the items in the cartProduct", cartProduct)
           const size = userCart.items[i].size;
+          const sizeQuantity = cartProduct.size[size].quantity
           const quantity = userCart.items[i].quantity;
+          const subtotal = userCart.items[i].subTotal
+          const totalAmoutCart = userCart.totalAmount
           const finalProduct = Object.assign({}, cartProduct.toObject(), {
             size: size
           },{
             userId:userId
+          },{
+            stock:sizeQuantity
+          },{
+            subTotal:subtotal
+          },{
+            totalAmoutCart:totalAmoutCart
           },
             { quantity: quantity })
           if (products) {
@@ -43,6 +52,7 @@ const loadCartPage = async (req, res) => {
         }
         console.log("This si the total Price:",TotalPriceOfCart);
         console.log("This is the cartData from cartRednderPage:",cartData)
+        console.log("This is products: ",products);
        // console.log("This is the product that is sending to CartPage: ", products)
         res.render("cartPage", { products,TotalPriceOfCart,cartData });
       } else {
@@ -76,7 +86,9 @@ const addToCart = async (req, res) => {
       const cartItems = {
         productId : productId,
         price:productData.salePrice,
-        size:size
+        size:size,
+        quantity:1,
+        subTotal:productData.salePrice,
       }
 
       const userAlreadyHaveCart = await cart.findOne({userId:userId});
@@ -278,9 +290,102 @@ const addToCart = async (req, res) => {
                   }
 
 
-                   
-                                 
- }
+}
+
+const incrementQuantity = async (req, res)=>{
+                      console.log("Entered into increment quantity of cartController");
+                      
+                      const {productId,size,index,stock,productPrice } = req.body
+                      const price = parseInt(productPrice)
+                      console.log("This is productId: ",new ObjectId(productId));
+                      console.log("This size of product: ",size);
+                      console.log("This is index :",index);
+                      console.log("This is stock of prodcut: ",parseInt(stock));
+                      
+                      console.log("This is price : ",productPrice)
+                      console.log("This is userId: ",req.session.user._id)
+                      const cartData = await cart.findOne({userId:new ObjectId(req.session.user._id)})
+
+                      const cartD = await cart.findOne({ userId: new ObjectId(req.session.user._id) }, { _id: 0, items: 1 });
+                      function getQuantity(productId, size, cart) {
+                        const item = cart.items.find(item =>
+                          item.productId.equals(productId) && item.size === size
+                        );
+                      
+                        return item ? item.quantity : 0;
+                      }
+                      const cartQuantity = getQuantity(new ObjectId(productId), size, cartD );
+                      console.log("This is the new cartQuanty: ",cartQuantity)
+
+                      if(parseInt(stock) > parseInt(cartQuantity)){
+                        if(parseInt(cartQuantity)<10){
+                          const increment = await cart.findOneAndUpdate({
+                            userId: new ObjectId(req.session.user._id),
+                             "items.productId":new ObjectId(productId),
+                             "items.size":size
+                           },{
+                             $inc: {
+                               "items.$.quantity": 1,
+                               "items.$.subTotal": price, 
+                               totalAmount:price
+                             }
+                           })
+                           const cartData  = await cart.findOne({userId:new ObjectId(req.session.user._id)})
+                           console.log("This is cartData totalAnount: ",cartData.totalAmount)
+                           res.json({status:true,totalAmount:cartData.totalAmount})
+   
+                           console.log("This is incremented :",increment)
+
+                        }else{
+                          console.log("10 unit is exceed per cart");
+                          res.json({status:false,response:"execeedLimit"})
+                        }
+                        
+                        
+                      }else{
+                        console.log("storck is less")
+                        res.json({status:false,response:"stockLess"})
+                      }
+
+                  
+}
+
+const decreaseQuantity = async(req, res)=>{
+        console.log("Entered into decrease quantity in the cartController");
+
+        const {productId,size,index,stock,productPrice } = req.body;
+        const price = parseInt(productPrice)
+        const cartD = await cart.findOne({ userId: new ObjectId(req.session.user._id) }, { _id: 0, items: 1 });
+                      function getQuantity(productId, size, cart) {
+                        const item = cart.items.find(item =>
+                          item.productId.equals(productId) && item.size === size
+                        );
+                      
+                        return item ? item.quantity : 0;
+                      }
+                      const cartQuantity = getQuantity(new ObjectId(productId), size, cartD );
+                      console.log("This is the new cartQuanty: ",cartQuantity)
+
+                      if(parseInt(cartQuantity)>1){
+                        const decrement = await cart.findOneAndUpdate({
+                          userId: new ObjectId(req.session.user._id),
+                           "items.productId":new ObjectId(productId),
+                           "items.size":size
+                         },{
+                           $inc: {
+                             "items.$.quantity": -1,
+                             "items.$.subTotal": -price, 
+                             totalAmount:-price
+                           }
+                         })
+                         console.log("this is decrement:",decrement);
+                         const cartData  = await cart.findOne({userId:new ObjectId(req.session.user._id)})
+                         res.json({status:true,totalAmount:cartData.totalAmount})
+
+                      }else{
+                        console.log('Error: quantity is 1')
+                      }
+}
 
   const loadCheckOutPage = async(req, res)=>{
            console.log("Entered in to loadCheckOutPage in the cartController");
@@ -336,5 +441,7 @@ module.exports = {
               productWithSizeCartCheck,
               deleteCartedItems,
               changeQuantity,
-              loadCheckOutPage
+              loadCheckOutPage,
+              incrementQuantity,
+              decreaseQuantity
 }

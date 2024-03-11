@@ -155,7 +155,7 @@ const loadUserHome = async function (req, res) {
           const newAddedProducts = await product.find().sort({creationOn:-1})
 
           
-          console.log("This is new Added Products:" ,newAddedProducts)
+        //  console.log("This is new Added Products:" ,newAddedProducts)
           
           res.render("userHome", { productData,categoryData,userData,newAddedProducts });
       } else {

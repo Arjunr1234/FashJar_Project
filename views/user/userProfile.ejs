@@ -185,31 +185,32 @@
                                             <h5 style="color: white;">Account Details</h5><span><p style="color: white;">Also You Can Edit</p></span>
                                         </div>
                                         <div class="card-body">
-                                            <form class="" method="post" action="/editUserDetails" id="">
-
+                                            <form class="" method="post"  id="detailsEdit">
                                                 <div class="row">
                                                     <div class="form-group col-md-6">
-                                                        <label> Name <span class="required">*</span></label>
-                                                        <input required="" class="form-control square black-border" id="proname" name="name" type="text" value="<%= userData.name %>">
+                                                        <label>Name <span class="required">*</span></label>
+                                                        <input required="" class="form-control square black-border" id="pronamex" name="name" type="text" value="<%= userData.name %>">
+                                                        <div style="color: red;" id="proname-error" class="error-message"></div>
                                                     </div>
-                                                    <div style="color: red;" id="proname-error"></div>
+                                            
                                                     <div class="form-group col-md-6">
                                                         <label>Mobile Number <span class="required">*</span></label>
-                                                        <input required="" class="form-control square black-border" id="pronumber" name="mobile" type="number" value="<%= userData.mobile %>">
+                                                        <input required="" class="form-control square black-border" id="pronumberx" name="mobile" type="number" value="<%= userData.mobile %>">
+                                                        <div style="color: red;" id="pronumber-error" class="error-message"></div>
                                                     </div>
-                                                    <div style="color: red;" id="pronumber-error"></div>
-                                
+                                            
                                                     <div class="form-group col-md-12">
                                                         <label>Email Address <span class="required">*</span></label>
-                                                        <input required="" class="form-control square black-border" name="email" type="email" value="<%= userData.email %>"  readonly>
+                                                        <input required="" class="form-control square black-border" name="email" type="email" value="<%= userData.email %>" readonly>
                                                     </div>
-                                
+                                            
                                                     <div class="form-group col-md-12">
-                                                        <label> Password <span class="required">*</span></label>
-                                                        <input required="" class="form-control square black-border" name="password" type="password">
+                                                        <label>Password <span class="required">*</span></label>
+                                                        <input required="" class="form-control square black-border" name="password" id="passwordx" type="password">
                                                     </div>
+                                            
                                                     <div class="col-md-12">
-                                                        <button type="submit" class="btn btn-fill-out " style="background-color:black;" name="submit" value="Submit">Save</button>
+                                                        <button type="button" class="btn btn-fill-out" style="background-color:black;" name="submit" value="Submit" id="detailsEditSubmitButton" onclick="addDetails()">Save</button>
                                                     </div>
                                                 </div>
                                             </form>
@@ -260,7 +261,7 @@
                                                     <h5 style="color: white;">Edit Password</h5>
                                                 </div>
                                                 <div class="card-body" style="color: white;">
-                                                    <form class="" method="post" action="/changepassword" id="editPasswordForm">
+                                                    <form class="" method="post"  id="editPasswordForm">
                                                         <div class="row">
                                                             <div class="form-group col-md-12">
                                                                 <label>Current Password <span class="required">*</span></label>
@@ -278,7 +279,7 @@
                                                                 <div id="error3" class="error-message"></div>
                                                             </div>
                                                             <div class="col-md-12">
-                                                                <button type="submit" class="btn btn-fill-out " style="background-color: black;" name="submit" value="Submit">change</button>
+                                                                <button type="button" class="btn btn-fill-out " style="background-color: black;" name="submit" value="Submit " onclick="changePassword()" >change</button>
                                                             </div>
                                                         </div>
                                                     </form>   
@@ -406,6 +407,8 @@
 <!-- Preloader Start -->
 
 <!-- Vendor JS-->
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script src="/public/js/accountDetailsVal.js"></script>
 <script src="/public/js/editPasswordValidation.js"></script>
 <script src="/public/js/addressValidation.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -482,6 +485,87 @@
     });
   }
   
+</script>
+
+<script>
+    function changePassword() {
+        console.log("Entered into change Password");
+        const currentPassword = document.getElementById('currentpassword').value;
+        const newPassword = document.getElementById('newpassword').value;
+        const confirmPassword = document.getElementById('conformPass').value;
+    
+        const formData = {
+            currentpassword: currentPassword,
+            newpassword: newPassword,
+            confirmpassword: confirmPassword
+        };
+    
+        $.ajax({
+            url: '/changepassword',
+            type: 'POST',  // Use 'type' instead  of 'method'
+            contentType: 'application/json',
+            data: JSON.stringify(formData),
+            dataType: 'json',  // Specify the expected data type of the response
+            success: function (response) {
+                if (response.success) {
+                    location.reload();
+                } else {
+                    Toastify({
+                        text: response.message,
+                        backgroundColor: "red",
+                        duration: 3000,
+                        position: "center"
+                    }).showToast();
+                }
+            },
+            error: function (error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    
+    
+</script>
+<script>
+   
+        // Your code here
+
+        function addDetails() {
+            
+            const name = document.getElementById('pronamex').value;
+            const mobile = document.getElementById('pronumberx').value;
+            const password = document.getElementById('passwordx').value;
+            
+
+            const formData = {
+                name: name,
+                mobile: mobile,
+                password: password
+            };
+
+            $.ajax({
+                url: '/editUserDetails',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {
+                        location.reload();
+                    } else {
+                        Toastify({
+                            text: response.message,
+                            backgroundColor: "red",
+                            duration: 3000,
+                            position: "center"
+                        }).showToast();
+                    }
+                }
+            });
+        }
+
+       
 </script>
 
 

@@ -27,7 +27,7 @@ router.post('/otp',userHelper.checkUserExist, otpHelper.sendOtp);
 router.post('/verify-otp', userController.insertUserWithVerify);
  router.get('/resendOtp', otpHelper.resendOtp);
 //router.get('/resendOtp', userController.loadOtpVerify);
-router.get('/viewProduct',isUser,userController.loadVeiwProduct)
+router.get('/viewProduct',userController.loadVeiwProduct)
 
 router.post('/size/:id/:size',isUser, userController.displaySize);
 
@@ -47,6 +47,8 @@ router.get('/productWithSizeCartCheck',isUser,cartController.productWithSizeCart
 router.get('/deleteCartItems',isUser,cartController.deleteCartedItems);
 router.patch('/changeQuantity',isUser,cartController.changeQuantity);
 router.get('/proceedToCheckOut',isUser,cartController.loadCheckOutPage)
+router.post('/incrementQuantity',isUser ,cartController.incrementQuantity);
+router.post('/decrementQuantity',isUser,cartController.decreaseQuantity)
 
 
 //================profiles=========================================
