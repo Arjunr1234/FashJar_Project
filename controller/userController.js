@@ -8,6 +8,7 @@ const bcrypt = require("bcrypt")
 const product = require("../models/productModel")
 const category = require("../models/categoryModel")
 const cart = require("../models/cartModel");
+const offerHelper = require("../helper/offerHelper")
 const {ObjectId} = require("mongoose").Types
 
 
@@ -138,22 +139,17 @@ const loadUserHome = async function (req, res) {
 
           const cartData = await cart.findOne({userId:userData._id})
          
+          console.log("This is place berfore entering into the forloop")
           
-         const cartCount =  await cart.aggregate([
-            {
-              $match: {
-                "userId": userData._id
-              }
-            },
-            {
-              $project: {
-                itemCount: { $size: "$items" }
-              }
-            }
-          ])
+          for(let i=0; i<productData.length; i++){
+            const product = productData[i];
+            const caluclatedPrice = await offerHelper.calculateOfferPrice(product)
+            product.offerPrice = caluclatedPrice
+          }
+         
 
           const newAddedProducts = await product.find().sort({creationOn:-1})
-
+          console.log("This is the productData: ",productData);
           
         //  console.log("This is new Added Products:" ,newAddedProducts)
           
@@ -183,7 +179,8 @@ const loadGuestUserHome = async (req, res)=>{
                   }
               }
           ]);
-          const categoryData = await category.find({isListed:true})
+          const categoryData = await category.find({isListed:true});
+          
             
             res.render("userHome",{productData,categoryData})
 }
@@ -250,9 +247,13 @@ const loadVeiwProduct = async(req, res)=>{
          const productId = req.query.id;
          const userData = req.session.user
          
-         const products =await product.find({_id:productId})
+         let products = await product.findById({_id:productId}).lean();
+         const calculatedPrice = await offerHelper.calculateOfferPrice(products);
+         products.offerPrice = calculatedPrice
+
          
-         
+         console.log("This is the product view products (athe ith thanne):",products)
+        //  console.log("offerprice: ",products.offerPrice)
          
          res.render("productView",{products,userData});
 

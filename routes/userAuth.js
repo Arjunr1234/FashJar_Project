@@ -6,7 +6,9 @@ const userHelper = require("../helper/userHelper");
 const cartController = require("../controller/cartController");
 const profileController = require("../controller/profileController");
 const orderController = require("../controller/orderController");
+const wishlistController = require("../controller/wishlistController")
 const isUser = require("../middlewares/userLoggingMiddleware");
+const wishlist = require("../models/wishlistModel");
 
 
 router.get('/', userController.loginLoad);
@@ -45,7 +47,7 @@ router.get('/loadCartPage',isUser,cartController.loadCartPage);
 router.post('/addToCart',isUser, cartController.addToCart);
 router.get('/productWithSizeCartCheck',isUser,cartController.productWithSizeCartCheck);
 router.get('/deleteCartItems',isUser,cartController.deleteCartedItems);
-router.patch('/changeQuantity',isUser,cartController.changeQuantity);
+//router.patch('/changeQuantity',isUser,cartController.changeQuantity);
 router.get('/proceedToCheckOut',isUser,cartController.loadCheckOutPage)
 router.post('/incrementQuantity',isUser ,cartController.incrementQuantity);
 router.post('/decrementQuantity',isUser,cartController.decreaseQuantity)
@@ -70,7 +72,17 @@ router.get('/viewOrderDetails',isUser,orderController.loadViewOrderDetails);
 router.post('/deleteOrder',isUser,orderController.deleteOrder);
 router.post('/retrunProduct',isUser,orderController.returnProduct);
 router.get('/editAddressCheckout',isUser, orderController.loadAddressEditCheckout);
-router.post('/updateAddressInCheckoutPage',isUser,orderController.updateAddress)
+router.post('/updateAddressInCheckoutPage',isUser,orderController.updateAddress);
+
+//===========================Wishlist========================================
+
+router.get('/loadwishlist',isUser,wishlistController.loadWishlistPage);
+router.post('/addToWishlist',isUser,wishlistController.addToWishlist);
+router.post('/deleteWishlist',isUser,wishlistController.deleteWishlist);
+router.post('/addToCartFromWishlist',isUser,wishlistController.addToCart)
+
+
+//===========================================================================
 
 module.exports = router;
 

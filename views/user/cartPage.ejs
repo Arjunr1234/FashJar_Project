@@ -193,23 +193,12 @@
                                                         </p>
                                                     </td>
                                                     <td class="size"><%= products[i].size.toUpperCase() %></td>
-                                                    <td class="price" id="price<%= i %>" data-title="Price"><span><%=products[i].salePrice %></span></td>
-                                                    <!-- <td class="text-center" data-title="Stock">
-                                                        <div class="detail-qty border radius  m-auto">
-                                                        
-                                                            <a href="#" class="qty-down"><i class="fi-rs-angle-small-down" onclick="changeQuantity('<%= products[i].userId %>','<%= products[i]._id %>',-1,'<%= products[i].size %>')" <%= cartData.items[i].quantity === 1 ? 'disabled' : '' %>></i></a>
-                                                            
-                                                            <span class="qty-val"  id="productQuantity<%= i %>"><%= products[i].quantity %></span>
-                                                            
-                                                            <a href="#" class="qty-up" ><i class="fi-rs-angle-small-up" onclick="changeQuantity('<%= products[i].userId %>','<%= products[i]._id %>',1,'<%= products[i].size %>')"></i></a>
-                                                               
-                                                           
-                                                        </div>
-                                                    </td> -->
+                                                    <td class="price" id="price<%= i %>" data-title="Price"><span><%=products[i].offerPrice %></span></td>
+                                                    
                                                     <td class="text-center" data-title="Stock">
                                                         <div class="detail-qty border radius  m-auto" style="display: flex; align-items: center;">
                                                     
-                                                            <button onclick="decrement('<%=products[i]._id %>','<%= products[i].size %>','<%=i%>','<%=products[i].stock  %>','<%=products[i].quantity %>','<%=products[i].salePrice %>')"
+                                                            <button id="decrementButton<%= i %>" onclick="decrement('<%=products[i]._id %>','<%= products[i].size %>','<%=i%>','<%=products[i].stock  %>','<%=products[i].quantity %>','<%=products[i].offerPrice %>')"
                                                                     style="background-color: rgb(50, 134, 224);width: 50px; height: 25px; border: none; color: white; ">-</button>
                                                     
                                                             <div class="detail-qty border radius  m-auto" style="margin: 0 10px;">
@@ -218,7 +207,7 @@
                                                                 </span>
                                                             </div>
                                                     
-                                                            <button onclick="increment('<%=products[i]._id %>','<%= products[i].size %>','<%=i%>','<%=products[i].stock  %>','<%=products[i].quantity %>','<%=products[i].salePrice %>')"
+                                                            <button id="incrementButton<%= i %>" onclick="increment('<%=products[i]._id %>','<%= products[i].size %>','<%=i%>','<%=products[i].stock  %>','<%=products[i].quantity %>','<%=products[i].offerPrice %>')"
                                                                     style="background-color: rgb(50, 134, 224);width: 50px; height: 25px; border: none; color: white; ">+</button>
                                                     
                                                         </div>
@@ -463,102 +452,88 @@
     }
     
 
-    function changeQuantity(userId, productId, alpha,productSize){
-
-        $.ajax({
-            url:`/changeQuantity?userId=${userId}&productId=${productId}&alpha=${alpha}&productSize=${productSize}`,
-            method:'PATCH',
-            contentType:'application/json',
-            success:function(response){
-                  if(response.response){
-                      location.reload()
-                  }else if(!response.response){
-                    Swal.fire({
-                        title: "Limit exeded!!",
-                        
-                        icon: "question"
-                      }).then((yes)=>{
-                        if(yes){
-                            location.reload()
-                        }
-                    })
-                    //location.reload()
-                    Toastify({
-                        text: "Quantity exceed the Limit!!",
-                        backgroundColor: "red",
-                        duration: 3000,
-                        position: "center" 
-                    }).showToast();
-                    
-                  }
-            }
-        })
-    }
+   
      
     function increment(productId, size, index, stock, cartQuantity,productPrice){
-            
-           const qty = document.getElementById("quantity" + index).innerHTML
-           const subTtl = document.getElementById("subtotal" + index).innerHTML
-           const total = document.getElementById("totalAmountOfCart" ).innerHTML
-         //  const price = document.getElementById("price" + index).innerHTML
-           const prc = document.getElementById("price" + index).innerHTML
-           const Grandtotal =  document.getElementById("totalCartAmount").innerHTML
-           console.log("This is product Price: ",productPrice);
-           console.log("This is qty:",parseInt(qty))
-           console.log("This is subTtl :",subTtl)
-           console.log("This is grandTotal: ",Grandtotal)
-
-           $.ajax({
-            url:'/incrementQuantity',
-            method:'post',
-            data:{
-                productId,size,index,stock,productPrice
-            },
-            success:(response)=>{
-                if(response.status){
-                    console.log("Entered into status true");
-                    console.log("This is response.totalAmount: ",response.totalAmount)
-                    
-                    document.getElementById("quantity" + index).innerHTML = parseInt(qty) + 1
-                    document.getElementById("subtotal" + index).innerHTML = parseInt(subTtl) + parseInt(productPrice);
-                    document.getElementById("totalAmountOfCart").innerHTML = response.totalAmount;
-                    document.getElementById("totalCartAmount").innerHTML = response.totalAmount
-
-                }else if(!response.status){
-                    if(response.response === 'stockLess'){
-
-                        Toastify({
-                            text: "Quantity exceed the avaliable stock!!",
-                            backgroundColor: "red",
-                            duration: 3000,
-                            position: "center" 
-                        }).showToast();
-
-                    }else if(response.response === 'execeedLimit'){
-
-                        Toastify({
-                            text: "Only 10 unit allowed in each order!!",
-                            backgroundColor: "red",
-                            duration: 3000,
-                            position: "center" 
-                        }).showToast();
-
-                    }
-
-
-                }
-            }
-           })
-
-
-    }
-
-    function decrement(productId, size, index, stock, cartQuantity,productPrice){
-            
+        console.log("Entered into increment ajax")
+         
         const qty = document.getElementById("quantity" + index).innerHTML
         const subTtl = document.getElementById("subtotal" + index).innerHTML
-      //  const total = document.getElementById("totalAmountOfCart" ).innerHTML
-        const prc = document.getElementById("price" + index).innerHTML
+        const total = document.getElementById("totalAmountOfCart" ).innerHTML
+        const prc = document.getElementById("price" + index).innerHTML;
+        const incrementBtn = document.getElementById("incrementButton"+index);
+        console.log("productId: ",productId);
+        console.log("size: ",size)
+       
+        
+
+        $.ajax({
+         url:'/incrementQuantity',
+         method:'post',
+         data:{
+             productId,size,index,stock,productPrice
+         },
+         success:(response)=>{
+             if(response.status){
+                 console.log("Entered into status true");
+                 console.log("This is response.totalAmount: ",response.totalAmount)
+                 
+                 document.getElementById("quantity" + index).innerHTML = parseInt(qty) + 1
+                 document.getElementById("subtotal" + index).innerHTML = parseInt(subTtl) + parseInt(productPrice);
+                 document.getElementById("totalAmountOfCart").innerHTML = response.totalAmount;
+                 document.getElementById("totalCartAmount").innerHTML = response.totalAmount
+                
+
+             }else if(!response.status){
+                 if(response.response === 'stockLess'){
+
+                     Toastify({
+                         text: "Quantity exceed the avaliable stock!!",
+                         backgroundColor: "red",
+                         duration: 3000,
+                         position: "center" 
+                     }).showToast();
+                      
+                    // incrementBtn.disabled = true;
+                    // setTimeout(function(){
+                    //     incrementBtn.disabled = false;
+                    // },3000)
+                    
+                 }else if(response.response === 'execeedLimit'){
+
+                     Toastify({
+                         text: "Only 10 unit allowed in each order!!",
+                         backgroundColor: "red",
+                         duration: 3000,
+                         position: "center" 
+                     }).showToast();
+
+
+                  //   incrementBtn.disabled = true;
+                  //   setTimeout(function(){
+                  //       incrementBtn.disabled = false;
+                  //   },3000)
+                   
+
+                 }
+
+
+             }
+         }
+        })
+
+
+ }
+
+    function decrement(productId, size, index, stock, cartQuantity,productPrice){
+        console.log("Entering to decrement function ajax");
+            
+        const qty = document.getElementById("quantity" + index).innerHTML;
+        const subTtl = document.getElementById("subtotal" + index).innerHTML;
+        const total = document.getElementById("totalAmountOfCart" ).innerHTML;
+        const prc = document.getElementById("price" + index).innerHTML;
+        const decrementBtn = document.getElementById("decrementButton");
+        
         
 
         $.ajax({
@@ -575,6 +550,10 @@
                  document.getElementById("subtotal" + index).innerHTML = parseInt(subTtl) - parseInt(productPrice);
                  document.getElementById("totalAmountOfCart").innerHTML = response.totalAmount;
                  document.getElementById("totalCartAmount").innerHTML = response.totalAmount
+
+             }else if(response.quantity === "equalToOne"){
+               // decrementBtn.disabled = false
+                  
 
              }
 

@@ -190,9 +190,9 @@
                                         <span class="zoom-icon"><i class="fi-rs-search"></i></span>
                                         <!-- MAIN SLIDES -->
                                         <div class="product-image-slider">
-                                            <% for( let i = 0; i < products[0].productImage.length; i++ ) { %>
+                                            <% for( let i = 0; i < products.productImage.length; i++ ) { %>
                                                 <figure class="border-radius-10">
-                                                    <img src="/public/uploads/product-images/<%= products[0].productImage[i] %>" alt="product image">
+                                                    <img src="/public/uploads/product-images/<%= products.productImage[i] %>" alt="product image">
                                                 </figure>
                                             <% } %>
        
@@ -200,8 +200,8 @@
                                         </div>
                                         <!-- THUMBNAILS -->
                                         <div class="slider-nav-thumbnails pl-15 pr-15">
-                                            <% for( let i = 0; i < products[0].productImage.length; i++ ) { %>
-                                                <div><img src="/public/uploads/product-images/<%= products[0].productImage[i] %>" alt="product image"></div>
+                                            <% for( let i = 0; i < products.productImage.length; i++ ) { %>
+                                                <div><img src="/public/uploads/product-images/<%= products.productImage[i] %>" alt="product image"></div>
                                             <% } %>
                                             
                                         </div>
@@ -211,7 +211,7 @@
                                 <div class="col-md-6 col-sm-12 col-xs-12">
                                     <!-- below this is trying to modify -->
                                     <div class="detail-info">
-                                        <h2 class="title-detail"><%= products[0].productName %></h2>
+                                        <h2 class="title-detail"><%= products.productName %></h2>
                                         <div class="product-detail-rating">
                                             <!-- <div class="pro-details-brand">
                                                 <span> Brands: <a href="shop-grid-right.html">Bootstrap</a></span>
@@ -227,14 +227,14 @@
                                        
                                         <div class="clearfix product-price-cover">
                                             <div class="product-price primary-color float-left">
-                                                <ins><span class="text-brand text-secondary">₹ <%= products[0].salePrice %></span></ins>
+                                                <ins><span class="text-brand text-secondary">₹ </span><span id="offerPrice" class="text-brand text-secondary"><%= products.offerPrice %></span></ins>
                                                 <span class="old-price font-md ml-15" style="text-decoration: line-through; color:red">
-                                                    ₹ <%= products[0].regularPrice %>
+                                                    ₹ <%= products.regularPrice %>
                                                 </span>
                                                 <!-- Make the "Save" price text blinking -->
-                                                <% if (products[0].regularPrice && products[0].salePrice) { %>
+                                                <% if (products.regularPrice && products.offerPrice) { %>
                                                     <span class="save-price font-md color3 ml-15" style="color: rgb(15, 218, 15);" >
-                                                        Save ₹ <%= products[0].regularPrice - products[0].salePrice %>
+                                                        Save ₹ <%= products.regularPrice - products.offerPrice%>
                                                     </span>
                                                     
                                                 <% } %>
@@ -248,7 +248,7 @@
                                         </div>
                                         <div class="bt-1 border-color-1 mt-15 mb-15"></div>
                                         <div class="short-desc mb-30">
-                                            <p><%= products[0].description %>!</p>
+                                            <p><%= products.description %>!</p>
                                         </div>
                                         <!-- above this is trying to modify -->
                                         <div class="product_sort_info font-xs mb-30">
@@ -280,9 +280,9 @@
                                         <div class="attr-detail attr-size">
                                             <strong class="mr-10">Size</strong>
                                             <ul class="list-filter size-filter font-small">
-                                                <li><a  onclick="sizeClick('<%= products[0]._id %>','s')">S</a></li>
-                                                <li ><a  onclick="sizeClick('<%= products[0]._id %>','m')">M</a></li>
-                                                <li><a  onclick="sizeClick('<%= products[0]._id %>','l')">L</a></li>
+                                                <li><a  onclick="sizeClick('<%= products._id %>','s')">S</a></li>
+                                                <li ><a  onclick="sizeClick('<%= products._id %>','m')">M</a></li>
+                                                <li><a  onclick="sizeClick('<%= products._id %>','l')">L</a></li>
                                                
                                             </ul>
                                         </div>
@@ -290,16 +290,20 @@
                                         
                                         <div class="bt-1 border-color-1 mt-30 mb-30"></div>
                                        
-                                  <% if(locals.userData) {%>         
+                                        <% if(locals.userData ) {%>         
                                            
-                                        <div class="detail-extralink">
-                                           
-                                            <div class="col-md-6"> <!-- Adjust the column size based on your layout -->
-                                             
-                                                <button onclick="addToCart('<%= products[0]._id %>')" id="addToCartButton" type="submit" class="btn btn-primary">Add to cart</button>
+                                            <div class="detail-extralink">
+                                               
+                                                <div class="col-md-6"> <!-- Adjust the column size based on your layout -->
+                                                    <%- console.log("This is in ejs file: ",products) %>
+                                                    <div class="product-extra-link2">
+                                                    <button onclick="addToCart('<%= products._id %>')" id="addToCartButton" type="button" class="btn btn-primary button  button-add-to-cart">Add to cart</button>
+                                                    
+                                                    <a aria-label="Add To Wishlist" class="action-btn hover-up" onclick="addToWishlistToggle('<%= products._id %>')"><span id="heart<%= products._id %>"><i class="fi-rs-heart"></i></span></a>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                  <%} else {%>
+                                      <%} else {%>
                                     <div class="detail-extralink">
                                            
                                         <div class="col-md-6"> 
@@ -324,7 +328,7 @@
                                 <div class="col-lg-10 m-auto entry-main-content">
                                     <h2 class="section-title style-1 mb-30">Description</h2>
                                     <div class="description mb-50">
-                                        <p><%= products[0].description %>.</p>
+                                        <p><%= products.description %>.</p>
                                         <!-- <p>Spluttered narrowly yikes left moth in yikes bowed this that grizzly much hello on spoon-fed that alas rethought much decently richly and wow against the frequent fluidly at formidable acceptably flapped
                                             besides and much circa far over the bucolically hey precarious goldfinch mastodon goodness gnashed a jellyfish and one however because.
                                         </p> -->
@@ -771,6 +775,11 @@
         
         function addToCart(productId){
              console.log("add to cart is jhgjh clicked");
+             //console.log("This is offerprice in ajaz: ",offerPrice)
+            const  offerPrice = parseInt(document.getElementById("offerPrice").innerHTML)
+             
+           //  console.log("This is ooooooooooooooofer:",offer)
+             console.log("This is productId:",productId)
              if (sizeClicked === null) {
                 console.error("Please select a size before adding to cart");
                 Toastify({
@@ -788,7 +797,7 @@
                 url:'/addToCart',
                 type:'POST',
                 contentType:'application/json',
-                data: JSON.stringify({ id: productId, size: sizeClicked }),
+                data: JSON.stringify({ id: productId, size: sizeClicked, offerPrice }),
                 success:function(response){
                     console.log(response)
                     if(response.response){
@@ -880,4 +889,45 @@
                 }
             })
           }
+
+
+          
+            function addToWishlistToggle(productId) {
+                console.log("Entered into function");
+                console.log("This is the product Id: ",productId)
+                $.ajax({
+                    url: '/addToWishlist',
+                    method: 'post',
+                    data: JSON.stringify({ productId }),
+                    contentType: 'application/json',
+                    success: function(response) {
+                      if(response.status === 'added'){
+                        Toastify({
+                            text: response.message, // Unicode character for checkmark symbol
+                            backgroundColor: "green",
+                            duration: 3000,
+                            position: "center"
+                        }).showToast();
+                        document.getElementById('heart'+productId).style.color = 'red'
+                        
+                        
+                      }else if(response.status === 'removed'){
+                        Toastify({
+                            text: response.message,
+                            backgroundColor: "green",
+                            duration: 3000,
+                            position: "center" 
+                        }).showToast();
+                        document.getElementById('heart'+productId).style.color = 'black'
+
+                      }
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error here
+                        console.error('Error adding to wishlist:', error);
+                    }
+                });
+            }
+        
+        
       </script>

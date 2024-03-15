@@ -21,7 +21,7 @@ function validateForm() {
   const description = document.getElementById("descriptionX").value.trim();
   const brand = document.getElementById("brandX").value.trim();
   const regularPrice = parseFloat(document.getElementById("regularPriceX").value);
-  const salePrice = parseFloat(document.getElementById("salePriceX").value);
+  const discount = parseFloat(document.getElementById("salePriceX").value);
   const sSize = document.getElementById("sSizeQuantityX").value.trim();
   const mSize = document.getElementById("mSizeQuantityX").value.trim();
   const lSize = document.getElementById("lSizeQuantityX").value.trim();
@@ -43,8 +43,8 @@ function validateForm() {
       displayErrorMessage("regularPrice-error", "Regular Price must be a valid positive number");
       isValid = false;
   }
-  if (salePrice <= 0 || isNaN(salePrice) || salePrice >= regularPrice) {
-      displayErrorMessage("salePrice-error", "Sale Price must be a valid positive number less than Regular Price");
+  if ( isNaN(discount) || discount>100) {
+      displayErrorMessage("salePrice-error", "Discount must be a valid positive number less than 100");
       isValid = false;
   }
   if (sSize === "" || isNaN(parseInt(sSize)) || parseInt(sSize) < 0) {

@@ -302,11 +302,11 @@
                                                         <h2><a href="/viewProduct?id=<%= productData[i]._id %>"><%= productData[i].productName %></a></h2>
                                                         <div class="rating-result" title="90%">
                                                             <span>
-                                                                <span>90%</span>
+                                                                <span style="color: red;"><%= productData[i].discount %>%</span>
                                                             </span>
                                                         </div>
                                                         <div class="product-price">
-                                                            <span>₹ <%= productData[i].salePrice %> </span>
+                                                            <span>₹ <%= productData[i].offerPrice %> </span>
                                                             <span class="old-price">₹ <%= productData[i].regularPrice %></span>
                                                         </div>
                                                        
