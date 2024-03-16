@@ -4,11 +4,11 @@
         <div class="col-lg-6">
             <div class="card mb-4">
                 <div class="card-header">
-                    <h4>Add New Offer</h4>
+                    <h4>Add new Category offer</h4>
                 </div>
                 <div class="card-body">
                     <div class="mx-auto"> 
-                        <form action="/admin/PostOffer" id="editForm" method="post">
+                        <form action="/admin/postCategoryOffer" id="editForm" method="post">
                             <div class="mb-4">
                                 <label for="product_name" class="form-label">Offer Name</label>
                                 <input type="text" name="name" placeholder="Type here" class="form-control" id="name">
@@ -24,34 +24,18 @@
                                 <input name="endingDate" type="date" value="2021-05-02" class="form-control">
                                 <p><span id="error3" style="display: none;" class="mt-15 err text-danger"></span></p>
                             </div>
-                            <div class="mb-4">
-                                <label class="form-label">Product</label>
-                                <select class="form-select" name="product">
-                                    <% if(locals.product) { %>
-                                        <% for(let i = 0; i < product.length; i++) { %>
-                                            <% if(!product[i].product_status) { %>
-                                                <option value="<%= product[i]._id %>"><%= product[i].name %></option>
-                                            <% } %>
-                                        <% } %>
-                                    <% } %>
-                                </select>
-                                <p><span id="error4" style="display: none;" class="mt-15 err text-danger"></span></p>
-                            </div>
-                            <div class="mb-4">
-                                <label class="form-label">Product Discount</label>
-                                <input placeholder="Type here" name="productDiscount" class="form-control" id="productDiscount">
-                                <p><span id="error5" style="display: none;" class="mt-15 err text-danger"></span></p>
-                            </div>
+                            
+                           
                             <div class="mb-4">
                                 <label class="form-label">Category</label>
                                 <select class="form-select" name="category">
-                                    <% if(locals.category) { %>
-                                        <% for(let i = 0; i < category.length; i++) { %>
-                                            <% if(!category[i].isList) { %>
-                                                <option value="<%= category[i]._id %>"><%= category[i].name %></option>
+                                    <% if(locals.categoryData) { %>
+                                        <% for(let i = 0; i < categoryData.length; i++) { %>
+                                            <% //if(!category[i].isList) { %>
+                                                <option value="<%= categoryData[i]._id %>"><%= categoryData[i].name %></option>
                                             <% } %>
                                         <% } %>
-                                    <% } %>
+                                    <%// } %>
                                 </select>
                                 <p><span id="error6" style="display: none;" class="mt-15 err text-danger"></span></p>
                             </div>

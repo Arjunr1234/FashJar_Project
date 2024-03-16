@@ -79,7 +79,7 @@ router.post('/updateAddressInCheckoutPage',isUser,orderController.updateAddress)
 router.get('/loadwishlist',isUser,wishlistController.loadWishlistPage);
 router.post('/addToWishlist',isUser,wishlistController.addToWishlist);
 router.post('/deleteWishlist',isUser,wishlistController.deleteWishlist);
-router.post('/addToCartFromWishlist',isUser,wishlistController.addToCart)
+router.post('/addToCartFromWishlist',isUser,wishlistController.addToCart);
 
 
 //===========================================================================

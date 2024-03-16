@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router()
 const adminController = require("../controller/adminController");
+const adminSection2Controller = require("../controller/adminSection2Controller")
 const isAdmin = require("../middlewares/adminMiddleware");
 const multer = require("multer");
 const uploads = require("../middlewares/multer");
@@ -42,7 +43,18 @@ router.post('/deleteImage',adminController.deleteImage);
 
 router.get('/orders',isAdmin,adminController.loadOrderPage);
 router.get('/viewOrderDetails',isAdmin,adminController.loadViewOrderPage);
-router.post('/changeOrderStatus',isAdmin,adminController.changeOrderStatus)
+router.post('/changeOrderStatus',isAdmin,adminController.changeOrderStatus);
+
+
+//============================Offer==============================================
+
+router.get('/loadCategoryOffer',isAdmin,adminSection2Controller.loadCategoryOfferPage);
+router.get('/loadProductOffer',isAdmin,adminSection2Controller.loadProductOfferPage);
+router.get('/loadAddProductOffer',isAdmin,adminSection2Controller.loadAddProductOffer);
+router.get('/loadAddCategoryOffer',isAdmin,adminSection2Controller.loadAddCategoryOffer);
+router.post('/PostProductOffer',isAdmin,adminSection2Controller.addingProductOffer);
+router.post('/postCategoryOffer',isAdmin,adminSection2Controller.addCategoryOffer)
+
 
 
 

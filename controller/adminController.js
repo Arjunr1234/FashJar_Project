@@ -7,7 +7,9 @@ const product = require("../models/productModel")
 const mongoose = require('mongoose'); 
 const order = require("../models/orderModel");
 const cart = require("../models/cartModel");
-const objectId = require("mongoose").Types.ObjectId
+const productModel = require("../models/productOfferModel");
+const objectId = require("mongoose").Types.ObjectId;
+const offerHelper = require("../helper/offerHelper")
 
 
 
@@ -22,8 +24,15 @@ const loadLogin =  (req,res)=>{
   res.render("adminLogin",{error})
 }
 
-const loadHome = (req, res)=>{
+const loadHome = async (req, res)=>{
     if(req.session.admin){
+//====================this is the additional thisng to delete====================
+    const productD = await product.find()
+    console.log("This is the productD:",productD[0]);
+
+    const offerPrice = await offerHelper.newOfferPrice(productD[0]);
+   // console.log("This is the offerPrice: ",offerPrice);
+//==================till here =====================================================
       res.render("adminHome")
     }else{
       res.redirect("admin/login")
