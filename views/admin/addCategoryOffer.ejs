@@ -31,11 +31,11 @@
                                 <select class="form-select" name="category">
                                     <% if(locals.categoryData) { %>
                                         <% for(let i = 0; i < categoryData.length; i++) { %>
-                                            <% //if(!category[i].isList) { %>
+                                            <% if(!categoryData[i].offerStatus) { %>
                                                 <option value="<%= categoryData[i]._id %>"><%= categoryData[i].name %></option>
                                             <% } %>
                                         <% } %>
-                                    <%// } %>
+                                    <% } %>
                                 </select>
                                 <p><span id="error6" style="display: none;" class="mt-15 err text-danger"></span></p>
                             </div>

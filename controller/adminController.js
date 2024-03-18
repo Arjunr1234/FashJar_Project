@@ -31,7 +31,7 @@ const loadHome = async (req, res)=>{
     console.log("This is the productD:",productD[0]);
 
     const offerPrice = await offerHelper.newOfferPrice(productD[0]);
-   // console.log("This is the offerPrice: ",offerPrice);
+    console.log("This is the offerPrice in admincontroller : ",offerPrice);
 //==================till here =====================================================
       res.render("adminHome")
     }else{
@@ -280,6 +280,7 @@ const loadCategoryPage = async (req, res) => {
                       ])
                       
                       console.log(productDetails)
+                      
 
                       
                        
@@ -637,6 +638,8 @@ const changeOrderStatus = async (req, res) => {
             }
         }
     );
+           
+          
     
 
       console.log("This is changingData: ", changingData);

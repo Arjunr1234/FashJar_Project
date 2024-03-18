@@ -214,7 +214,7 @@
                                                     </td>
                                                     
                                                     <td class="text-right" data-title="Cart">
-                                                        <span id="subtotal<%= i %>"><%= products[i].subTotal  %> </span>
+                                                        <span id="subtotal<%= i %>"><%= products[i].newSubtotal  %> </span>
                                                     </td>
                                                     <td class="action" data-title="Remove"><a href="#" class="text-muted"><i class="fi-rs-trash hover" id="deleteCartButton" onclick="deleteCart('<%= products[i]._id %>', '<%= products[i].size %>', '<%= products[i].userId %>')"></i></a></td>
                                                 </tr>
@@ -456,7 +456,7 @@
      
     function increment(productId, size, index, stock, cartQuantity,productPrice){
         console.log("Entered into increment ajax")
-         
+         console.log(productId, size, index, stock, cartQuantity,productPrice)
         const qty = document.getElementById("quantity" + index).innerHTML
         const subTtl = document.getElementById("subtotal" + index).innerHTML
         const total = document.getElementById("totalAmountOfCart" ).innerHTML
@@ -494,10 +494,10 @@
                          position: "center" 
                      }).showToast();
                       
-                    // incrementBtn.disabled = true;
-                    // setTimeout(function(){
-                    //     incrementBtn.disabled = false;
-                    // },3000)
+                     incrementBtn.disabled = true;
+                     setTimeout(function(){
+                         incrementBtn.disabled = false;
+                     },3000)
                     
                  }else if(response.response === 'execeedLimit'){
 
@@ -509,10 +509,10 @@
                      }).showToast();
 
 
-                  //   incrementBtn.disabled = true;
-                  //   setTimeout(function(){
-                  //       incrementBtn.disabled = false;
-                  //   },3000)
+                     incrementBtn.disabled = true;
+                    setTimeout(function(){
+                        incrementBtn.disabled = false;
+                     },3000)
                    
 
                  }

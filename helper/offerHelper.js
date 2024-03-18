@@ -29,14 +29,24 @@ const calculateOfferPrice = async (productData)=>{
 }
 
 const newOfferPrice = async (product)=>{
+                   
                  
                    console.log("Entered into newOfferPrice in offerHelper");
-                   console.log("This is the recenvied prd: ",product);
+                   
+
+
+
+                   return new Promise(async(resolve,reject)=>{
+                      try {
+                                 
+                        const regularPrice = product.regularPrice
+                   const discount = product.discount;
+                  
                    const catId = product.category
                    const prdId = product._id
-                   console.log("This is catId: ",catId.toString())
+                   
                    const currentDate = new Date()
-                   console.log("This is current date: ",currentDate.toLocaleDateString())
+                  
                    const productOffer = await getActiveProductOffer(currentDate)
                    console.log("This is the productOffer:",productOffer)
                    const categoryOffer = await getActiveCategoryOffer(currentDate)
@@ -45,31 +55,60 @@ const newOfferPrice = async (product)=>{
                    const findCategoryOfferById = (categoryOffers, categoryId) => {
                     return categoryOffers.find(offer => offer.categoryOffer.category.toString() === categoryId.toString());
                 };
-                   const letsee = findCategoryOfferById(categoryOffer,catId)
+                   const catOffer = findCategoryOfferById(categoryOffer,catId)
                 
-                   console.log("This is the finded category letsee: ",letsee)
+                   console.log("This is the CatOffer : ",catOffer)
 
                    const findProductOfferById = (productOffer,productId) =>{
                        return productOffer.find(offer=>offer.productOffer.product.toString() === productId.toString())
                    }
-                   const letseePrd = findProductOfferById(productOffer,prdId)
-                   console.log("This is prod letseee: ",letseePrd)
+                   const prdOffer = findProductOfferById(productOffer,prdId)
+                   console.log("This is PrdOffer: ",prdOffer)
 
+                   if(catOffer!==undefined && prdOffer!==undefined){
+                    console.log("Entered into carOffer and PrdOffer valid section");
+                    
+                    if(prdOffer.productOffer.discount > catOffer.categoryOffer.discount){
+                      console.log("prd offer is greater than CatOffer");
+                      const offerPrice = regularPrice - (regularPrice*prdOffer.productOffer.discount/100);
+                      console.log("This is the offerPrice: ",offerPrice);
+                      resolve(parseInt(offerPrice))
+                    }else{
+                      console.log("cat offer is greater than prdOffer")
+                    
+                      const offerPrice = regularPrice - (regularPrice*catOffer.categoryOffer.discount/100)
+                      console.log("This is the offerPrice: ",offerPrice)
+                      resolve(parseInt(offerPrice))
+                    }
 
+                   }else if(prdOffer!==undefined){
+                    console.log("Entered into only productOffer")
+                    const offerPrice = regularPrice - (regularPrice*prdOffer.productOffer.discount/100);
+                    console.log("offerPrice: ",offerPrice);
+                    resolve(parseInt(offerPrice))
+                   }else if(catOffer!==undefined){
+                    console.log("Entered into only catOffer");
+                    const offerPrice = regularPrice - (regularPrice*catOffer.categoryOffer.discount/100);
+                    console.log("offerPrice: ",offerPrice)
+                    resolve(parseInt(offerPrice))
+                   }else{
+                    console.log("Entered into no CatOffer and prdOffer");
+                    const offerPrice = regularPrice - (regularPrice*discount/100);
+                    console.log("offerPrice: ",offerPrice)
+                    resolve(parseInt(offerPrice))
+                   }
 
+                   
 
-                  //  return new Promise(async(resolve,reject)=>{
-                  //     try {
-
-                  //         const currentDate = new Date()
+                          
                         
-                  //     } catch (error) {
-                  //       console.log(error)
+                      } catch (error) {
+                        console.log(error)
                         
-                  //     }
+                      }
                        
 
-                  //  })
+                   })
 
                   
                   

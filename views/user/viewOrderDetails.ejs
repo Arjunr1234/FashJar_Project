@@ -82,7 +82,7 @@
                                       </td>
                                       <td class="col-cancell col-md-2 text-center">
                                         <% if(orders[i].orderDetails.status === 'Delivered') {%>
-                                          <a  class="btn btn-sm font-sm btn-action btn-warning" style="width: 50%; padding: 5px; font-size: 12px; background:rgb(255, 200, 0)" onclick="returnProduct('<%= orders[i].orderId %>','<%= orders[i].orderDetails.product %>','<%= orders[i].orderDetails.size %>')">Return</a>
+                                          <a  class="btn btn-sm font-sm btn-action btn-warning" style="width: 50%; padding: 5px; font-size: 12px; background:rgb(255, 200, 0)" onclick="returnProduct('<%= orders[i].orderId %>','<%= orders[i].orderDetails.product %>','<%= orders[i].orderDetails.size %>','<%= orders[i].orderDetails.quantity %>')">Return</a>
 
                                           <%} else if( orders[i].orderDetails.status ===  "Cancelled"){%>
 
@@ -93,7 +93,7 @@
                                                 <%}
 
                                             else {%>
-                                              <a class="btn btn-sm font-sm btn-action btn-warning" style="width: 50%; padding: 5px; font-size: 12px; background:red" onclick="cancelProduct('<%= orders[i].orderId %>','<%= orders[i].orderDetails.product %>','<%= orders[i].orderDetails.size %>')">Cancel</a>
+                                              <a class="btn btn-sm font-sm btn-action btn-warning" style="width: 50%; padding: 5px; font-size: 12px; background:red" onclick="cancelProduct('<%= orders[i].orderId %>','<%= orders[i].orderDetails.product %>','<%= orders[i].orderDetails.size %>','<%= orders[i].orderDetails.quantity %>')">Cancel</a>
   
                                               <%}
                                              %>
@@ -153,11 +153,11 @@
 </body>
 <script>
    
-  function cancelProduct(orderId, productId, size) {
+  function cancelProduct(orderId, productId, size,quantity) {
     const requestedData = {
       orderId: orderId,
       productId: productId,
-      size: size
+      size: size,quantity
     };
    // const cancelledButton = document.getElementById("buttonCancelled")
   
@@ -199,12 +199,12 @@
   }
   
 
- function returnProduct(orderId, productId, size){
+ function returnProduct(orderId, productId, size,quantity){
 
         const requestedData = {
           orderId : orderId,
           productId: productId,
-          size, size
+          size, quantity
         }
 
         Swal.fire({

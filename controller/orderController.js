@@ -3,7 +3,8 @@ const product = require('../models/productModel')
 const placeOrderHelper = require("../helper/placeOrderHelper");
 const objectId = require("mongoose").Types.ObjectId;
 //const { ObjectId } = require('mongodb');
-const user = require("../models/userModel")
+const user = require("../models/userModel");
+const { addingProduct } = require('./adminController');
 
 
 
@@ -86,10 +87,13 @@ const user = require("../models/userModel")
  const deleteOrder = async (req, res) => {
   console.log("Entered into delete order in the orderController");
 
-  const { orderId, productId, size } = req.body;
+  const { orderId, productId, size,quantity } = req.body;
+  
   console.log("This is orderId: ", orderId);
   console.log("This is product id: ", productId);
   console.log("This is size: ", size);
+  console.log("This is the quantity: ",quantity)
+  
 
   const deletingOrder = await order.updateOne(
     {
@@ -109,8 +113,14 @@ const user = require("../models/userModel")
 );
    console.log(deletingOrder)
 
-   if(deletingOrder.modifiedCount>0){
+   if(deletingOrder.modifiedCount===1){
     console.log("The order is cancelled!!");
+    const addingProduct = await product.updateOne(
+      { "_id": new objectId(productId), "size.s": { $exists: true } },
+      { $inc: { "size.s.quantity": quantity } }
+      
+    );
+    console.log("This is the adding product: ",addingProduct);
     res.json({success:true})
    }else{
     console.log("The modified count is 0");

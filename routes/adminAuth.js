@@ -6,6 +6,7 @@ const isAdmin = require("../middlewares/adminMiddleware");
 const multer = require("multer");
 const uploads = require("../middlewares/multer");
 const adminIsLogin = require("../middlewares/adminIsLoginMiddleware");
+const { changeOfferStatus } = require("../middlewares/offerStatusMiddelware");
 
 
 
@@ -53,7 +54,13 @@ router.get('/loadProductOffer',isAdmin,adminSection2Controller.loadProductOfferP
 router.get('/loadAddProductOffer',isAdmin,adminSection2Controller.loadAddProductOffer);
 router.get('/loadAddCategoryOffer',isAdmin,adminSection2Controller.loadAddCategoryOffer);
 router.post('/PostProductOffer',isAdmin,adminSection2Controller.addingProductOffer);
-router.post('/postCategoryOffer',isAdmin,adminSection2Controller.addCategoryOffer)
+router.post('/postCategoryOffer',isAdmin,adminSection2Controller.addCategoryOffer);
+router.get('/deleteProductOffer',isAdmin,adminSection2Controller.deleteProductOffer);
+router.get('/deleteCategoryOffer',isAdmin,adminSection2Controller.deleteCategoryOffer)
+router.get('/editProductOffer',isAdmin,adminSection2Controller.loadEditProductOffer);
+router.get('/editCategoryOffer',isAdmin,adminSection2Controller.loadEditCategoryOffer);
+router.post('/updateProductOffer',isAdmin,adminSection2Controller.updateProductOffer);
+router.post('/updateCategoryOffer',isAdmin,adminSection2Controller.updateCategoryOffer)
 
 
 

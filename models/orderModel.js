@@ -22,7 +22,12 @@ const orderSchema = new mongoose.Schema({
       type:String,
       enum:["Pending", "Processing", "Confirmed", "OutForDelivery", "Shipped", "Delivery", "Cancelled", "Return pending", "Return", "Returned" ],
       default:"Pending"
-    }
+    },
+  //  returnReason: {
+  //         type:String,
+  //         default:null
+
+  //   }
   }],
   address:{
     name:String,

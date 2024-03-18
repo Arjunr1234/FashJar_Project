@@ -1,0 +1,88 @@
+<%- include("../partials/adminHeader") %>
+<section class="content-main">
+    <div class="row justify-content-center mt-30">
+        <div class="col-lg-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Edit Category offer</h4>
+                </div>
+                <div class="card-body">
+                    <div class="mx-auto"> 
+                        <form action="/admin/updateCategoryOffer?catId=<%= offerDetails._id %>" id="editForm" method="post">
+                          <% if(locals.offerDetails){%>
+                            <div class="mb-4">
+                              <label for="product_name" class="form-label">Offer Name</label>
+                              <input type="text" name="name" placeholder="Type here" class="form-control" id="name" value="<%= offerDetails.name %>">
+                              <p><span id="error1" style="display: none;" class="mt-15 err text-danger"></span></p>
+                          </div>
+                          <div class="mb-4">
+                            <label class="form-label">Starting Date</label>
+                            <input name="startingDate" type="date" class="form-control" value="<%= offerDetails.startingDate.toISOString().split('T')[0] %>">
+                            <p><span id="error2" style="display: none;" class="mt-15 err text-danger"></span></p>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Ending Date</label>
+                            <input name="endingDate" type="date" class="form-control" value="<%= offerDetails.endingDate.toISOString().split('T')[0] %>">
+                            <p><span id="error3" style="display: none;" class="mt-15 err text-danger"></span></p>
+                        </div>
+                        
+                          
+                         
+                          <div class="mb-4">
+                              <label class="form-label">Category</label>
+                              <select class="form-select" name="category">
+                                  <% if(locals.categoryData) { %>
+                                      <% for(let i = 0; i < categoryData.length; i++) { %>
+                                          <% if(!categoryData[i].offerStatus) { %>
+                                              <option value="<%= categoryData[i]._id %>" <% if (categoryData[i].name === offerDetails.categoryOffer.categoryName) { %>selected<% } %>>
+                                                <%= categoryData[i].name %></option>
+                                          <% } %>
+                                      <% } %>
+                                  <% } %>
+                              </select>
+                              <p><span id="error6" style="display: none;" class="mt-15 err text-danger"></span></p>
+                          </div>
+                          <div class="mb-4">
+                              <label class="form-label">Category Discount</label>
+                              <input placeholder="Type here" name="categoryDiscount" class="form-control" id="categoryDiscount" value="<%= offerDetails.categoryOffer.discount %>">
+                              <p><span id="error7" style="display: none;" class="mt-15 err text-danger"></span></p>
+                          </div>
+                          <button type="submit" class="btn ms-auto d-block btn-primary btn-md rounded font-sm hover-up">Update</button>
+                            
+                            <%} %>
+                            
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+ <!-- content-main end// -->
+        <footer class="main-footer font-xs">
+            <div class="row pb-30 pt-15">
+                <div class="col-sm-6">
+                    <script>
+                    document.write(new Date().getFullYear())
+                    </script> ©, FarshJar e-commerce Website .
+                </div>
+                <div class="col-sm-6">
+                    <div class="text-sm-end">
+                        All rights reserved
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+    <script src="/public/admin-assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/public/admin-assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/public/admin-assets/js/vendors/select2.min.js"></script>
+    <script src="/public/admin-assets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/public/admin-assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <!-- Main Script -->
+    <script src="/public/admin-assets/js/main.js" type="text/javascript"></script>
+</body>
+
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-categories.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:21 GMT -->
+</html>

@@ -1,4 +1,4 @@
-const { calculateOfferPrice } = require("../helper/offerHelper");
+const { newOfferPrice } = require("../helper/offerHelper");
 const { findOne } = require("../models/adminModel");
 const product = require("../models/productModel");
 const wishlist = require("../models/wishlistModel");
@@ -21,7 +21,7 @@ const loadWishlistPage = async(req, res)=>{
               console.log("This is products: ",pro)
               wishlistProduct = await product.findOne({_id:pro.productId})
               console.log("This is each product:",wishlistProduct )
-              const calculatedPrice = await calculateOfferPrice(wishlistProduct);
+              const calculatedPrice = await newOfferPrice(wishlistProduct);
               console.log("This is calculated offerPrice: ",calculatedPrice);
               const finalProduct = Object.assign({},wishlistProduct.toObject(),
               {offerPrice:calculatedPrice}
@@ -121,7 +121,7 @@ const addToCart = async(req, res)=>{
             console.log("This is size : ",size);
             const userId = req.session.user._id
             const products = await product.findById(productId);
-            const offerPrice = await calculateOfferPrice(products);
+            const offerPrice = await newOfferPrice(products);
             
             const stock = products.size[size].quantity
             console.log("This is the avaliable stock: ",stock)

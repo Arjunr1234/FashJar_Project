@@ -143,7 +143,7 @@ const loadUserHome = async function (req, res) {
           
           for(let i=0; i<productData.length; i++){
             const product = productData[i];
-            const caluclatedPrice = await offerHelper.calculateOfferPrice(product)
+            const caluclatedPrice = await offerHelper.newOfferPrice(product)
             product.offerPrice = caluclatedPrice
           }
          
@@ -248,7 +248,7 @@ const loadVeiwProduct = async(req, res)=>{
          const userData = req.session.user
          
          let products = await product.findById({_id:productId}).lean();
-         const calculatedPrice = await offerHelper.calculateOfferPrice(products);
+         const calculatedPrice = await offerHelper.newOfferPrice(products);
          products.offerPrice = calculatedPrice
 
          

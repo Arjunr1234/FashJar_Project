@@ -22,10 +22,11 @@ const loadCartPage = async (req, res) => {
         for (let i = 0; i < userCart.items.length; i++) {
           const cartProduct = await product.findById(userCart.items[i].productId); 
           console.log("This is the items in the cartProduct", cartProduct)
-          const calculatedPrice = await offerHelper.calculateOfferPrice(cartProduct)
+          const calculatedPrice = await offerHelper.newOfferPrice(cartProduct)
           const size = userCart.items[i].size;
           const sizeQuantity = cartProduct.size[size].quantity
           const quantity = userCart.items[i].quantity;
+          const newSubtotal = quantity*calculatedPrice;
           const subtotal = userCart.items[i].subTotal
           const totalAmoutCart = userCart.totalAmount
           const finalProduct = Object.assign({}, cartProduct.toObject(),
@@ -33,6 +34,7 @@ const loadCartPage = async (req, res) => {
           {userId:userId },
           {stock:sizeQuantity},
           {subTotal:subtotal},
+          {newSubtotal:newSubtotal},
           {totalAmoutCart:totalAmoutCart},
           {offerPrice:calculatedPrice},
           { quantity: quantity })
@@ -49,10 +51,10 @@ const loadCartPage = async (req, res) => {
           const saveTotalPrice = await cart.updateOne({userId:userId},{$set:{totalAmount:TotalPriceOfCart}})
 
         }
-      //  console.log("This si the total Price:",TotalPriceOfCart);
-     //   console.log("This is the cartData from cartRednderPage:",cartData)
+        console.log("This si the total Price:",TotalPriceOfCart);
+        console.log("This is the cartData from cartRednderPage:",cartData)
       //  console.log("This is products: ",products);
-      //  console.log("This is the product that is sending to CartPage: ", products)
+        console.log("This is the product that is sending to CartPage: ", products)
         res.render("cartPage", { products,TotalPriceOfCart,cartData });
       } else {
         res.render("cartPage")
@@ -307,8 +309,8 @@ const incrementQuantity = async (req, res)=>{
   console.log("This size of product: ",size);
   console.log("This is index :",index);
   console.log("This is stock of prodcut: ",parseInt(stock));
-  
-  console.log("This is price : ",productPrice)
+  console.log("This is price: ",price)
+  console.log("This is Productprice : ",productPrice)
   console.log("This is userId: ",req.session.user._id)
   const cartData = await cart.findOne({userId:new ObjectId(req.session.user._id)})
 
@@ -326,18 +328,18 @@ const incrementQuantity = async (req, res)=>{
   if(parseInt(stock) > parseInt(cartQuantity)){
     if(parseInt(cartQuantity)<10){
 
-      const increment = await cart.findOneAndUpdate({
-        userId: userId,
-         "items.productId":prdId,
-         "items.size":size
-       },{
-         $inc: {
-           "items.$.quantity": 1,
-           "items.$.subTotal": price, 
-           totalAmount:price
-         }
-       })
-       console.log("show that  increment: ",increment)
+      const increment = await cart.findOneAndUpdate(
+        { userId: userId, items: { $elemMatch: { productId: prdId, size: size } } },
+        {
+          $inc: {
+            "items.$.quantity": 1,
+            "items.$.subTotal": price,
+            totalAmount: price
+          }
+        },
+        { new: true }
+      );
+             console.log("show that  increment: ",increment)
        const cartData  = await cart.findOne({userId:new ObjectId(req.session.user._id)})
        console.log("This is cartData totalAnount: ",cartData.totalAmount)
        res.json({status:true,totalAmount:cartData.totalAmount})
@@ -374,17 +376,25 @@ const decreaseQuantity = async(req, res)=>{
                       console.log("This is the new cartQuanty: ",cartQuantity)
 
                       if(parseInt(cartQuantity)>1){
-                        const decrement = await cart.findOneAndUpdate({
-                          userId: new ObjectId(req.session.user._id),
-                           "items.productId":new ObjectId(productId),
-                           "items.size":size
-                         },{
-                           $inc: {
-                             "items.$.quantity": -1,
-                             "items.$.subTotal": -price, 
-                             totalAmount:-price
-                           }
-                         })
+                        const decrement = await cart.findOneAndUpdate(
+                          {
+                            userId: new ObjectId(req.session.user._id),
+                            items: {
+                              $elemMatch: {
+                                productId: new ObjectId(productId),
+                                size: size
+                              }
+                            }
+                          },
+                          {
+                            $inc: {
+                              "items.$.quantity": -1,
+                              "items.$.subTotal": -price,
+                              totalAmount: -price
+                            }
+                          }
+                        );
+                        
                          console.log("this is decrement:",decrement);
                          const cartData  = await cart.findOne({userId:new ObjectId(req.session.user._id)})
                          res.json({status:true,totalAmount:cartData.totalAmount})
