@@ -395,7 +395,7 @@
                     window.location.href=response.url
                 }else if(response.razorpayStatus){
                     console.log("Entered into payment in ajax")
-                    razorpayPayment(response.instance)
+                    razorpayPayment(response.instance, data)
 
                 }else {
                     console.log("This is response: ",response)
@@ -424,7 +424,9 @@
 
       })
 
-      function razorpayPayment(instance){
+      function razorpayPayment(instance, data){
+       
+                  
         var options = {
             "key": "rzp_test_K8JS3lXn50mode", // Enter the Key ID generated from the Dashboard
             "amount": instance.amount , // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
@@ -434,11 +436,11 @@
             "image": "https://example.com/your_logo",
             "order_id": instance.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
             "handler": function (response){
-                alert(response.razorpay_payment_id);
-                alert(response.razorpay_order_id);
-                alert(response.razorpay_signature);
+              //  alert(response.razorpay_payment_id);
+              //  alert(response.razorpay_order_id);
+              //  alert(response.razorpay_signature);
 
-                verifyPayment(response,instance)
+                verifyPayment(response,instance,data)
             },
             "prefill": {
                 "name": "Gaurav Kumar",
@@ -456,11 +458,26 @@
         rzp1.open();
       }
 
-    function verifyPayment(payment, order){
+    function verifyPayment(payment, order,data){
         $.ajax({
             url:'/verifyPayment',
-            data:{payment, order},
-            method:'POST'
+            data:{payment, order, data},
+            method:'POST',
+            success:function(response){
+                if(response.success){
+                    window.location.href=response.url
+                }else{
+                    console.log("This is response: ",response)
+                    console.log("Entered in to else tostrify in verifypayment")
+                    Toastify({
+                        text: response.message,
+                         backgroundColor: "red",
+                     duration: 6000,
+                     position: "center" 
+                 }).showToast();
+
+                }
+            }
         })
     }
       

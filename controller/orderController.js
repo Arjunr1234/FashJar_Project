@@ -289,7 +289,34 @@ const paymentHelper = require("../helper/paymentHelper")
   }
   const verifyPayment = async(req, res)=>{
     console.log("Entered into verifyPayment in orderController");
-    console.log("This is the received body: ",req.body)
+
+    const receivedData = req.body.data;
+    const userId = req.session.user._id;
+
+    console.log("This is the received body: ",req.body);
+    console.log("This is the received data: ",receivedData);
+    console.log("This is the userId: ", userId)
+    
+    const result = await paymentHelper.verifyThePayment(req.body).then(async (response)=>{
+       console.log("payment is successfull");
+
+       const placedOrder = await placeOrderHelper.placeOrderHelp(receivedData,userId);
+              console.log("This is the Promise response received : ",placedOrder);
+              if(placedOrder.status === true){
+                 console.log("hello world!!!")
+                 const clearedCart = await placeOrderHelper.clearCart(userId);
+                 console.log("This is cleared cart:",clearedCart)
+                 if(clearedCart.acknowledged){
+                       console.log("Entered in to clearCart acknowledged");
+                       res.json({success:true,url:"/orderIsPlaced"});
+                 }
+              }else{
+                res.json({success:false,message:placedOrder.message,url:"/loadCartPage"})
+               }
+       
+    }).catch((err)=>{
+      res.json({success:false, message:'Payment Failed!!'});
+    })
   }
 
 module.exports = {
