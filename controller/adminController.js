@@ -7,6 +7,7 @@ const product = require("../models/productModel")
 const mongoose = require('mongoose'); 
 const order = require("../models/orderModel");
 const cart = require("../models/cartModel");
+const wallet = require("../models/walletModel")
 const productModel = require("../models/productOfferModel");
 const objectId = require("mongoose").Types.ObjectId;
 const offerHelper = require("../helper/offerHelper")
@@ -615,11 +616,16 @@ const changeOrderStatus = async (req, res) => {
   console.log("Entered into changeorderStatus in adminController");
 
   try {
-      const { orderId, productId, productSize, status } = req.body;
+      const { orderId, productId, productSize, status,productPrice,userId,quantity } = req.body;
+      const receivedPrice = parseInt(productPrice);
+      const receivedQuantity = parseInt(quantity)
       console.log("This is orderId: ", new mongoose.Types.ObjectId(orderId));
       console.log("This is status: ", status);
-      console.log("This is productId:",productId)
-      console.log("This is productSize: ",productSize)
+      console.log("This is productId:",productId);
+      console.log("This is productSize: ",productSize);
+      console.log("This is the productPrice: ",receivedPrice);
+      console.log("This is the userId: ",userId);
+      console.log("This is the quantity: ",receivedQuantity)
 
      
       const changingData = await order.updateOne(
@@ -644,7 +650,29 @@ const changeOrderStatus = async (req, res) => {
 
       console.log("This is changingData: ", changingData);
       if (changingData.modifiedCount > 0) {
+
         console.log('Product status updated successfully.');
+        if(status === 'Returned'){
+          const totalPrice = receivedPrice * receivedQuantity
+
+          const data = {
+            amount:totalPrice,
+            date:new Date(),
+            paymentMethod:"Return Refund",
+            isReceived:true
+          
+          }
+          const updateResult = await wallet.updateOne(
+            { userId: new objectId(userId) },
+            {
+                $push: { walletDatas: data },
+                $inc: { balance: totalPrice }
+            }
+            );
+            console.log("This is updateResult : ",updateResult)
+
+        }
+        
         res.json({ success: true });
     } else {
         console.log('No matching order or product found.');

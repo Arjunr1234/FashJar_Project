@@ -1,7 +1,8 @@
 const cart = require("../models/cartModel");
 const productModel = require("../models/productModel");
 const users = require("../models/userModel");
-const order = require("../models/orderModel")
+const order = require("../models/orderModel");
+const offerHelper = require("../helper/offerHelper")
 
 
 
@@ -35,11 +36,14 @@ const placeOrderHelp = async (body, userId) => {
         let products = [];
 
         for (let i of userCart.items) {
+          const productD = await productModel.findById(i.productId);
+          const offerPrice = await offerHelper.newOfferPrice(productD)
           products.push({
             product: i.productId,
-            productPrice: i.price,
+            productPrice:offerPrice,
             size: i.size,
             quantity: i.quantity,
+            
           });
 
           const changeProductQuantity = await productModel.findOne({

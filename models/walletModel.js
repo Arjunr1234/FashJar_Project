@@ -19,6 +19,9 @@ const walletSchema = mongoose.Schema({
     },
     paymentMethod: {
       type: String,
+    },
+    isReceived:{
+      type:Boolean
     }
   }]
 });

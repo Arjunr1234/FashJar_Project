@@ -138,6 +138,7 @@
             </div>
         </header>
         <section class="content-main">
+           
           <div class="content-header">
               <div>
                   <h2 class="content-title card-title">Order Details </h2>
@@ -221,8 +222,10 @@
                                         <% } else if (orderData[i].products.status == 'OutForDelivery') { %>
                                             <a id="changeStatus<%= orderData[i].products.product %>" onclick="changeOrderStatus('<%= orderData[i]._id %>','<%= orderData[i].products.size %>','<%= orderData[i].products.product %>','Delivered')" class="btn btn-outline-primary rounded font-sm">Delivered</a>
                                         <% } else if (orderData[i].products.status == 'Return pending') { %>
-                                            <a id="changeStatus<%= orderData[i].products.product %>" onclick="changeOrderStatus('<%= orderData[i]._id %>','<%= orderData[i].products.size %>','<%= orderData[i].products.product %>','Returned')" class="btn btn-outline-primary rounded font-sm">Approve Return</a>
-                                        <% } %>
+                                            <a id="changeStatus<%= orderData[i].products.product %>" onclick="changeOrderStatus('<%= orderData[i]._id %>','<%= orderData[i].products.size %>','<%= orderData[i].products.product %>','Returned','<%= orderData[i].products.productPrice %>','<%= orderData[i].userId %>','<%= orderData[i].products.quantity %>')" class="btn btn-outline-primary rounded font-sm">Approve Return</a>
+                                        <% }
+                                        
+                                        %>
                                     </td>
                                      
                                      
@@ -248,6 +251,51 @@
                             
                           </tbody>
                         </table>
+                        <!-- Modal -->
+                        <!-- Modal -->
+<!-- Modal -->
+<!-- Modal -->              <!-- Modal -->
+<!-- Modal -->
+<!-- <div id="reasonModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Reason for Return</h2>
+        <p id="reasonText"></p>
+    </div>
+</div> -->
+
+
+<div class="modal fade" id="reasonModal" tabindex="-1" role="dialog" aria-labelledby="returnModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="returnModalLabel">Return Product</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="returnForm">
+                    <!-- Hidden fields to store orderId, productId, size, and quantity -->
+
+                    <div class="form-group">
+                        <label for="returnReason">Reason for Return</label>
+                        <p id="reasonText"></p>
+                        <textarea class="form-control" id="returnReason" name="returnReason" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="submitReturn" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+  
+  
                     </div>
                   </div>
                   
@@ -358,17 +406,41 @@
     <script src="/public/admin-assets/js/main.js" type="text/javascript"></script>
     <script src="/public/admin-assets/js/custom-chart.js" type="text/javascript"></script>
 
-
+    
+    <script>
+        function showModal(returnReason) {
+            // Assuming you have a modal with ID "reasonModal"
+            console.log("Modal is being shown with reason: ", returnReason);
+            var modal = document.getElementById('reasonModal');
+    
+            // Assuming you have a span or div inside your modal to display the reason
+            var reasonElement = document.getElementById('reasonText');
+            reasonElement.innerHTML = returnReason;
+    
+            // Show the modal
+            modal.style.display = 'block';
+        }
+    
+        function closeModal() {
+            var modal = document.getElementById('reasonModal');
+            modal.style.display = 'none';
+        }
+    </script>
+        
+        
+        
+        
+        
 
 
     <script>
               
-      function changeOrderStatus(orderId,productSize, prdId, newStatus) {
+      function changeOrderStatus(orderId,productSize, prdId, newStatus,productPrice,userId,quantity) {
         const requestData = {
             orderId:orderId,
             productSize: productSize,
             productId: prdId, 
-            status: newStatus
+            status: newStatus,productPrice,userId,quantity
         };
         console.log(requestData)
         $.ajax({

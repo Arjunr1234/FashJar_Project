@@ -25,6 +25,12 @@
                                         <a class="nav-link" href="/viewOrders" style="color: white; font-weight:bold"><i class="fi-rs-shopping-bag mr-10"></i>Orders</a>
                                     </li>
                                     <li class="nav-item" style="background-color: black;">
+                                        <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="#wallet" role="tab" aria-controls="track-orders" aria-selected="false" style="color: white; ">
+                                            <i class="fas fa-wallet mr-2"></i> <i class="fi-rs-marker mr-2"></i> 
+                                            Wallet
+                                        </a>
+                                    </li>
+                                    <li class="nav-item" style="background-color: black;">
                                         <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="#add-address" role="tab" aria-controls="track-orders" aria-selected="false" style="color: white; font-weight:bold"><i class="fi-rs-shopping-cart-check mr-10"></i>Add Adress</a>
                                     </li>
                                     <li class="nav-item" style="background-color: black;">
@@ -37,12 +43,7 @@
                                         <a class="nav-link" id="account-detail-tab" data-bs-toggle="tab" href="#account-details" role="tab" aria-controls="account-detail" aria-selected="true" style="color: white; font-weight:bold"><i class="fi-rs-user mr-10"></i>User Details</a>
                                     </li>
                                    
-                                    <li class="nav-item" style="background-color: black;">
-                                        <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="#dashboard" role="tab" aria-controls="track-orders" aria-selected="false" style="color: white; ">
-                                            <i class="fas fa-wallet mr-2"></i> <i class="fi-rs-marker mr-2"></i> 
-                                            Wallet
-                                        </a>
-                                    </li>
+                                    
                                     <li class="nav-item" style="background-color: black;">
                                         <a class="nav-link" onclick="makeLogout()" style="color: white; font-weight:bold"><i class="fi-rs-sign-out mr-10" style="color: white; font-weight:1rem"></i>Logout</a>
                                     </li>
@@ -69,52 +70,55 @@
                             </div>
                             
                             
-                            
-                                <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h5 class="mb-0">Your Orders</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="table-responsive">
-                                                <table class="table">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Order</th>
-                                                            <th>Date</th>
-                                                            <th>Status</th>
-                                                            <th>Total</th>
-                                                            <th>Actions</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>#1357</td>
-                                                            <td>March 45, 2020</td>
-                                                            <td>Processing</td>
-                                                            <td>$125.00 for 2 item</td>
-                                                            <td><a href="#" class="btn-small d-block">View</a></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>#2468</td>
-                                                            <td>June 29, 2020</td>
-                                                            <td>Completed</td>
-                                                            <td>$364.00 for 5 item</td>
-                                                            <td><a href="#" class="btn-small d-block">View</a></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>#2366</td>
-                                                            <td>August 02, 2020</td>
-                                                            <td>Completed</td>
-                                                            <td>$280.00 for 3 item</td>
-                                                            <td><a href="#" class="btn-small d-block">View</a></td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
+                                <% if(locals.walletData){%>
+                                    <div class="tab-pane fade" id="wallet" role="tabpanel" aria-labelledby="orders-tab">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h4 class="mb-0 text-center">Wallet</h4>
                                             </div>
+    
+                                            <div style="border: 2px solid #44ff00; border-radius: 10px; padding: 20px; font-size: 24px; text-align: center;" class="d-flex justify-content-center">
+                                                <div>
+                                                    <h3 class="text-center">Available balance:₹ <span><%= walletData.balance %></span></h3>
+                                                </div>
+                                                
+                                            </div>
+                                            <table class="table table-responsive">
+                                                <thead>
+                                                   
+                                                        <tr>
+                                                            <th class="text-center">Date</th>
+                                                            <th class="text-center">Payment Method</th>
+                                                            <th class="text-center">Amount</th>
+                                                        </tr>
+                                                        
+                                                       
+                                                   
+                                                </thead>
+                                                <% for(let i=0; i<walletData.walletDatas.length; i++){%>
+                                                 <tbody>
+                                                    
+                                                    <td class="text-center"><%= walletData.walletDatas[i].date.toLocaleDateString('en-GB') %></td>
+                                                    <td class="text-center"><%= walletData.walletDatas[i].paymentMethod %></td>
+                                                    <% if(walletData.walletDatas[i].isReceived){%>
+                                                        <td style="color: green;">+ <%= walletData.walletDatas[i].amount %></td>
+                                                        <%}else{%>
+                                                            <td style="color:red;">- <%= walletData.walletDatas[i].amount %></td>
+                                                            <%} %>
+                                                   
+                                                   
+                                                 </tbody>
+                                                 <%} %>
+                                                
+                                                
+                                            </table>
+                                            
                                         </div>
                                     </div>
-                                </div>
+                                    
+                                    <%} %>
+                            
+                               
                                 <div class="tab-pane fade" id="add-address" role="tabpanel" aria-labelledby="account-detail-tab">
                                     <div class="card">
                                         <div class="card-header" style="background-color: black;">

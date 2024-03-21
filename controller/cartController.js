@@ -45,7 +45,9 @@ const loadCartPage = async (req, res) => {
         const cartData = await cart.findOne({userId:userId})
              var TotalPriceOfCart = 0
         for(let i=0;i<cartData.items.length;i++){
-             TotalPriceOfCart = TotalPriceOfCart +  (cartData.items[i].quantity * cartData.items[i].price)
+            const productD = await product.findById(cartData.items[i].productId) 
+            const price = await offerHelper.newOfferPrice(productD)
+             TotalPriceOfCart = TotalPriceOfCart +  (cartData.items[i].quantity * price)
         }
         if(cartData){
           const saveTotalPrice = await cart.updateOne({userId:userId},{$set:{totalAmount:TotalPriceOfCart}})
@@ -417,13 +419,15 @@ const loadCheckOutPage = async(req, res)=>{
                 if(cartData){
                   for(let i=0; i<cartData.items.length; i++){
                     const productData = await product.findById(cartData.items[i].productId)
+                    const offerPrice = await offerHelper.newOfferPrice(productData)
                     const cartSize = cartData.items[i].size;
                     const cartQuantity = cartData.items[i].quantity;
                     const cartPrice = cartData.items[i].price;
                     const finalProduct = Object.assign({},productData.toObject(),
                     {size:cartSize},
                     {price:cartPrice},
-                    {quantity:cartQuantity}
+                    {quantity:cartQuantity},
+                    {offerPrice:offerPrice}
                     )
                     if(products){
                       products.push(finalProduct);
@@ -432,7 +436,9 @@ const loadCheckOutPage = async(req, res)=>{
                   
                   var TotalPriceOfCart = 0
                   for(let i=0;i<cartData.items.length;i++){
-                  TotalPriceOfCart = TotalPriceOfCart +  (cartData.items[i].quantity * cartData.items[i].price)
+                  const productD = await product.findById(cartData.items[i].productId) 
+                  const price = await offerHelper.newOfferPrice(productD)
+                  TotalPriceOfCart = TotalPriceOfCart +  (cartData.items[i].quantity * price)
         }  
                   console.log("This is the final proudcts: ",products);
                   console.log("This is the total price of the cart: ",TotalPriceOfCart)

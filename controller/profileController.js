@@ -3,14 +3,17 @@ const cart = require('../models/cartModel');
 const category = require("../models/categoryModel");
 const product = require("../models/productModel");
 const bcrypt = require("bcrypt");
-const order = require("../models/orderModel")
-const objectId = require("mongoose").Types.objectId
+const order = require("../models/orderModel");
+const wallet = require("../models/walletModel");
+const objectId = require("mongoose").Types.ObjectId
 
 
 const loadProfile = async (req, res)=>{
    
    try {
-  
+    
+    const walletData = await wallet.findOne({userId:new objectId(req.session.user._id)})
+    console.log("This is wallet Data : ",walletData)
 
     if(req.session.user){
       const userId = req.session.user._id;
@@ -20,7 +23,7 @@ const loadProfile = async (req, res)=>{
    console.log("This is userData :",userData)
 
 
-    res.render("userProfile",{userData})
+    res.render("userProfile",{userData, walletData})
     }else{
       console.log("req.session.user is not found in loadprofile profileController")
     }

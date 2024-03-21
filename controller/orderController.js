@@ -5,6 +5,8 @@ const objectId = require("mongoose").Types.ObjectId;
 //const { ObjectId } = require('mongodb');
 const user = require("../models/userModel");
 const { addingProduct } = require('./adminController');
+const wallet = require('../models/walletModel');
+const paymentHelper = require("../helper/paymentHelper")
 
 
 
@@ -14,22 +16,87 @@ const { addingProduct } = require('./adminController');
             console.log("Entered into placeorder in orderController");
             const receivedData = req.body;
             const userId = req.session.user._id;
+            const totalPriceOfCart = parseInt(receivedData.totalPriceOfCart)
             console.log("This is received Data in placedOrder:",receivedData)
-            console.log("This is userId in placdOrder:",userId)
-            
-            const placedOrder = await placeOrderHelper.placeOrderHelp(receivedData,userId);
-            console.log(placedOrder);
-            if(placedOrder.status === true){
-               console.log("hello world!!!")
-               const clearedCart = await placeOrderHelper.clearCart(userId);
-               console.log("This is cleared cart:",clearedCart)
-               if(clearedCart.acknowledged){
-                     console.log("Entered in to clearCart acknowledged");
-                     res.json({success:true,url:"/orderIsPlaced"});
+            console.log("This is address: ",receivedData.address);
+            console.log("This is paymentMethod: ",receivedData.paymentMethod);
+            console.log("This is userId in placdOrder:",userId);
+
+
+
+            if(receivedData.paymentMethod === 'COD'){
+              const placedOrder = await placeOrderHelper.placeOrderHelp(receivedData,userId);
+              console.log("This is the Promise response received : ",placedOrder);
+              if(placedOrder.status === true){
+                 console.log("hello world!!!")
+                 const clearedCart = await placeOrderHelper.clearCart(userId);
+                 console.log("This is cleared cart:",clearedCart)
+                 if(clearedCart.acknowledged){
+                       console.log("Entered in to clearCart acknowledged");
+                       res.json({success:true,url:"/orderIsPlaced"});
+                 }
+              }else{
+                res.json({success:false,message:placedOrder.message,url:"/loadCartPage"})
                }
-            }else{
-              res.json({success:false,message:placedOrder.message,url:"/loadCartPage"})
-             }
+
+            }else if(receivedData.paymentMethod === 'wallet'){
+              //console.log("payment Method is Wallet");
+
+               const walletData = await wallet.findOne({userId:new objectId(req.session.user._id)});
+               const walletBalance = parseInt(walletData.balance);
+               console.log("This is wallet Balance: ",walletBalance);
+
+
+               if(totalPriceOfCart > walletBalance){
+
+
+                 res.json({success:false, message:'Wallet has insufficient fund!!'})
+
+
+               }else{
+
+
+                const placedOrder = await placeOrderHelper.placeOrderHelp(receivedData,userId);
+                console.log("This is the Promise response received : ",placedOrder);
+                if(placedOrder.status === true){
+                   console.log("hello world!!!")
+                   const clearedCart = await placeOrderHelper.clearCart(userId);
+                   console.log("This is cleared cart:",clearedCart)
+                   if(clearedCart.acknowledged){
+                         console.log("Entered in to clearCart acknowledged");
+                         const data = {
+                            amount:totalPriceOfCart,
+                            date:new Date(),
+                            paymentMethod:"Wallet Payment",
+                            isReceived:false
+
+                         }
+                         const pushDatas = await wallet.updateOne(
+                          {userId:new objectId(userId)},
+                          { $push: { walletDatas: data } }
+                         )
+                         const decreaseWalletAmount = await wallet.updateOne(
+                                       {userId:new objectId(userId)},
+                                       { $inc: { balance: -totalPriceOfCart } } 
+                          )
+
+                         res.json({success:true,url:"/orderIsPlaced"});
+                   }
+                }else{
+                  res.json({success:false,message:placedOrder.message,url:"/loadCartPage"})
+                 }
+  
+
+               }
+               
+            }else if(receivedData.paymentMethod === 'razorpay'){
+              console.log("payment method is razor pay");
+              const payment = await paymentHelper.generateRazorpay(userId,totalPriceOfCart)
+              console.log("This is the response: ",payment);
+              res.json({razorpayStatus:true, instance:payment})
+              
+            }
+           
            
  }
 
@@ -132,10 +199,15 @@ const { addingProduct } = require('./adminController');
        console.log("Entered in to return Product of orderController");
 
        try {
-            const {orderId, productId, size} = req.body;
+            const {orderId, productId, size,quantity, reason, productPrice} = req.body;
+            const userId = req.session.user._id
+            
             console.log("This is orderId : ",orderId);
             console.log("This is productId: ",productId);
-            console.log("This is the size: ",size)
+            console.log("This is the size: ",size);
+            console.log("This is the quantity: ",quantity);
+            console.log("This is the reason : ",reason);
+            console.log("This is the productPrice: ",productPrice)
 
             const returnProduct = await order.updateOne(
               {
@@ -149,7 +221,8 @@ const { addingProduct } = require('./adminController');
               },
               {
                   $set: {
-                      "products.$.status": "Return pending"
+                      "products.$.status": "Return pending",
+                      "products.$.returnReason":reason
                   }
               }
           );
@@ -157,8 +230,10 @@ const { addingProduct } = require('./adminController');
           console.log("This is return product:",returnProduct);
 
           if(returnProduct.modifiedCount>0){
-            console.log("Product is updated to returned");
-            res.json({success:true})
+          
+
+          res.json({success:true});
+
           }else{
             console.log("modified count is less than zero");
             res.json({success:false})
@@ -212,6 +287,10 @@ const { addingProduct } = require('./adminController');
      }
 
   }
+  const verifyPayment = async(req, res)=>{
+    console.log("Entered into verifyPayment in orderController");
+    console.log("This is the received body: ",req.body)
+  }
 
 module.exports = {
   placeOrder,
@@ -220,5 +299,6 @@ module.exports = {
   deleteOrder,
   returnProduct,
   loadAddressEditCheckout,
-  updateAddress
+  updateAddress,
+  verifyPayment
 }

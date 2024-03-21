@@ -19,7 +19,7 @@ const loadWishlistPage = async(req, res)=>{
           if(wishlistData){
             for(pro of wishlistData.products){
               console.log("This is products: ",pro)
-              wishlistProduct = await product.findOne({_id:pro.productId})
+              wishlistProduct = await product.findOne({_id:new objectId(pro.productId)})
               console.log("This is each product:",wishlistProduct )
               const calculatedPrice = await newOfferPrice(wishlistProduct);
               console.log("This is calculated offerPrice: ",calculatedPrice);
@@ -164,4 +164,4 @@ module.exports = {
              addToWishlist,
              deleteWishlist,
              addToCart
-}
+          }

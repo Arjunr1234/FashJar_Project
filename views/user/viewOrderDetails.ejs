@@ -81,23 +81,22 @@
                                       </th>
                                       </td>
                                       <td class="col-cancell col-md-2 text-center">
-                                        <% if(orders[i].orderDetails.status === 'Delivered') {%>
-                                          <a  class="btn btn-sm font-sm btn-action btn-warning" style="width: 50%; padding: 5px; font-size: 12px; background:rgb(255, 200, 0)" onclick="returnProduct('<%= orders[i].orderId %>','<%= orders[i].orderDetails.product %>','<%= orders[i].orderDetails.size %>','<%= orders[i].orderDetails.quantity %>')">Return</a>
+                                        <% if (orders[i].orderDetails.status === 'Delivered') { %>
+                                          <!-- Update the onclick attribute to call a JavaScript function -->
+                                          <a class="btn btn-sm font-sm btn-action btn-warning" style="width: 50%; padding: 5px; font-size: 12px; background: rgb(255, 200, 0)" onclick="openReturnModal('<%= orders[i].orderId %>', '<%= orders[i].orderDetails.product %>', '<%= orders[i].orderDetails.size %>', '<%= orders[i].orderDetails.quantity %>','<%= orders[i].orderDetails.productPrice %>')">Return</a>
+                                        <% } else if( orders[i].orderDetails.status ===  "Cancelled"){%>
 
-                                          <%} else if( orders[i].orderDetails.status ===  "Cancelled"){%>
+                                          <%} else if( orders[i].orderDetails.status ===  "Return pending"){%>
 
-                                            <%} else if( orders[i].orderDetails.status ===  "Return pending"){%>
-  
-                                              <%}else if( orders[i].orderDetails.status ===  "Returned"){%>
-  
-                                                <%}
+                                            <%}else if( orders[i].orderDetails.status ===  "Returned"){%>
 
-                                            else {%>
-                                              <a class="btn btn-sm font-sm btn-action btn-warning" style="width: 50%; padding: 5px; font-size: 12px; background:red" onclick="cancelProduct('<%= orders[i].orderId %>','<%= orders[i].orderDetails.product %>','<%= orders[i].orderDetails.size %>','<%= orders[i].orderDetails.quantity %>')">Cancel</a>
-  
                                               <%}
-                                             %>
-                                    </td>
+
+                                          else {%>
+                                            <a class="btn btn-sm font-sm btn-action btn-warning" style="width: 50%; padding: 5px; font-size: 12px; background:red" onclick="cancelProduct('<%= orders[i].orderId %>','<%= orders[i].orderDetails.product %>','<%= orders[i].orderDetails.size %>','<%= orders[i].orderDetails.quantity %>','<%= orders[i].orderDetails.productPrice %>')">Cancel</a>
+
+                                            <%} %>
+                                      </td>
                                     
                                      
                                   </tr>
@@ -110,6 +109,37 @@
                                           
                       </tbody>
                     </table>
+                    <div class="modal fade" id="returnModal" tabindex="-1" role="dialog" aria-labelledby="returnModalLabel" aria-hidden="true">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="returnModalLabel">Return Product</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <form id="returnForm">
+                              <!-- Hidden fields to store orderId, productId, size, and quantity -->
+                              <input type="hidden" id="returnOrderId" name="returnOrderId">
+                              <input type="hidden" id="returnProductId" name="returnProductId">
+                              <input type="hidden" id="returnSize" name="returnSize">
+                              <input type="hidden" id="returnQuantity" name="returnQuantity">
+                              <input type="hidden" id="returnProductPrice" name="returnProductPrice">
+                    
+                              <div class="form-group">
+                                <label for="returnReason">Reason for Return:</label>
+                                <textarea class="form-control" id="returnReason" name="returnReason" rows="3"></textarea>
+                              </div>
+                            </form>
+                          </div>
+                          <div class="modal-footer">
+                           
+                            <button type="button" class="btn btn-primary" id="submitReturn">Submit</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                 </div>
               </div>      
            <!-- .row // -->
@@ -240,6 +270,79 @@
    
 
 </script>
+<script>
+
+  
+  function openReturnModal(orderId, productId, size, quantity,productPrice) {
+    // Check if any value is undefined or null
+    if (!orderId || !productId || !size || !quantity) {
+      console.error("One or more values (orderId, productId, size, quantity) are undefined or null.");
+      return;
+    }
+  
+    // Populate hidden fields with orderId, productId, size, and quantity
+
+    $('#returnOrderId').val(orderId);
+    $('#returnProductId').val(productId);
+    $('#returnSize').val(size);
+    $('#returnQuantity').val(quantity);
+    $('#returnProductPrice').val(productPrice);
+  
+    // Show the return modal
+    $('#returnModal').modal('show');
+  }
+  
+  // Handle form submission
+  $(document).ready(function(){
+   
+    $('#submitReturn').click(function(){
+      
+      // Retrieve data from form fields
+      var orderId = $('#returnOrderId').val();
+      var productId = $('#returnProductId').val();
+      var size = $('#returnSize').val();
+      var quantity = $('#returnQuantity').val();
+      var reason = $('#returnReason').val();
+      var productPrice =  $('#returnProductPrice').val();
+      $('#returnModal').modal('hide');
+      
+      // Now you can use orderId, productId, size, quantity, and reason to submit the form or perform any other action
+      console.log("Order ID: " + orderId);
+      console.log("Product ID: " + productId);
+      console.log("Size: " + size);
+      console.log("Quantity: " + quantity);
+      console.log("Reason for return: " + reason);
+      console.log("This is the productPrice: ",productPrice)
+
+      const requestedData = {
+        orderId : orderId,
+        productId: productId,
+        size, quantity, reason, productPrice
+      }
+
+      $.ajax({
+        url:"/retrunProduct",
+        method:"POST",
+        contentType:'application/json',
+        data:JSON.stringify(requestedData),
+        success:function(data){
+             if(data.success){
+             console.log("Entered in to success is true")
+              swal("Return request is Accepted", {
+               icon: "success",
+           }).then(() => {
+               location.reload();
+               
+             })
+             }
+
+        }
+     })
+  
+      
+    });
+  });
+  </script>
 
 <!-- Mirrored from wp.alithemes.com/html/evara/evara-frontend/shop-cart.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 15 Jul 2023 10:10:07 GMT -->
 </html>

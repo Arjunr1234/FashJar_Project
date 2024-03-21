@@ -1,5 +1,5 @@
 const { render } = require("ejs")
-const User = require("../models/userModel")
+const User = require("../models/userModel");
 const otpSend = require("../helper/otpHelper")
 const otpHelper = require("../helper/otpHelper")
 const userHelper = require("../helper/userHelper")
@@ -8,7 +8,8 @@ const bcrypt = require("bcrypt")
 const product = require("../models/productModel")
 const category = require("../models/categoryModel")
 const cart = require("../models/cartModel");
-const offerHelper = require("../helper/offerHelper")
+const offerHelper = require("../helper/offerHelper");
+const wallet = require("../models/walletModel")
 const {ObjectId} = require("mongoose").Types
 
 
@@ -118,6 +119,18 @@ const loadUserHome = async function (req, res) {
       if (req.session.user) {
           const userData = await User.findOne({ _id: req.session.user });
           const name = userData.name;
+
+          const findingWallet = await wallet.findOne({userId:new ObjectId(req.session.user._id)})
+
+          if(!findingWallet){  
+            const createWallet = await wallet.create({
+              userId:req.session.user._id,
+              balance:0
+            })
+
+          }
+
+         
           
 
           const productData = await product.aggregate([
@@ -135,6 +148,7 @@ const loadUserHome = async function (req, res) {
                   }
               }
           ]);
+
           const categoryData = await category.find({isListed:true})
 
           const cartData = await cart.findOne({userId:userData._id})
@@ -149,7 +163,7 @@ const loadUserHome = async function (req, res) {
          
 
           const newAddedProducts = await product.find().sort({creationOn:-1})
-          console.log("This is the productData: ",productData);
+        //  console.log("This is the productData: ",productData);
           
         //  console.log("This is new Added Products:" ,newAddedProducts)
           
