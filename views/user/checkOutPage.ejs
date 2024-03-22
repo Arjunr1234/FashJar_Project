@@ -180,7 +180,67 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="bt-1 border-color-1 mt-30 mb-30"></div>
+                            <div class="bt-1 border-color-1 "></div>
+                            <div class="form-group col-lg-6">
+                                <button class="btn btn-sm" id="couponusing" style="background-color: black;" data-toggle="modal" data-target="#couponModal"><i class="fi-rs-label mr-10"></i>Use Available Coupons</button>
+                            </div>
+                           <!-- modal -->
+                           <div class="modal fade" id="couponModal" tabindex="-1" aria-labelledby="couponModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="couponModalLabel">Available Coupons</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <% if(locals.couponData){%>
+                                        <table class="table">
+                                            <thead>
+                                              <tr>
+                                                <th class="text-center">Coupon Code</th>
+                                                <th class="text-center">Coupon Name</th>
+                                                <th class="text-center">Discount</th>
+                                                <th class="text-center">Use Coupon</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              <!-- Replace this with your backend logic to populate the coupons -->
+                                              <% for( let i = 0; i < couponData.length; i++ ) { %>
+                                                <tr>
+                                                    <td class="text-center"><%= couponData[i].couponCode %></td>
+                                                    <td class="text-center"><%= couponData[i].name %></td>
+                                                    <td class="text-center"><%= couponData[i].discount %> %</td>
+                                                    <td class="text-center">
+                                                        <a  class="btn btn-sm font-sm btn-action btn-warning"
+                                                            style="width: 70%"
+                                                            data-id="<%= couponData[i]._id %>"
+                                                            data-code="<%= couponData[i].couponCode %>"
+                                                            data-name="<%= couponData[i].name %>"
+                                                            data-discount="<%= couponData[i].discount %>">Apply</a>
+                                                    </td>
+                                                </tr>
+                                              <% } %>
+                                             
+                                             
+                                              <!-- End of coupon data -->
+                                            </tbody>
+                                          </table>
+                                        <%} %>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                            <!-- modal End -->
+
+
+
+
                             <div class="payment_method">
                                 <div class="mb-25">
                                     <h5>Payment</h5>
@@ -366,6 +426,55 @@
     <!-- Template  JS -->
     <script src="/public/assets/js/maind134.js?v=3.4"></script>
     <script src="/public/assets/js/shopd134.js?v=3.4"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            console.log("DOMContentLoaded event fired");
+    
+            var couponButton = document.getElementById("couponusing");
+            if (couponButton) {
+                console.log("Found coupon button");
+                couponButton.addEventListener("click", function() {
+                    console.log("Coupon button clicked");
+    
+                    var couponModal = document.getElementById("couponModal");
+                    if (couponModal) {
+                        console.log("Found coupon modal");
+                        var modal = new bootstrap.Modal(couponModal);
+                        modal.show();
+    
+                        var applyButtons = document.querySelectorAll("#couponModal .btn-action");
+                        applyButtons.forEach(function(applyButton) {
+                            applyButton.addEventListener("click", function(event) {
+                                var couponId = applyButton.dataset.id; // Retrieve the coupon ID from the data-id attribute
+                                var couponCode = applyButton.dataset.code; // Retrieve the coupon code from the data-code attribute
+                                var couponName = applyButton.dataset.name; // Retrieve the coupon name from the data-name attribute
+                                var discount = applyButton.dataset.discount; // Retrieve the discount from the data-discount attribute
+    
+                                console.log("Coupon Id:", couponId);
+                                console.log("Coupon Code:", couponCode);
+                                console.log("Coupon Name:", couponName);
+                                console.log("Discount:", discount);
+    
+                                // You can perform further actions with the retrieved data here
+                                // For example, you can use AJAX to send the data to the server
+    
+                                // Close the modal
+                                modal.hide();
+                            });
+                        });
+                    } else {
+                        console.error("Coupon modal not found");
+                    }
+                });
+            } else {
+                console.error("Coupon button not found");
+            }
+        });
+    </script>
+    
+    
+    
 
     <script>
       document.getElementById("placeOrderButton").addEventListener("click", function(){

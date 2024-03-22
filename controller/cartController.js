@@ -6,6 +6,7 @@ const offerHelper = require("../helper/offerHelper")
 const ObjectId = require("mongoose").Types.ObjectId
 const order = require("../models/orderModel")
 const wishlist = require("../models/wishlistModel");
+const coupon = require("../models/couponModel");
 
 
 
@@ -440,13 +441,15 @@ const loadCheckOutPage = async(req, res)=>{
                   const price = await offerHelper.newOfferPrice(productD)
                   TotalPriceOfCart = TotalPriceOfCart +  (cartData.items[i].quantity * price)
         }  
-                  console.log("This is the final proudcts: ",products);
-                  console.log("This is the total price of the cart: ",TotalPriceOfCart)
+                 // console.log("This is the final proudcts: ",products);
+                 // console.log("This is the total price of the cart: ",TotalPriceOfCart)
                 }
                  const userAddress = await user.findOne({_id:userId},{address:1})
-                 console.log("This is the userAddress in loadCheckOutPage ", userAddress)
+                // console.log("This is the userAddress in loadCheckOutPage ", userAddress);
+                 const couponData = await coupon.find();
+                 console.log("This is couponData: ",couponData)
                   
-                  res.render("checkOutPage",{products, TotalPriceOfCart, userAddress})
+                res.render("checkOutPage",{products, TotalPriceOfCart, userAddress,couponData})
               }else{
                 console.log("req.session.user is not found in loadCheckOutPage");
                 res.redirect('/')
