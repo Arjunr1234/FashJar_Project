@@ -9,6 +9,7 @@ const order = require("../models/orderModel");
 const cart = require("../models/cartModel");
 const wallet = require("../models/walletModel")
 const productModel = require("../models/productOfferModel");
+const coupon = require("../models/couponModel")
 const objectId = require("mongoose").Types.ObjectId;
 const offerHelper = require("../helper/offerHelper")
 
@@ -28,11 +29,9 @@ const loadLogin =  (req,res)=>{
 const loadHome = async (req, res)=>{
     if(req.session.admin){
 //====================this is the additional thisng to delete====================
-    const productD = await product.find()
-    console.log("This is the productD:",productD[0]);
 
-    const offerPrice = await offerHelper.newOfferPrice(productD[0]);
-    console.log("This is the offerPrice in admincontroller : ",offerPrice);
+//const check = coupon.find((data)=>data.endingDate); 
+    
 //==================till here =====================================================
       res.render("adminHome")
     }else{

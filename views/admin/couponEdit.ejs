@@ -23,29 +23,45 @@
         }
         </style>
         <section class="content-main" style="background-color: white;">
-          <div class="content-header">
+
+          <% if(locals.couponData){%>
+
+            <div class="content-header">
               <div class="container">
                   <div class="row">
-                      <div class="col-md-6 mt-60">
-                          <h2 class="content-title card-title">Category Edit</h2>
-                          <form id="addCategory" action="/admin/updateCategory?categoryId=<%= categoryData._id %>" method="post" onsubmit="return validateAndSubmit()">
-                           
-                        
+                      <div class="col-md-6 mt-30">
+                          <h2 class="content-title card-title mb-20">Coupon Edit</h2>
+                          <form id="addCategory" action="/admin/updateCoupon?couponId=<%= couponData._id %>" method="POST">
+                          
+                          
                             <div class="mb-4">
-                                <label for="product_name" class="form-label">Name</label>
-                                <input type="text" placeholder="Type here" class="form-control" id="categoryNameX" name="categoryName" value="<%= categoryData.name %>" />
-                                <div id="categoryName-error" class="error-message"></div>
+                              <label for="product_name" class="form-label">Coupon name</label>
+                              <input name="couponName" type="text" placeholder="Type here" class="form-control" id="product_name"
+                                value="<%= couponData.name %>" />
                             </div>
-                            
+                          
                             <div class="mb-4">
-                                <label class="form-label">Description</label>
-                                <textarea placeholder="Type here" class="form-control" id="descriptionX" name="description"><%= categoryData.description %></textarea>
-                                <div id="description-error" class="error-message"></div>
+                              <label class="form-label">Starting Date</label>
+                              <input name="startingDate" type="date" class="form-control"
+                                value="<%= couponData.createdOn.toISOString().split('T')[0] %>">
+                              <p><span id="error2" style="display: none;" class="mt-15 err text-danger"></span></p>
+                            </div>
+                            <div class="mb-4">
+                              <label class="form-label">Ending Date</label>
+                              <input name="endingDate" type="date" class="form-control"
+                                value="<%= couponData.expireOn.toISOString().split('T')[0] %>">
+                              <p><span id="error2" style="display: none;" class="mt-15 err text-danger"></span></p>
+                            </div>
+                            <div class="mb-4">
+                              <label class="form-label">Discount</label>
+                              <input placeholder=" %" name="couponDiscount" class="form-control" id="couponDiscount"
+                                value="<%= couponData.discount %>">
+                              <p><span id="error7" style="display: none;" class="mt-15 err text-danger"></span></p>
                             </div>
                             <div class="d-grid">
-                                <button class="btn btn-primary">Update category</button>
+                              <button class="btn btn-primary" type="submit">Update coupon</button>
                             </div>
-                        </form>
+                          </form>
                         
                         
                         
@@ -55,6 +71,10 @@
                   </div>
               </div>
           </div>
+            
+            
+            <%} %>
+         
       </section>
         <footer class="main-footer font-xs">
             <div class="row pb-30 pt-15">
@@ -71,7 +91,7 @@
             </div>
         </footer>
     </main>
-    <script src="/public/js/categoryValidation.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/public/admin-assets/js/vendors/jquery-3.6.0.min.js"></script>
     <script src="/public/admin-assets/js/vendors/bootstrap.bundle.min.js"></script>
@@ -81,11 +101,7 @@
    
     <!-- Main Script -->
     <script src="/public/admin-assets/js/main.js" type="text/javascript"></script>
-    <script>
-        $(document).ready(function(){
-            $('#customerlist').DataTable();
-        })
-    </script>
+    
 
     
 </body>
