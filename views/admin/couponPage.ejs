@@ -44,12 +44,13 @@
                                         <tr>
                                             
                                             
-                                            <th class="col-md-3 text-center">Name</th>
+                                            <th class="col-md-2 text-center">Name</th>
                                             <th class="col-md-2 text-center">Created On</th>
-                                            <th class="col-md-2 text-center">Expire On</th>
+                                            <th class="col-md-1 text-center">Expire On</th>
                                             <th class="col-md-1 text-center">Discount</th>
                                             <th class="col-md-2 text-center">Status</th>
                                             <th class="col-md-2 text-center">Edit</th>
+                                            <th class="col-md-2 text-center">Delete</th>
                                             
                                         </tr>
                                     </thead>
@@ -57,9 +58,9 @@
                                       <% if (locals.couponData) { %>
                                         <% for (let i = 0; i < couponData.length; i++) { %>
                                           <tr>
-                                            <td class="col-md-3 text-center"><%= couponData[i].name %></td>
-                                            <td class="col-md-2 text-center"><%= couponData[i].createdOn.toLocaleDateString() %></td>
-                                            <td class="col-md-2 text-center"><%= couponData[i].expireOn.toLocaleDateString() %></td>
+                                            <td class="col-md-2 text-center"><%= couponData[i].name %></td>
+                                            <td class="col-md-1 text-center"><%= couponData[i].createdOn.toLocaleDateString() %></td>
+                                            <td class="col-md-1 text-center"><%= couponData[i].expireOn.toLocaleDateString() %></td>
                                             <td class="col-md-1 text-center"><%= couponData[i].discount %>%</td>
                                             <td class="col-md-2 text-center">
                                                  
@@ -72,6 +73,9 @@
                                             
                                           <td class="col-md-2  text-center">
                                             <a href="/admin/loadCouponEdit?couponId=<%= couponData[i]._id %>" class="btn btn-sm font-sm btn-action btn-warning" style="width: 70%">Edit</a>
+                                        </td>
+                                        <td class="col-md-2  text-center">
+                                            <a  class="btn btn-sm  font-sm btn-action btn-danger" style="width: 70%" onclick="deleteCoupon('<%= couponData[i]._id %>')">Delete</a>
                                         </td>
                                           </tr>
                                         <% } %>
@@ -106,6 +110,8 @@
             </div>
         </footer>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="/public/admin-assets/js/vendors/jquery-3.6.0.min.js"></script>
     <script src="/public/admin-assets/js/vendors/bootstrap.bundle.min.js"></script>
     <script src="/public/admin-assets/js/vendors/select2.min.js"></script>
@@ -116,9 +122,41 @@
 
     
 
+       <script>
+        function deleteCoupon(id){
+                  console.log("Entered into deleteCoupon  ");
 
+                  Swal.fire({
+                    text: "Do you want to Remove the Coupon ?",
+                    buttons: ["cancel", true],
+                }).then((result)=>{
+                    if(result.isConfirmed){
+
+                        $.ajax({
+                            url:'/admin/deleteCoupon',
+                            method:'DELETE',
+                            data:{id},
+                            success:function(response){
+                                if(response.success){
+                                    location.reload()
+                                }else{
+                                    alert("Failed to delete")
+                                }
+    
+                            }
+    
+                        })
+
+                    }
+                        
+                    
+                })
+        }
+       </script>
 
     
+        
+    </body>
 
 
 <!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-categories.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:21 GMT -->

@@ -69,7 +69,8 @@ router.post('/updateCategoryOffer',isAdmin,adminSection2Controller.updateCategor
 router.get('/loadCouponPage',isAdmin,checkCoupon, adminSection2Controller.loadCouponPage);
 router.post('/postAddCoupon',isAdmin, adminSection2Controller.createCoupons);
 router.get('/loadCouponEdit',isAdmin,adminSection2Controller.loadCouponEdit);
-router.post('/updateCoupon',isAdmin,adminSection2Controller.updateCoupon)
+router.post('/updateCoupon',isAdmin,adminSection2Controller.updateCoupon);
+router.delete('/deleteCoupon',isAdmin,adminSection2Controller.deleteCoupon)
 
 
 

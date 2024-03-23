@@ -73,7 +73,8 @@ router.post('/deleteOrder',isUser,orderController.deleteOrder);
 router.post('/retrunProduct',isUser,orderController.returnProduct);
 router.get('/editAddressCheckout',isUser, orderController.loadAddressEditCheckout);
 router.post('/updateAddressInCheckoutPage',isUser,orderController.updateAddress);
-router.post('/verifyPayment', isUser, orderController.verifyPayment)
+router.post('/verifyPayment', isUser, orderController.verifyPayment);
+router.post('/applyCoupon',isUser,orderController.applyCoupon)
 
 //===========================Wishlist========================================
 

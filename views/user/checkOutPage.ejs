@@ -174,6 +174,10 @@
                                             <td colspan="2"><em>Free Shipping</em></td>
                                         </tr>
                                         <tr>
+                                            <th>Coupon</th>
+                                            <td class="text-center" colspan="2" id="couponAppliedText">Not applied</td>
+                                        </tr>
+                                        <tr>
                                             <th>Total</th>
                                             <td colspan="2" class="product-subtotal">₹<span id="totalPriceOfCarts" class="font-xl text-brand fw-900"> <%= TotalPriceOfCart %></span></td>
                                         </tr>
@@ -182,7 +186,7 @@
                             </div>
                             <div class="bt-1 border-color-1 "></div>
                             <div class="form-group col-lg-6">
-                                <button class="btn btn-sm" id="couponusing" style="background-color: black;" data-toggle="modal" data-target="#couponModal"><i class="fi-rs-label mr-10"></i>Use Available Coupons</button>
+                                <button class="btn btn-sm hover" id="couponusing" style="background-color: black;" data-toggle="modal" data-target="#couponModal"><i class="fi-rs-label mr-10"></i>Use Available Coupons</button>
                             </div>
                            <!-- modal -->
                            <div class="modal fade" id="couponModal" tabindex="-1" aria-labelledby="couponModalLabel" aria-hidden="true">
@@ -196,37 +200,44 @@
                                     </div>
                                     <div class="modal-body">
                                         <% if(locals.couponData){%>
-                                        <table class="table">
-                                            <thead>
-                                              <tr>
-                                                <th class="text-center">Coupon Code</th>
-                                                <th class="text-center">Coupon Name</th>
-                                                <th class="text-center">Discount</th>
-                                                <th class="text-center">Use Coupon</th>
-                                              </tr>
-                                            </thead>
-                                            <tbody>
+                                       
                                               <!-- Replace this with your backend logic to populate the coupons -->
-                                              <% for( let i = 0; i < couponData.length; i++ ) { %>
-                                                <tr>
-                                                    <td class="text-center"><%= couponData[i].couponCode %></td>
-                                                    <td class="text-center"><%= couponData[i].name %></td>
-                                                    <td class="text-center"><%= couponData[i].discount %> %</td>
-                                                    <td class="text-center">
-                                                        <a  class="btn btn-sm font-sm btn-action btn-warning"
-                                                            style="width: 70%"
-                                                            data-id="<%= couponData[i]._id %>"
-                                                            data-code="<%= couponData[i].couponCode %>"
-                                                            data-name="<%= couponData[i].name %>"
-                                                            data-discount="<%= couponData[i].discount %>">Apply</a>
-                                                    </td>
-                                                </tr>
-                                              <% } %>
+                                              <% if(couponData.length > 0){%>
+                                                <% for( let i = 0; i < couponData.length; i++ ) { %>
+                                                    <table class="table">
+                                                        <thead>
+                                                          <tr>
+                                                            <th class="text-center">Coupon Code</th>
+                                                            <th class="text-center">Coupon Name</th>
+                                                            <th class="text-center">Discount</th>
+                                                            <th class="text-center">Use Coupon</th>
+                                                          </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                    <tr>
+                                                        <td class="text-center"><%= couponData[i].couponCode %></td>
+                                                        <td class="text-center"><%= couponData[i].name %></td>
+                                                        <td class="text-center"><%= couponData[i].discount %> %</td>
+                                                        <td class="text-center">
+                                                            <a  class="btn btn-sm font-sm btn-action btn-warning"
+                                                                style="width: 70%"
+                                                                data-id="<%= couponData[i]._id %>"
+                                                                data-code="<%= couponData[i].couponCode %>"
+                                                                data-name="<%= couponData[i].name %>"
+                                                                data-discount="<%= couponData[i].discount %>">Apply</a>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                                  <% } %>
+                                                <%}else{%>
+                                                    <h1 class="text-center bold text-danger">No avaliable Coupons!!</h1>
+                                                    <%} %>
+                                             
                                              
                                              
                                               <!-- End of coupon data -->
-                                            </tbody>
-                                          </table>
+                                           
                                         <%} %>
                                     </div>
                                     <div class="modal-footer">
@@ -247,14 +258,14 @@
                                 </div>
                                 <div class="payment_option">
                                     <div class="custome-radio">
-                                        <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios3" checked="" value="razorpay">
+                                        <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios3" checked="" value="Razorpay">
                                         <label class="form-check-label" for="exampleRadios3" data-bs-toggle="collapse" data-target="#bankTranfer" aria-controls="bankTranfer">Razorpay</label>
                                         <div class="form-group collapse in" id="bankTranfer">
                                             <p class="text-muted mt-5">There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration. </p>
                                         </div>
                                     </div>
                                     <div class="custome-radio">
-                                        <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios4" checked="" value="COD">
+                                        <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios4" checked="" value="Cash On Delivery">
                                         <label class="form-check-label" for="exampleRadios4" data-bs-toggle="collapse" data-target="#checkPayment" aria-controls="checkPayment">Cash on Delivery</label>
                                         <div class="form-group collapse in" id="checkPayment">
                                             <p class="text-muted mt-5">Please send your cheque to Store Name, Store Street, Store Town, Store State / County, Store Postcode. </p>
@@ -428,55 +439,98 @@
     <script src="/public/assets/js/shopd134.js?v=3.4"></script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            console.log("DOMContentLoaded event fired");
-    
-            var couponButton = document.getElementById("couponusing");
-            if (couponButton) {
-                console.log("Found coupon button");
-                couponButton.addEventListener("click", function() {
-                    console.log("Coupon button clicked");
-    
-                    var couponModal = document.getElementById("couponModal");
-                    if (couponModal) {
-                        console.log("Found coupon modal");
-                        var modal = new bootstrap.Modal(couponModal);
-                        modal.show();
-    
-                        var applyButtons = document.querySelectorAll("#couponModal .btn-action");
-                        applyButtons.forEach(function(applyButton) {
-                            applyButton.addEventListener("click", function(event) {
-                                var couponId = applyButton.dataset.id; // Retrieve the coupon ID from the data-id attribute
-                                var couponCode = applyButton.dataset.code; // Retrieve the coupon code from the data-code attribute
-                                var couponName = applyButton.dataset.name; // Retrieve the coupon name from the data-name attribute
-                                var discount = applyButton.dataset.discount; // Retrieve the discount from the data-discount attribute
-    
-                                console.log("Coupon Id:", couponId);
-                                console.log("Coupon Code:", couponCode);
-                                console.log("Coupon Name:", couponName);
-                                console.log("Discount:", discount);
-    
-                                // You can perform further actions with the retrieved data here
-                                // For example, you can use AJAX to send the data to the server
-    
-                                // Close the modal
-                                modal.hide();
-                            });
-                        });
-                    } else {
-                        console.error("Coupon modal not found");
-                    }
-                });
-            } else {
-                console.error("Coupon button not found");
-            }
-        });
+        
+
+
+
+
+
     </script>
     
     
     
 
     <script>
+      
+
+      // Declare a global variable to store couponId
+let globalCouponId;
+
+document.addEventListener("DOMContentLoaded", function() {
+    console.log("DOMContentLoaded event fired");
+
+    var couponButton = document.getElementById("couponusing");
+    if (couponButton) {
+        console.log("Found coupon button");
+        couponButton.addEventListener("click", function() {
+            console.log("Coupon button clicked");
+
+            var couponModal = document.getElementById("couponModal");
+            if (couponModal) {
+                console.log("Found coupon modal");
+                var modal = new bootstrap.Modal(couponModal);
+                modal.show();
+
+                var applyButtons = document.querySelectorAll("#couponModal .btn-action");
+                applyButtons.forEach(function(applyButton) {
+                    applyButton.addEventListener("click", function(event) {
+                        // Retrieve the coupon ID from the data-id attribute
+                        globalCouponId = applyButton.dataset.id; 
+                        var couponCode = applyButton.dataset.code; 
+                        var couponName = applyButton.dataset.name; 
+                        var discount = applyButton.dataset.discount; 
+
+                        console.log("Coupon Id:", globalCouponId);
+                        console.log("Coupon Code:", couponCode);
+                        console.log("Coupon Name:", couponName);
+                        console.log("Discount:", discount);
+
+                        // You can perform further actions with the retrieved data here
+                        // For example, you can use AJAX to send the data to the server
+                        const couponData = { couponId: globalCouponId, couponCode, couponName, discount };
+
+                        $.ajax({
+                            url:'/applyCoupon',
+                            method:'POST',
+                            data:couponData,
+                            success:function(response){
+                                if(response.success){
+                                    console.log("this is the price: ", response.couponPrice)
+                                    document.getElementById('totalPriceOfCarts').innerHTML = response.couponPrice
+                                    document.getElementById('couponAppliedText').innerHTML = 'Coupon is applied';
+                                    document.getElementById('couponAppliedText').style.color = 'green';
+                                    document.getElementById('couponusing').style.display = 'none'
+                                }
+                            }
+                        });
+
+                        // Close the modal
+                        modal.hide();
+                    });
+                });
+            } else {
+                console.error("Coupon modal not found");
+            }
+        });
+    } else {
+        console.error("Coupon button not found");
+    }
+});
+
+// Access globalCouponId from other functions
+function otherFunction() {
+    console.log("Global couponId:", globalCouponId);
+}
+
+
+
+
+
+
+
+
+
+
       document.getElementById("placeOrderButton").addEventListener("click", function(){
         const selectedAddress = document.querySelector('input[name="addressSelected"]:checked').value;
         const selectPaymentMethod = document.querySelector('input[name="payment_option"]:checked').value;
@@ -485,11 +539,12 @@
         console.log("This is selected Address: ",selectedAddress);
         console.log("This is the payment option: ",selectPaymentMethod);
         console.log("Total Price of Cart: ",totalPriceOfCart);
+        console.log("This is global couponId: ",globalCouponId)
 
         const data = {
           address:selectedAddress,
           paymentMethod:selectPaymentMethod,
-          totalPriceOfCart
+          totalPriceOfCart,globalCouponId
         }
 
         $.ajax({

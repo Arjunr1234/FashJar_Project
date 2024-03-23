@@ -6,7 +6,9 @@ const objectId = require("mongoose").Types.ObjectId;
 const user = require("../models/userModel");
 const { addingProduct } = require('./adminController');
 const wallet = require('../models/walletModel');
-const paymentHelper = require("../helper/paymentHelper")
+const cart = require("../models/cartModel");
+const paymentHelper = require("../helper/paymentHelper");
+const { findById } = require('../models/adminModel');
 
 
 
@@ -16,15 +18,17 @@ const paymentHelper = require("../helper/paymentHelper")
             console.log("Entered into placeorder in orderController");
             const receivedData = req.body;
             const userId = req.session.user._id;
+            const couponId = receivedData.globalCouponId
             const totalPriceOfCart = parseInt(receivedData.totalPriceOfCart)
             console.log("This is received Data in placedOrder:",receivedData)
             console.log("This is address: ",receivedData.address);
             console.log("This is paymentMethod: ",receivedData.paymentMethod);
             console.log("This is userId in placdOrder:",userId);
+            console.log("This is the received couponId: ",couponId);
 
 
 
-            if(receivedData.paymentMethod === 'COD'){
+            if(receivedData.paymentMethod === 'Cash On Delivery'){
               const placedOrder = await placeOrderHelper.placeOrderHelp(receivedData,userId);
               console.log("This is the Promise response received : ",placedOrder);
               if(placedOrder.status === true){
@@ -56,7 +60,7 @@ const paymentHelper = require("../helper/paymentHelper")
                }else{
 
 
-                const placedOrder = await placeOrderHelper.placeOrderHelp(receivedData,userId);
+                const placedOrder = await placeOrderHelper.placeOrderHelp(receivedData,userId, couponId);
                 console.log("This is the Promise response received : ",placedOrder);
                 if(placedOrder.status === true){
                    console.log("hello world!!!")
@@ -89,7 +93,7 @@ const paymentHelper = require("../helper/paymentHelper")
 
                }
                
-            }else if(receivedData.paymentMethod === 'razorpay'){
+            }else if(receivedData.paymentMethod === 'Razorpay'){
               console.log("payment method is razor pay");
               const payment = await paymentHelper.generateRazorpay(userId,totalPriceOfCart)
               console.log("This is the response: ",payment);
@@ -319,6 +323,40 @@ const paymentHelper = require("../helper/paymentHelper")
     })
   }
 
+  const applyCoupon = async(req, res)=>{
+           console.log("Enter into applycoupon in orderController");
+
+           const {couponId, couponCode, couponName, discount} = req.body
+           couponDiscount = parseInt(discount);
+
+           const userId = req.session.user._id;
+           console.log("This is the body: ",req.body)
+           const cartData = await cart.findOne({userId:new objectId(userId)}).lean();
+           const totalAmountofCart = cartData.totalAmount
+           console.log("This is the total amount of cart: ",totalAmountofCart);
+
+           couponPrice = Math.round(totalAmountofCart - ( totalAmountofCart * couponDiscount/100));
+           console.log("This is the price after coupon is applied: ", couponPrice)
+
+
+           const changeTotalPrice = await cart.updateOne(
+                                      {userId:new objectId(userId)},
+                                      {$set:{totalAmount:couponPrice}}
+           )
+
+           console.log("Thsi is Changetotal price Status: ", changeTotalPrice);
+
+           if(changeTotalPrice.modifiedCount === 1){
+            res.json({success: true, couponPrice})
+           }else{
+            console.log("Data is not modified");
+            res.json({success:false})
+           }
+
+
+
+  }
+
 module.exports = {
   placeOrder,
   loadSuccessPage,
@@ -327,5 +365,6 @@ module.exports = {
   returnProduct,
   loadAddressEditCheckout,
   updateAddress,
-  verifyPayment
+  verifyPayment,
+  applyCoupon
 }

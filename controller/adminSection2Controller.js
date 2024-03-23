@@ -415,6 +415,22 @@ const updateCoupon = async(req, res)=>{
              
 }
 
+const deleteCoupon = async(req, res)=>{
+                 
+                     console.log("Entered into deleteCoupon in adminSection2Controller");
+                     const couponId = new ObjectId(req.body.id);
+                     console.log("Thsi is the id: ",couponId)
+                     const couponDelete = await coupon.deleteOne({_id:couponId});
+                     console.log("This i s delete: ",couponDelete)
+                     if(couponDelete.deletedCount){
+                      res.json({success:true});
+                     }else{
+                      res.json({success:false})
+                     }
+
+
+}
+
 
 
 
@@ -435,6 +451,7 @@ module.exports = {
   loadCouponPage,
   createCoupons,
   loadCouponEdit,
-  updateCoupon
+  updateCoupon,
+  deleteCoupon
   
 }
