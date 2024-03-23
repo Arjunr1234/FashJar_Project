@@ -73,7 +73,8 @@ router.post('/deleteOrder',isUser,orderController.deleteOrder);
 router.post('/retrunProduct',isUser,orderController.returnProduct);
 router.get('/editAddressCheckout',isUser, orderController.loadAddressEditCheckout);
 router.post('/updateAddressInCheckoutPage',isUser,orderController.updateAddress);
-router.post('/verifyPayment', isUser, orderController.verifyPayment)
+router.post('/verifyPayment', isUser, orderController.verifyPayment);
+router.post('/applyCoupon',isUser,orderController.applyCoupon)
 
 //===========================Wishlist========================================
 
@@ -81,6 +82,7 @@ router.get('/loadwishlist',isUser,wishlistController.loadWishlistPage);
 router.post('/addToWishlist',isUser,wishlistController.addToWishlist);
 router.post('/deleteWishlist',isUser,wishlistController.deleteWishlist);
 router.post('/addToCartFromWishlist',isUser,wishlistController.addToCart);
+
 
 
 //===========================================================================

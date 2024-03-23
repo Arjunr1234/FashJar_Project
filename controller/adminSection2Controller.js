@@ -8,7 +8,8 @@ const product = require("../models/productModel");
 const categoryOffer = require("../models/categoryOfferModel");
 const productOffer = require("../models/productOfferModel");
 const CategoryOfferModel = require("../models/categoryOfferModel");
-const wallet = require("../models/walletModel")
+const wallet = require("../models/walletModel");
+const coupon = require("../models/couponModel");
 const ObjectId = require("mongoose").Types.ObjectId
 
 
@@ -354,6 +355,86 @@ const updateCategoryOffer = async(req, res)=>{
                        }      
 }
 
+const loadCouponPage = async(req, res)=>{
+     console.log("Entered into loadCoupon Page ");
+
+     const couponData = await coupon.find()
+     console.log("Thi s is coupon data: ", couponData)
+
+     res.render("couponPage",{couponData})
+}
+
+const createCoupons = async(req, res)=>{
+  console.log("Entered into saveCoupon data in adminSection2Controller");
+
+  console.log("This is the received data: ",req.body)
+  const { couponName,startingDate,endingDate,couponDiscount } = req.body;
+  const startDate = new Date(startingDate);
+  const endDate = new Date(endingDate);
+
+               const createCoupon =  await coupon.create({
+                            name: couponName,
+                            createdOn: startDate,
+                            expireOn: endDate,
+                            discount: parseInt(couponDiscount),
+
+                                          })
+                                          console.log("This is the new: ",createCoupon)
+
+            res.redirect('/admin/loadCouponPage')
+}
+
+const loadCouponEdit = async(req, res)=>{
+                      console.log("Entered into loadCouponEdit in adminSection2Controller");
+                      couponId = req.query.couponId
+                      console.log("This is the id: ",couponId)
+                      const couponData = await coupon.findById(couponId)
+                      console.log("This is the  coupons: ",couponData)
+                      res.render('couponEdit',{couponData})
+}
+
+const updateCoupon = async(req, res)=>{
+              
+               console.log("Entered into update coupon in adminSection2Controller");
+               const couponId = req.query.couponId;
+               const { couponName,startingDate,endingDate,couponDiscount } = req.body;
+               const startDate = new Date(startingDate);
+               const endDate = new Date(endingDate);
+               console.log("This is the  data: ",req.body);
+
+               const update = await coupon.updateOne(
+                                 {_id:couponId},
+                                {$set:{
+                                  name: couponName,
+                                  createdOn: startDate,
+                                  expireOn: endDate,
+                                  discount: parseInt(couponDiscount),
+                                }}
+               )
+               res.redirect("/admin/loadCouponPage")
+             
+}
+
+const deleteCoupon = async(req, res)=>{
+                 
+                     console.log("Entered into deleteCoupon in adminSection2Controller");
+                     const couponId = new ObjectId(req.body.id);
+                     console.log("Thsi is the id: ",couponId)
+                     const couponDelete = await coupon.deleteOne({_id:couponId});
+                     console.log("This i s delete: ",couponDelete)
+                     if(couponDelete.deletedCount){
+                      res.json({success:true});
+                     }else{
+                      res.json({success:false})
+                     }
+
+
+}
+
+
+
+
+
 module.exports = {
   loadCategoryOfferPage,
   loadProductOfferPage,
@@ -366,6 +447,11 @@ module.exports = {
   loadEditCategoryOffer,
   updateProductOffer,
   updateCategoryOffer,
-  deleteCategoryOffer
+  deleteCategoryOffer,
+  loadCouponPage,
+  createCoupons,
+  loadCouponEdit,
+  updateCoupon,
+  deleteCoupon
   
 }

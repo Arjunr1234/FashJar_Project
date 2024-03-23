@@ -2,7 +2,9 @@ const cart = require("../models/cartModel");
 const productModel = require("../models/productModel");
 const users = require("../models/userModel");
 const order = require("../models/orderModel");
+const coupon = require("../models/couponModel")
 const offerHelper = require("../helper/offerHelper")
+const ObjectId = require("mongoose").Types.ObjectId
 
 
 
@@ -11,7 +13,23 @@ const placeOrderHelp = async (body, userId) => {
   console.log("Entered into placeOrder in placeOrderHelper");
   return new Promise(async (resolve, reject) => {
     try {
+          const couponId = body.globalCouponId
+          const userIdData = new ObjectId(userId)
+          
+          if(couponId){
+            console.log("user has couponId")
+            const addingUserToCoupon = await coupon.updateOne(
+                                     {_id:new ObjectId(couponId)},
+                                     { $push: { "usedByUser": userIdData } }
+            )
+          }
+
+
+
+
       const userCart = await cart.findOne({ userId: userId });
+
+
 
       // Check if userCart is not null before proceeding
       if (userCart) {
@@ -52,26 +70,74 @@ const placeOrderHelp = async (body, userId) => {
           changeProductQuantity.size[i.size].quantity -= i.quantity;
           await changeProductQuantity.save();
         }
+           
 
-        if (userCart && orderAddress) {
-          const orderPlacing = await order.create({
-            userId: userId,
-            products: products,
-            address: {
-              name: orderAddress.name,
-              mobile: orderAddress.mobile,
-              house: orderAddress.house,
-              city: orderAddress.city,
-              state: orderAddress.state,
-              pincode: orderAddress.pincode,
-              country: orderAddress.country,
-            },
-            paymentMethod: body.paymentMethod,
-            totalAmount: userCart.totalAmount
-          });
-          response.status = true;
-          resolve(response);
+        if(couponId){
+          const couponData = await coupon.findById(couponId).lean();
+          console.log("This is my couponDAta finded: ",couponData);
+          const couponIdData = new Object(couponId)
+          const couponName = couponData.name;
+          const couponDiscount = couponData.discount;
+          const couponCode = couponData.couponCode
+
+
+          if (userCart && orderAddress) {
+            const orderPlacing = await order.create({
+              userId: userId,
+              products: products,
+              address: {
+                name: orderAddress.name,
+                mobile: orderAddress.mobile,
+                house: orderAddress.house,
+                city: orderAddress.city,
+                state: orderAddress.state,
+                pincode: orderAddress.pincode,
+                country: orderAddress.country,
+              },
+              paymentMethod: body.paymentMethod,
+              totalAmount: userCart.totalAmount,
+              coupon:{
+                couponId:couponIdData,
+                name:couponName,
+                code:couponCode,
+                discount:couponDiscount
+              }
+              
+            });
+            response.status = true;
+            resolve(response);
+          }
+
+
+
+        }else{
+
+
+          if (userCart && orderAddress) {
+            const orderPlacing = await order.create({
+              userId: userId,
+              products: products,
+              address: {
+                name: orderAddress.name,
+                mobile: orderAddress.mobile,
+                house: orderAddress.house,
+                city: orderAddress.city,
+                state: orderAddress.state,
+                pincode: orderAddress.pincode,
+                country: orderAddress.country,
+              },
+              paymentMethod: body.paymentMethod,
+              totalAmount: userCart.totalAmount
+            });
+            response.status = true;
+            resolve(response);
+          }
+
         }
+
+
+
+      
       } else {
         // Handle the case where userCart is null
         console.error("User cart not found for userId:", userId);

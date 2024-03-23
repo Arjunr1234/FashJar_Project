@@ -1,0 +1,163 @@
+<%- include("../partials/adminHeader") %>
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Coupons </h2>
+                    <p>Add, edit or delete a Coupons</p>
+                </div>
+               
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <form id="addCoupon" action="/admin/postAddCoupon" method="post">
+                                <div class="mb-4">
+                                    <label for="product_name" class="form-label">Coupon name</label>
+                                    <input name="couponName" type="text" placeholder="Type here" class="form-control" id="product_name" />
+                                </div>
+                               
+                                <div class="mb-4">
+                                  <label class="form-label">Starting Date</label>
+                                  <input name="startingDate" type="date" placeholder="mm/dd/yy" class="form-control">
+                                  <p><span id="error2" style="display: none;" class="mt-15 err text-danger"></span></p>
+                              </div>
+                              <div class="mb-4">
+                                <label class="form-label">Ending Date</label>
+                                <input name="endingDate" type="date" placeholder="mm/dd/yy" class="form-control">
+                                <p><span id="error2" style="display: none;" class="mt-15 err text-danger"></span></p>
+                            </div>
+                            <div class="mb-4">
+                              <label class="form-label">Discount</label>
+                              <input placeholder=" %" name="couponDiscount" class="form-control" id="couponDiscount">
+                              <p><span id="error7" style="display: none;" class="mt-15 err text-danger"></span></p>
+                          </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-primary" type="submit">Create Coupon</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            
+                                            
+                                            <th class="col-md-2 text-center">Name</th>
+                                            <th class="col-md-2 text-center">Created On</th>
+                                            <th class="col-md-1 text-center">Expire On</th>
+                                            <th class="col-md-1 text-center">Discount</th>
+                                            <th class="col-md-2 text-center">Status</th>
+                                            <th class="col-md-2 text-center">Edit</th>
+                                            <th class="col-md-2 text-center">Delete</th>
+                                            
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                      <% if (locals.couponData) { %>
+                                        <% for (let i = 0; i < couponData.length; i++) { %>
+                                          <tr>
+                                            <td class="col-md-2 text-center"><%= couponData[i].name %></td>
+                                            <td class="col-md-1 text-center"><%= couponData[i].createdOn.toLocaleDateString() %></td>
+                                            <td class="col-md-1 text-center"><%= couponData[i].expireOn.toLocaleDateString() %></td>
+                                            <td class="col-md-1 text-center"><%= couponData[i].discount %>%</td>
+                                            <td class="col-md-2 text-center">
+                                                 
+                                              <% if (couponData[i].isActive) { %>
+                                                  <span class="badge" style="background-color: rgb(7, 219, 11);">Active</span>
+                                              <% } else { %>
+                                                  <span class="badge" style="background-color: red;">Expired</span>
+                                              <% } %>
+                                          </td>
+                                            
+                                          <td class="col-md-2  text-center">
+                                            <a href="/admin/loadCouponEdit?couponId=<%= couponData[i]._id %>" class="btn btn-sm font-sm btn-action btn-warning" style="width: 70%">Edit</a>
+                                        </td>
+                                        <td class="col-md-2  text-center">
+                                            <a  class="btn btn-sm  font-sm btn-action btn-danger" style="width: 70%" onclick="deleteCoupon('<%= couponData[i]._id %>')">Delete</a>
+                                        </td>
+                                          </tr>
+                                        <% } %>
+                                      <% } %>
+                                      
+                                     
+                                        
+                                    </tbody>
+                                </table>
+
+
+                               
+
+                            </div>
+                        </div> <!-- .col// -->
+                    </div> <!-- .row // -->
+                </div> <!-- card body .// -->
+            </div> <!-- card .// -->
+        </section> <!-- content-main end// -->
+        <footer class="main-footer font-xs">
+            <div class="row pb-30 pt-15">
+                <div class="col-sm-6">
+                    <script>
+                    document.write(new Date().getFullYear())
+                    </script> ©, Evara - HTML Ecommerce Template .
+                </div>
+                <div class="col-sm-6">
+                    <div class="text-sm-end">
+                        All rights reserved
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="/public/admin-assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/public/admin-assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/public/admin-assets/js/vendors/select2.min.js"></script>
+    <script src="/public/admin-assets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/public/admin-assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <!-- Main Script -->
+    <script src="/public/admin-assets/js/main.js" type="text/javascript"></script>
+
+    
+
+       <script>
+        function deleteCoupon(id){
+                  console.log("Entered into deleteCoupon  ");
+
+                  Swal.fire({
+                    text: "Do you want to Remove the Coupon ?",
+                    buttons: ["cancel", true],
+                }).then((result)=>{
+                    if(result.isConfirmed){
+
+                        $.ajax({
+                            url:'/admin/deleteCoupon',
+                            method:'DELETE',
+                            data:{id},
+                            success:function(response){
+                                if(response.success){
+                                    location.reload()
+                                }else{
+                                    alert("Failed to delete")
+                                }
+    
+                            }
+    
+                        })
+
+                    }
+                        
+                    
+                })
+        }
+       </script>
+
+    
+        
+    </body>
+
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-categories.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:21 GMT -->
+</html>

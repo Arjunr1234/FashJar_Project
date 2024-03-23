@@ -7,6 +7,8 @@ const multer = require("multer");
 const uploads = require("../middlewares/multer");
 const adminIsLogin = require("../middlewares/adminIsLoginMiddleware");
 const { changeOfferStatus } = require("../middlewares/offerStatusMiddelware");
+const { checkCoupon } = require("../middlewares/couponActiveMiddleware");
+
 
 
 
@@ -61,6 +63,14 @@ router.get('/editProductOffer',isAdmin,adminSection2Controller.loadEditProductOf
 router.get('/editCategoryOffer',isAdmin,adminSection2Controller.loadEditCategoryOffer);
 router.post('/updateProductOffer',isAdmin,adminSection2Controller.updateProductOffer);
 router.post('/updateCategoryOffer',isAdmin,adminSection2Controller.updateCategoryOffer)
+
+//===========================Coupon====================================================
+
+router.get('/loadCouponPage',isAdmin,checkCoupon, adminSection2Controller.loadCouponPage);
+router.post('/postAddCoupon',isAdmin, adminSection2Controller.createCoupons);
+router.get('/loadCouponEdit',isAdmin,adminSection2Controller.loadCouponEdit);
+router.post('/updateCoupon',isAdmin,adminSection2Controller.updateCoupon);
+router.delete('/deleteCoupon',isAdmin,adminSection2Controller.deleteCoupon)
 
 
 

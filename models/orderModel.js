@@ -61,6 +61,21 @@ const orderSchema = new mongoose.Schema({
   },
   totalAmount:{
     type:Number
+  },
+  coupon:{
+    couponId:{
+      type:mongoose.Types.ObjectId,
+          ref:"coupons"
+  },
+   name:{
+    type:String
+   },
+   code:{
+      type:String
+   },
+   discount:{
+    type:Number
+   }
   }
 });
 
