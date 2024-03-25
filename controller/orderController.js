@@ -131,12 +131,18 @@ const { findById } = require('../models/adminModel');
                         const orderDetails = orderData.products[i]
                         const productImage = productData.productImage;
                         const productName = productData.productName;
+                        const orderAddress = orderData.address;
+                        const couponData = orderData.coupon;
+                        const payment = orderData.paymentMethod
                       //  console.log("This is the product detais of each products:",productData);
                         const finalOrder = Object.assign({},
                           {image:productImage},
                           {name:productName},
                           {orderId:orderedId},
-                          {orderDetails:orderDetails} )
+                          {orderDetails:orderDetails},
+                          {address:orderAddress},
+                          {coupon:couponData},
+                          {paymentMethod:payment} )
                           if(orders){
                             orders.push(finalOrder)
                           }
@@ -158,12 +164,15 @@ const { findById } = require('../models/adminModel');
  const deleteOrder = async (req, res) => {
   console.log("Entered into delete order in the orderController");
 
-  const { orderId, productId, size,quantity } = req.body;
-  
+  const { orderId, productId, size,quantity,productPrice,discount,paymentMethod } = req.body;
+  const userId = req.session.user._id;
   console.log("This is orderId: ", orderId);
   console.log("This is product id: ", productId);
   console.log("This is size: ", size);
-  console.log("This is the quantity: ",quantity)
+  console.log("This is the quantity: ",quantity);
+  console.log("This is productPrice: ",productPrice);
+  console.log("This is discount: ",discount);
+  console.log("This is paymentMethod: ",paymentMethod)
   
 
   const deletingOrder = await order.updateOne(
@@ -192,6 +201,44 @@ const { findById } = require('../models/adminModel');
       
     );
     console.log("This is the adding product: ",addingProduct);
+    if(paymentMethod === 'Razorpay' || paymentMethod === 'wallet'){
+      if(discount){
+        console.log("Product used a coupon")
+        const totalPrice = Math.floor((100-discount)/100*productPrice);
+        console.log("This is tottal price with discount: ",totalPrice);
+        const data = {
+          amount:totalPrice,
+          date:new Date(),
+          paymentMethod:"Cancell Refund",
+          isReceived:true
+        
+        }
+        const updateResult = await wallet.updateOne(
+          { userId: new objectId(userId) },
+          {
+              $push: { walletDatas: data },
+              $inc: { balance: totalPrice }
+          }
+          );
+  
+      }else{
+        console.log("Product not have coupon")
+        const data = {
+          amount:productPrice,
+          date:new Date(),
+          paymentMethod:"Cancell Refund",
+          isReceived:true
+      }
+      const updateResult = await wallet.updateOne(
+        { userId: new objectId(userId) },
+        {
+            $push: { walletDatas: data },
+            $inc: { balance: productPrice }
+        }
+        );
+
+    }}
+    
     res.json({success:true})
    }else{
     console.log("The modified count is 0");

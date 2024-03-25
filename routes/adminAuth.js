@@ -8,6 +8,7 @@ const uploads = require("../middlewares/multer");
 const adminIsLogin = require("../middlewares/adminIsLoginMiddleware");
 const { changeOfferStatus } = require("../middlewares/offerStatusMiddelware");
 const { checkCoupon } = require("../middlewares/couponActiveMiddleware");
+const salesReportController = require("../controller/adminSalesReportController")
 
 
 
@@ -70,7 +71,13 @@ router.get('/loadCouponPage',isAdmin,checkCoupon, adminSection2Controller.loadCo
 router.post('/postAddCoupon',isAdmin, adminSection2Controller.createCoupons);
 router.get('/loadCouponEdit',isAdmin,adminSection2Controller.loadCouponEdit);
 router.post('/updateCoupon',isAdmin,adminSection2Controller.updateCoupon);
-router.delete('/deleteCoupon',isAdmin,adminSection2Controller.deleteCoupon)
+router.delete('/deleteCoupon',isAdmin,adminSection2Controller.deleteCoupon);
+
+//==========================Sales Report ============================================
+
+router.get('/loadSalesReport',isAdmin,salesReportController.loadSalesReport);
+router.post('/salesReportSelectFilter',isAdmin,salesReportController.filterReport);
+router.post('/fileterDateRange',isAdmin,salesReportController.filterCustomDateOrder)
 
 
 

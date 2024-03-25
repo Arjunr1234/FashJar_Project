@@ -265,16 +265,10 @@
                                                 </li>
                                                 <li><a href="#" data-color="Yellow"><span
                                                             class="product-color-yellow"></span></a></li>
-                                                <li class="active"><a href="#" data-color="White"><span
-                                                            class="product-color-white"></span></a></li>
+                                                
                                                 <li><a href="#" data-color="Orange"><span
                                                             class="product-color-orange"></span></a></li>
-                                                <li><a href="#" data-color="Cyan"><span class="product-color-cyan"></span></a>
-                                                </li>
-                                                <li><a href="#" data-color="Green"><span class="product-color-green"></span></a>
-                                                </li>
-                                                <li><a href="#" data-color="Purple"><span
-                                                            class="product-color-purple"></span></a></li>
+                                               
                                             </ul>
                                         </div>
                                         <div class="attr-detail attr-size">
@@ -721,20 +715,7 @@
               </div>
           </footer>
           <!-- Preloader Start -->
-          <div id="preloader-active">
-              <div class="preloader d-flex align-items-center justify-content-center">
-                  <div class="preloader-inner position-relative">
-                      <div class="text-center">
-                          <h5 class="mb-5">Now Loading</h5>
-                          <div class="loader">
-                              <div class="bar bar1"></div>
-                              <div class="bar bar2"></div>
-                              <div class="bar bar3"></div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
+          
           <!-- Vendor JS-->
           <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
           <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -829,6 +810,8 @@
         
                     if (response.response === true) {
                         console.log("product in cart");
+
+                       
                         
                         addToCartButton.textContent = "View Cart";
                         addToCartButton.style.backgroundColor = "orange";

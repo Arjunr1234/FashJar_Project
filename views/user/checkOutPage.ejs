@@ -194,7 +194,7 @@
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="couponModalLabel">Available Coupons</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <button type="button" class="close"  data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
@@ -203,7 +203,7 @@
                                        
                                               <!-- Replace this with your backend logic to populate the coupons -->
                                               <% if(couponData.length > 0){%>
-                                                <% for( let i = 0; i < couponData.length; i++ ) { %>
+                                               
                                                     <table class="table">
                                                         <thead>
                                                           <tr>
@@ -214,6 +214,7 @@
                                                           </tr>
                                                         </thead>
                                                         <tbody>
+                                          <% for( let i = 0; i < couponData.length; i++ ) { %>           
                                                     <tr>
                                                         <td class="text-center"><%= couponData[i].couponCode %></td>
                                                         <td class="text-center"><%= couponData[i].name %></td>
@@ -227,9 +228,10 @@
                                                                 data-discount="<%= couponData[i].discount %>">Apply</a>
                                                         </td>
                                                     </tr>
+                                                    <% } %>
                                                 </tbody>
                                             </table>
-                                                  <% } %>
+                                                 
                                                 <%}else{%>
                                                     <h1 class="text-center bold text-danger">No avaliable Coupons!!</h1>
                                                     <%} %>
@@ -456,8 +458,12 @@
       // Declare a global variable to store couponId
 let globalCouponId;
 
+
+
 document.addEventListener("DOMContentLoaded", function() {
     console.log("DOMContentLoaded event fired");
+
+   
 
     var couponButton = document.getElementById("couponusing");
     if (couponButton) {
@@ -503,9 +509,10 @@ document.addEventListener("DOMContentLoaded", function() {
                                 }
                             }
                         });
-
+                        
                         // Close the modal
                         modal.hide();
+
                     });
                 });
             } else {

@@ -93,7 +93,7 @@
                                               <%}
 
                                           else {%>
-                                            <a class="btn btn-sm font-sm btn-action btn-warning" style="width: 50%; padding: 5px; font-size: 12px; background:red" onclick="cancelProduct('<%= orders[i].orderId %>','<%= orders[i].orderDetails.product %>','<%= orders[i].orderDetails.size %>','<%= orders[i].orderDetails.quantity %>','<%= orders[i].orderDetails.productPrice %>')">Cancel</a>
+                                            <a class="btn btn-sm font-sm btn-action btn-warning" style="width: 50%; padding: 5px; font-size: 12px; background:red" onclick="cancelProduct('<%= orders[i].orderId %>','<%= orders[i].orderDetails.product %>','<%= orders[i].orderDetails.size %>','<%= orders[i].orderDetails.quantity %>','<%= orders[i].orderDetails.productPrice %>','<%= orders[i].coupon.discount %>','<%= orders[i].paymentMethod %>')">Cancel</a>
 
                                             <%} %>
                                       </td>
@@ -183,11 +183,11 @@
 </body>
 <script>
    
-  function cancelProduct(orderId, productId, size,quantity) {
+  function cancelProduct(orderId, productId, size,quantity,productPrice,discount,paymentMethod) {
     const requestedData = {
       orderId: orderId,
       productId: productId,
-      size: size,quantity
+      size: size,quantity,productPrice,discount,paymentMethod
     };
    // const cancelledButton = document.getElementById("buttonCancelled")
   
