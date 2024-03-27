@@ -1,4 +1,5 @@
 <%- include("../partials/adminHeader") %>
+       
         <section class="content-main">
            
           <div class="content-header">
@@ -85,6 +86,8 @@
                                             <a id="changeStatus<%= orderData[i].products.product %>" onclick="changeOrderStatus('<%= orderData[i]._id %>','<%= orderData[i].products.size %>','<%= orderData[i].products.product %>','Delivered')" class="btn btn-outline-primary rounded font-sm">Delivered</a>
                                         <% } else if (orderData[i].products.status == 'Return pending') { %>
                                             <a id="changeStatus<%= orderData[i].products.product %>" onclick="changeOrderStatus('<%= orderData[i]._id %>','<%= orderData[i].products.size %>','<%= orderData[i].products.product %>','Returned','<%= orderData[i].products.productPrice %>','<%= orderData[i].userId %>','<%= orderData[i].products.quantity %>')" class="btn btn-outline-primary rounded font-sm">Approve Return</a>
+                                        <% }else if(orderData[i].products.status == 'Returned'){%>
+                                            <a id="returnReason" onclick="returnReason('<%= orderData[i].products.returnReason %>')" class="btn  btn-warning rounded font-sm">Reason</a>
                                         <% }
                                         
                                         %>
@@ -113,46 +116,11 @@
                             
                           </tbody>
                         </table>
-                        <!-- Modal -->
-                        <!-- Modal -->
-<!-- Modal -->
-<!-- Modal -->              <!-- Modal -->
-<!-- Modal -->
-<!-- <div id="reasonModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <h2>Reason for Return</h2>
-        <p id="reasonText"></p>
-    </div>
-</div> -->
+  <!-- Modal -->
+  
 
 
-<div class="modal fade" id="reasonModal" tabindex="-1" role="dialog" aria-labelledby="returnModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="returnModalLabel">Return Product</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="returnForm">
-                    <!-- Hidden fields to store orderId, productId, size, and quantity -->
 
-                    <div class="form-group">
-                        <label for="returnReason">Reason for Return</label>
-                        <p id="reasonText"></p>
-                        <textarea class="form-control" id="returnReason" name="returnReason" rows="3"></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="submitReturn" onclick="closeModal()">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 
 
@@ -169,87 +137,97 @@
                <!-- .row // -->
               </div> <!-- card body .// -->
           </div> <!-- card .// -->
-          <!-- <div class="row mb-50">
-            <div class="col-lg-6 col-md-12">
-              <div class="col-md-6">
-                <div class="mb-25">
-                    <h4>Address Details</h4>
-                </div>
-                
-                <div class="row mb-25">
-                  <div class="col">
+          <% if(locals.orderData){%>
+               
+            <div class="row mb-50 " >
+                <div class="col-lg-6 col-md-12 border">
+                  <div class="col-md-6">
+                    <div class="mb-25 pt-4">
+                        <h4 class="text-primary">Address Details</h4>
+                    </div>
                     
-                      <ul class="list-group">
+                    <div class="row mb-25">
+                      <div class="col">
                         
-                          <li class="list-group-item">
-                              <div>
-                                  <span><strong>Name:</strong>
-                                    
-                                  </span>
-                              </div>
-                              <div>
-                                  <span><strong>Mobile:</strong>
-                                    
-                                  </span>
-                              </div>
-                              <div>
-                                  <span><strong>House:</strong>
-                                      Oruvelil House
-                                  </span>
-                              </div>
-                              <div>
-                                  <span><strong>City:</strong>
-                                      Town
-                                  </span>
-                              </div>
-                              <div>
-                                  <span><strong>Pincode:</strong>
-                                    
-                                  </span>
-                              </div>
-                              
-                          </li>
-                      
-                      
-                      </ul>
-                     
+                          <ul class="list-group">
+                            
+                              <li class="list-group-item">
+                                  <div>
+                                      <span><strong>Name:</strong>
+                                        <%= orderData[0].address.name %>
+                                      </span>
+                                  </div>
+                                  <div>
+                                      <span><strong>Mobile:</strong>
+                                        <%= orderData[0].address.mobile %>
+                                      </span>
+                                  </div>
+                                  <div>
+                                      <span><strong>House:</strong>
+                                        <%= orderData[0].address.house %>
+                                      </span>
+                                  </div>
+                                  <div>
+                                      <span><strong>City:</strong>
+                                        <%= orderData[0].address.city %>
+                                      </span>
+                                  </div>
+                                  <div>
+                                      <span><strong>Pincode:</strong>
+                                        <%= orderData[0].address.pincode %>
+                                      </span>
+                                  </div>
+                                  
+                              </li>
+                          
+                          
+                          </ul>
+                         
+                      </div>
                   </div>
-              </div>
-                
-            </div>
+                    
                 </div>
-        
-                <div class="col-lg-6 col-md-12">
-                  <div class="border p-md-4 p-3 border-radius cart-totals">
-                      <div class="heading_s1 mb-3">
-                          <h4> Totals</h4>
-                      </div>
-                      <div class="table-responsive">
-                          <table class="table table-bordered">
-                              <tbody>
-                                  <tr>
-                                      <td class="cart_total_label"> Subtotal</td>
-                                      <td class="cart_total_amount"><span class="font-lg fw-900 text-brand">$price</span></td>
-                                  </tr>
-                                  <tr>
-                                      <td class="cart_total_label">Shipping</td>
-                                      <td class="cart_total_amount"><i class="ti-gift mr-2"></i> Free Shipping</td>
-                                  </tr>
-                                  <tr>
-                                      <td class="cart_total_label">Total</td>
-                                      <td class="cart_total_amount">
-                                          <strong><span class="font-xl fw-900 text-brand">$price</span></strong>
-                                      </td>
-                                  </tr>
-                              </tbody>
-                          </table>
+                    </div>
+            
+                    <div class="col-lg-6 col-md-12 border">
+                      <div class="border p-md-4 p-3 border-radius cart-totals">
+                          <div class="heading_s1 mb-3">
+                              <h4> Totals</h4>
+                          </div>
+                          <div class="table-responsive">
+                              <table class="table table-bordered">
+                                  <tbody>
+                                      <tr>
+                                          <td class="cart_total_label"> Subtotal</td>
+                                          <td class="cart_total_amount"><span class="font-lg fw-900 text-brand">₹  <%= orderData[0].totalAmount %></span></td>
+                                      </tr>
+                                      
+                                      <tr>
+                                        
+                                    
+                                          <td class="cart_total_label">Shipping</td>
+                                          <td class="cart_total_amount"><i class="ti-gift mr-2"></i> Free Shipping</td>
+                                      </tr>
+                                      <hr>
+                                      <tr>
+                                        
+                                          <td class="cart_total_label">Total</td>
+                                          <td class="cart_total_amount">
+                                              <strong><span class="font-xl fw-900 text-brand">₹  <%= orderData[0].totalAmount %></span></strong>
+                                          </td>
+                                      </tr>
+                                  </tbody>
+                              </table>
+                          </div>
                       </div>
                   </div>
-              </div>
-              
-              
-              
-        </div> -->
+                  
+                  
+                  
+            </div>   
+
+            <%} %>
+          
       </section>
 
     
@@ -258,6 +236,7 @@
        
         
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/public/admin-assets/js/vendors/jquery-3.6.0.min.js"></script>
     <script src="/public/admin-assets/js/vendors/bootstrap.bundle.min.js"></script>
     <script src="/public/admin-assets/js/vendors/select2.min.js"></script>
@@ -270,23 +249,18 @@
 
     
     <script>
-        function showModal(returnReason) {
-            // Assuming you have a modal with ID "reasonModal"
-            console.log("Modal is being shown with reason: ", returnReason);
-            var modal = document.getElementById('reasonModal');
-    
-            // Assuming you have a span or div inside your modal to display the reason
-            var reasonElement = document.getElementById('reasonText');
-            reasonElement.innerHTML = returnReason;
-    
-            // Show the modal
-            modal.style.display = 'block';
+        // JavaScript functions for modal interaction
+        function returnReason(reason) {
+            
+
+            Swal.fire({
+                title: reason,
+              //  text: reason,
+                
+              })
         }
     
-        function closeModal() {
-            var modal = document.getElementById('reasonModal');
-            modal.style.display = 'none';
-        }
+       
     </script>
         
         

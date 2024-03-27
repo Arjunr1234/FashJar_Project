@@ -33,6 +33,7 @@ const orderSchema = new mongoose.Schema({
     name:String,
     house:String,
     state:String,
+    district:String,
     country:String,
     city:String,
     pincode:Number,

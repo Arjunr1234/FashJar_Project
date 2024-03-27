@@ -28,12 +28,134 @@ const loadLogin =  (req,res)=>{
 
 const loadHome = async (req, res)=>{
     if(req.session.admin){
-//====================this is the additional thisng to delete====================
 
-//const check = coupon.find((data)=>data.endingDate); 
-    
-//==================till here =====================================================
-      res.render("adminHome")
+
+      const orderData = await order.aggregate([
+                           {$unwind:"$products"},
+                           {
+                            $group: {
+                              _id: "$products.status",
+                              count: { $sum: 1 },
+                            },
+                          },
+      ]);
+      const currentYear = new Date().getFullYear();
+      const monthlyReport = await order.aggregate([
+                 {$unwind:"$products"},
+                 {
+                  $match: {
+                    "products.status": "Delivered",
+                    $expr: {
+                      $eq: [{ $year: "$orderedOn" }, currentYear],
+                    },
+                  },
+                },
+                {
+                  $group: {
+                    _id: { $month: "$orderedOn" },
+                    totalAmount: { $sum: "$products.productPrice" },
+                  },
+                },
+                { $sort: { _id: 1 } },
+      ]);
+
+      const yearlyReport = await order.aggregate([
+        { $unwind: "$products" },
+        { $match: { "products.status": "Delivered" } },
+        {
+          $group: {
+            _id: { $year: "$orderedOn" },
+            totalAmount: { $sum: "$products.productPrice" },
+          },
+        },
+        { $sort: { _id: 1 } },
+      ]);
+
+      const bestCategory = await order.aggregate([
+        { $unwind: "$products" },
+        {
+          $lookup: {
+            from: "products",
+            localField: "products.product",
+            foreignField: "_id",
+            as: "prod",
+          },
+        },
+        { $unwind: "$prod" },
+        {
+          $lookup: {
+            from: "categories",
+            localField: "prod.category",
+            foreignField: "_id",
+            as: "category",
+          },
+        },
+        { $unwind: "$category" },
+        {
+          $group: {
+            _id: "$category",
+            count: { $sum: 1 },
+          },
+        },
+      ]);
+
+      const bestBrand = await order.aggregate([
+        { $unwind: "$products" },
+        {
+          $lookup: {
+            from: "products",
+            localField: "products.product",
+            foreignField: "_id",
+            as: "prod",
+          },
+        },
+        { $unwind: "$prod" },
+        {
+          $group: {
+            _id: "$prod.brand",
+            count: { $sum: 1 },
+          },
+        },
+      ]);
+
+      const bestSellingProduct = await order.aggregate([
+        { $unwind: "$products" },
+        { $match: { "products.status": "Delivered" } },
+        {
+          $lookup: {
+            from: "products",
+            localField: "products.product",
+            foreignField: "_id",
+            as: "product",
+          },
+        },
+        { $unwind: "$product" },
+        {
+          $group: {
+            _id: "$product",
+            productName: { $first: "$product.productName" },
+            totalCount: { $sum: "$products.quantity" },
+            productImage: { $first: "$product.productImage" }
+          },
+        },
+        { $sort: { totalCount: -1 } },
+        { $limit: 10 },
+      ]);
+          console.log("This is the best product : ",bestSellingProduct)
+    //     console.log("This is the best brand: ", bestBrand)
+    //    console.log("This is the category : ",bestCategory)
+    //  console.log("This is yearly report : ",yearlyReport)
+    //console.log("This is monthlyReport: ",monthlyReport)
+    // console.log("This is orderData : ",orderData);
+
+      res.render("adminHome",{
+        orderData,
+        monthlyReport,
+        yearlyReport,
+        bestCategory,
+        bestBrand,
+        bestSellingProduct
+      })
     }else{
       res.redirect("admin/login")
     }
@@ -618,13 +740,13 @@ const changeOrderStatus = async (req, res) => {
       const { orderId, productId, productSize, status,productPrice,userId,quantity } = req.body;
       const receivedPrice = parseInt(productPrice);
       const receivedQuantity = parseInt(quantity)
-      console.log("This is orderId: ", new mongoose.Types.ObjectId(orderId));
-      console.log("This is status: ", status);
-      console.log("This is productId:",productId);
-      console.log("This is productSize: ",productSize);
-      console.log("This is the productPrice: ",receivedPrice);
-      console.log("This is the userId: ",userId);
-      console.log("This is the quantity: ",receivedQuantity)
+      // console.log("This is orderId: ", new mongoose.Types.ObjectId(orderId));
+      // console.log("This is status: ", status);
+      // console.log("This is productId:",productId);
+      // console.log("This is productSize: ",productSize);
+      // console.log("This is the productPrice: ",receivedPrice);
+      // console.log("This is the userId: ",userId);
+      // console.log("This is the quantity: ",receivedQuantity)
 
      
       const changingData = await order.updateOne(

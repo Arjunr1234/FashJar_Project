@@ -38,6 +38,7 @@ const placeOrderHelp = async (body, userId) => {
         const orderAddress = user.address.find((address) => {
           return address._id.toString() === body.address;
         });
+        
 
         let response = {};
 
@@ -74,7 +75,7 @@ const placeOrderHelp = async (body, userId) => {
 
         if(couponId){
           const couponData = await coupon.findById(couponId).lean();
-          console.log("This is my couponDAta finded: ",couponData);
+          
           const couponIdData = new Object(couponId)
           const couponName = couponData.name;
           const couponDiscount = couponData.discount;
@@ -88,8 +89,9 @@ const placeOrderHelp = async (body, userId) => {
               address: {
                 name: orderAddress.name,
                 mobile: orderAddress.mobile,
-                house: orderAddress.house,
-                city: orderAddress.city,
+                house: orderAddress.houseName,
+                city: orderAddress.cityOrTown,
+                district:orderAddress.district,
                 state: orderAddress.state,
                 pincode: orderAddress.pincode,
                 country: orderAddress.country,
@@ -104,6 +106,7 @@ const placeOrderHelp = async (body, userId) => {
               }
               
             });
+           
             response.status = true;
             resolve(response);
           }
@@ -120,8 +123,8 @@ const placeOrderHelp = async (body, userId) => {
               address: {
                 name: orderAddress.name,
                 mobile: orderAddress.mobile,
-                house: orderAddress.house,
-                city: orderAddress.city,
+                house: orderAddress.houseName ,
+                city: orderAddress.cityOrTown,
                 state: orderAddress.state,
                 pincode: orderAddress.pincode,
                 country: orderAddress.country,
@@ -130,8 +133,10 @@ const placeOrderHelp = async (body, userId) => {
               totalAmount: userCart.totalAmount
             });
             response.status = true;
+            console.log("This is orderPlacing: ",orderPlacing) 
             resolve(response);
           }
+          
 
         }
 

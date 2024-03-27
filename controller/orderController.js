@@ -204,7 +204,7 @@ const { findById } = require('../models/adminModel');
     if(paymentMethod === 'Razorpay' || paymentMethod === 'wallet'){
       if(discount){
         console.log("Product used a coupon")
-        const totalPrice = Math.floor((100-discount)/100*productPrice);
+        const totalPrice = Math.floor((100-discount)/100*productPrice*quantity);
         console.log("This is tottal price with discount: ",totalPrice);
         const data = {
           amount:totalPrice,
@@ -224,7 +224,7 @@ const { findById } = require('../models/adminModel');
       }else{
         console.log("Product not have coupon")
         const data = {
-          amount:productPrice,
+          amount:productPrice * quantity,
           date:new Date(),
           paymentMethod:"Cancell Refund",
           isReceived:true
