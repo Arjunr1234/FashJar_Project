@@ -10,6 +10,7 @@ const category = require("../models/categoryModel")
 const cart = require("../models/cartModel");
 const offerHelper = require("../helper/offerHelper");
 const wallet = require("../models/walletModel")
+const wishlist  = require("../models/wishlistModel")
 const {ObjectId} = require("mongoose").Types
 
 
@@ -162,7 +163,12 @@ const loadUserHome = async function (req, res) {
           }
          
 
-          const newAddedProducts = await product.find().sort({creationOn:-1})
+          const newAddedProducts = await product.find({"isBlocked":false}).sort({_id:-1}).lean();
+           for(let i=0; i<newAddedProducts.length; i++){
+             const product = newAddedProducts[i];
+             const calculatedPrice = await offerHelper.newOfferPrice(product)
+             product.offerPrice = calculatedPrice
+           }
         //  console.log("This is the productData: ",productData);
           
         //  console.log("This is new Added Products:" ,newAddedProducts)
@@ -268,6 +274,20 @@ const loadVeiwProduct = async(req, res)=>{
          
          console.log("This is the product view products (athe ith thanne):",products)
         //  console.log("offerprice: ",products.offerPrice)
+////////////////////////////////////////////////////////////////////////////////////////////////
+        const userId = userData._id
+        const wishlistData = await wishlist.findOne({userId:new Object(userId)})
+
+        console.log("This is wishlist data: ",wishlistData)
+
+        var check = wishlistData.products.find(function(product) {
+          return  product.productId.toString() === productId.toString();
+          
+          
+        });
+
+        console.log("This is check:????????????????????",check);
+////////////////////////////////////////////////////////////////////////////////////////////////////
          
          res.render("productView",{products,userData});
 
@@ -310,7 +330,15 @@ const loadShopProduct = async(req, res)=>{
 
                 const categoryData = await category.find()
                 console.log("This is category data: ",categoryData)
-                const filteredProduct = await product.find()
+                const filteredProduct = await product.find({isBlocked:false}).lean()
+
+                for(let i=0; i<filteredProduct.length; i++){
+                  const product = filteredProduct[i];
+                  const calculatedPrice = await offerHelper.newOfferPrice(product)
+                  product.offerPrice = calculatedPrice
+                }
+                console.log("This is the filetered products: ",filteredProduct);
+
                 res.render("shop",{categoryData, filteredProduct})
 }
 
@@ -319,13 +347,55 @@ const filterCatergoryProducts = async(req, res)=>{
                     const categoryId = req.query.catId;
                     const categoryData = await category.find();
                     console.log("This is category Id:",categoryId);
-                    const filteredProduct = await product.find({category:new ObjectId(categoryId)})
+                    const filteredProduct = await product.find({category:new ObjectId(categoryId)}).lean();
+
+                    for(let i=0; i<filteredProduct.length; i++){
+                      const product = filteredProduct[i];
+                      const calculatedPrice = await offerHelper.newOfferPrice(product)
+                      product.offerPrice = calculatedPrice
+                    }
+
                     console.log("This is filtered Product: ",filteredProduct);
 
                     res.render("shop",{filteredProduct,categoryData})
                
 }
 
+const searchProduct = async(req, res)=>{
+                  console.log("Entered into search product in userController");
+                  const receivedData = req.body.productName
+                  const categoryData = await category.find();
+                  const filteredProduct = await product.aggregate([
+                    
+                      {
+                        $lookup: {
+                          from: "categories",
+                          localField: "category",
+                          foreignField: "_id",
+                          as: "category"
+                        }
+                      },
+                      {$unwind:"$category"},
+                      {
+                        $match: {
+                          $or: [
+                            { productName: { $regex: new RegExp("^" + receivedData, "i") } },
+                            { "category.name": { $regex: new RegExp("^" + receivedData, "i") } }
+                          ]
+                        }
+                      },
+                    
+                  ])
+                  for(let i=0; i<filteredProduct.length; i++){
+                    const product = filteredProduct[i];
+                    const calculatedPrice = await offerHelper.newOfferPrice(product)
+                    product.offerPrice = calculatedPrice
+                  }
+
+                  console.log("This is the searched data: ",filteredProduct);
+
+                  res.render("shop",{filteredProduct,categoryData})
+}
 
 
 
@@ -345,7 +415,8 @@ module.exports = {
               displaySize,
               loadGuestUserHome,
               loadShopProduct,
-              filterCatergoryProducts
+              filterCatergoryProducts,
+              searchProduct
 
               
               

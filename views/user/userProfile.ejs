@@ -101,9 +101,9 @@
                                                     <td class="text-center"><%= walletData.walletDatas[i].date.toLocaleDateString('en-GB') %></td>
                                                     <td class="text-center"><%= walletData.walletDatas[i].paymentMethod %></td>
                                                     <% if(walletData.walletDatas[i].isReceived){%>
-                                                        <td style="color: green;">+ <%= walletData.walletDatas[i].amount %></td>
+                                                        <td class="text-center" style="color: green;">+ <%= walletData.walletDatas[i].amount %></td>
                                                         <%}else{%>
-                                                            <td style="color:red;">- <%= walletData.walletDatas[i].amount %></td>
+                                                            <td class="text-center" style="color:red;">- <%= walletData.walletDatas[i].amount %></td>
                                                             <%} %>
                                                    
                                                    

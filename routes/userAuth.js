@@ -35,7 +35,8 @@ router.post('/size/:id/:size',isUser, userController.displaySize);
 
 //==================Shop==============================
 router.get('/shop',isUser,userController.loadShopProduct);
-router.get('/filterCategory',isUser,userController.filterCatergoryProducts)
+router.get('/filterCategory',isUser,userController.filterCatergoryProducts);
+router.post('/searchProducts',isUser,userController.searchProduct)
 
 //===============GuestUser===========================
 

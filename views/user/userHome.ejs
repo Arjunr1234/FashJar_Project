@@ -287,9 +287,7 @@
                                                             </a>
                                                         </div>
                                                         <div class="product-action-1">
-                                                            <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-                                                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                            <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                            
                                                         </div>
                                                         <div class="product-badges product-badges-position product-badges-mrg">
                                                             <span class="hot">Hot</span>
@@ -297,12 +295,12 @@
                                                     </div>
                                                     <div class="product-content-wrap">
                                                         <div class="product-category">
-                                                            <a href="/viewProduct?id=<%= productData[i]._id %>">Clothing</a>
+                                                            <a href="/viewProduct?id=<%= productData[i]._id %>"></a>
                                                         </div>
                                                         <h2><a href="/viewProduct?id=<%= productData[i]._id %>"><%= productData[i].productName %></a></h2>
                                                         <div class="rating-result" title="90%">
                                                             <span>
-                                                                <span style="color: red;"><%= productData[i].discount %>%</span>
+                                                                <span style="color: red;"> <%= Math.floor((1 - ( productData[i].offerPrice / productData[i].regularPrice)) * 100) %>%</span>
                                                             </span>
                                                         </div>
                                                         <div class="product-price">
@@ -380,12 +378,12 @@
                                                      </div>
                                                      <h2><a href="/viewProduct?id=<%= newAddedProducts[i]._id %>"><%= newAddedProducts[i].productName %></a></h2>
                                                      <div class="rating-result" title="90%">
-                                                         <span>
-                                                             <span>90%</span>
-                                                         </span>
+                                                         <span style="color: red;">
+                                                             <%= Math.floor((1 - ( newAddedProducts[i].offerPrice / newAddedProducts[i].regularPrice)) * 100) %>
+                                                         %</span>
                                                      </div>
                                                      <div class="product-price">
-                                                         <span>₹ <%= newAddedProducts[i].salePrice %> </span>
+                                                         <span>₹ <%= newAddedProducts[i].offerPrice %> </span>
                                                          <span class="old-price">₹ <%= newAddedProducts[i].regularPrice %></span>
                                                      </div>
                                                      
