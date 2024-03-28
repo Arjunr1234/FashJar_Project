@@ -33,6 +33,17 @@ router.get('/viewProduct',userController.loadVeiwProduct)
 
 router.post('/size/:id/:size',isUser, userController.displaySize);
 
+//===================ForgotPassword ==========================
+
+router.get("/forgotPassword",userController.loadEmaiEnterInForgotpassword);
+router.post("/postEmailData",userController.verifyingTheEmail);
+router.get("/postEmailData",userController.loadOtpForgotPassword);
+router.get('/verify-otp-forgotPassword',userController.loadEnterNewPassword);
+router.post('/verify-otp-forgotPassword',otpHelper.verifyOtpForgotPassword);
+router.post('/newPassword',userController.changePassword)
+
+
+
 //==================Shop==============================
 router.get('/shop',isUser,userController.loadShopProduct);
 router.get('/filterCategory',isUser,userController.filterCatergoryProducts);

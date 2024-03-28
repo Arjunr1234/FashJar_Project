@@ -452,7 +452,7 @@ const loadCheckOutPage = async(req, res)=>{
                  // console.log("This is the userAddress in loadCheckOutPage ", userAddress);
                  
 
-                 const couponData = await coupon.find({
+                 const couponData = await coupon.find({isActive:true,
                   "usedByUser": { "$nin": [new ObjectId(userId)] }
                 })
                 console.log("this si that : ",couponData)

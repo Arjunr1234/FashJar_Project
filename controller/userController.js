@@ -275,18 +275,18 @@ const loadVeiwProduct = async(req, res)=>{
          console.log("This is the product view products (athe ith thanne):",products)
         //  console.log("offerprice: ",products.offerPrice)
 ////////////////////////////////////////////////////////////////////////////////////////////////
-        const userId = userData._id
-        const wishlistData = await wishlist.findOne({userId:new Object(userId)})
+        // const userId = userData._id
+        // const wishlistData = await wishlist.findOne({userId:new Object(userId)})
 
-        console.log("This is wishlist data: ",wishlistData)
+        // console.log("This is wishlist data: ",wishlistData)
 
-        var check = wishlistData.products.find(function(product) {
-          return  product.productId.toString() === productId.toString();
+        // var check = wishlistData.products.find(function(product) {
+        //   return  product.productId.toString() === productId.toString();
           
           
-        });
+        // });
 
-        console.log("This is check:????????????????????",check);
+        // console.log("This is check:????????????????????",check);
 ////////////////////////////////////////////////////////////////////////////////////////////////////
          
          res.render("productView",{products,userData});
@@ -397,12 +397,95 @@ const searchProduct = async(req, res)=>{
                   res.render("shop",{filteredProduct,categoryData})
 }
 
+const loadEmaiEnterInForgotpassword = async(req, res)=>{
+                      console.log("Enter into loadEmaiEnterInForgotpassword in userController");
 
+                      res.render("enterEmailForgotPassword")
+}
+
+
+const verifyingTheEmail = async(req, res)=>{
+                        console.log("Entered into verifyingTheEmail in userController");
+
+                         const receivedEmail = req.body.email
+                         req.session.storedEmail = receivedEmail
+
+                        const checkUserExist = await User.findOne({email:receivedEmail});
+                        console.log("Thsi is Existing user: ",checkUserExist);
+
+                        if(checkUserExist){
+                          const result = await otpHelper.sendOtpForgotPassword(receivedEmail);
+                          console.log("This is the result: ",result)
+                          const expiryTime = 60;
+                          req.session.otpExpiry = Date.now()+expiryTime*1000;
+                          req.session.otp = result.otp;
+                          console.log("This is the otp in the session : ",req.session.otp);
+                          
+
+                          if(result.status){
+                            res.redirect("/postEmailData");
+                          }
+
+                        }else{
+                          req.flash("error","User not Exist");
+
+                          res.redirect("/")
+                        }
+}
+
+const loadOtpForgotPassword = async(req, res)=>{
+                       console.log("Entered into loadOtpForgotPassword in userController");
+                       
+                       const error = req.flash("error")
+                       res.render("otpForgotPassword",{error});
+}
+
+const loadEnterNewPassword = async(req, res)=>{
+                       console.log("Entered into loadEnter new PasswordPage in userController");
+
+                       res.render("enterPassForgotPassword")
+}
+
+const  changePassword = async(req, res)=>{
+                       console.log("Enter into changePassword in userController");
+                       
+                       try {
+
+                        console.log("This is the email: ",req.session.storedEmail);
+
+                       console.log("This is the data received: ", req.body)
+                       const userData = await User.findOne({email:req.session.storedEmail}).lean();
+                       const userId = new ObjectId(userData._id);
+                       console.log("This is the userId: ",userId);
+
+                       const { newPassword, confirmPassword} = req.body;
+
+                       if(confirmPassword === newPassword){
+                        const hashedPassword = await bcrypt.hash(newPassword,10);
+                        const updatePassword = await User.updateOne({_id:userId},{password:hashedPassword});
+
+                        if(updatePassword.modifiedCount === 1){
+                          console.log("Passowrd is updated!!");
+                          req.flash("message","Updated Successfully")
+                          res.redirect("/")
+                        }
+                        
+                       }
+
+                        
+                       } catch (error) {
+                        console.log(error)
+                        
+                       }
+
+}
 
 
 
 
 module.exports = { 
+
+
               loadSample,
               loginLoad,
               loadRegister,
@@ -416,7 +499,12 @@ module.exports = {
               loadGuestUserHome,
               loadShopProduct,
               filterCatergoryProducts,
-              searchProduct
+              searchProduct,
+              loadEmaiEnterInForgotpassword,
+              verifyingTheEmail,
+              loadOtpForgotPassword,
+              loadEnterNewPassword,
+              changePassword
 
               
               
