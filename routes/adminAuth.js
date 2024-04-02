@@ -50,6 +50,7 @@ router.get('/viewOrderDetails',isAdmin,adminController.loadViewOrderPage);
 router.post('/changeOrderStatus',isAdmin,adminController.changeOrderStatus);
 
 
+
 //============================Offer==============================================
 
 router.get('/loadCategoryOffer',isAdmin,adminSection2Controller.loadCategoryOfferPage);

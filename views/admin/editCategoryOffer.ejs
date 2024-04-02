@@ -8,22 +8,22 @@
                 </div>
                 <div class="card-body">
                     <div class="mx-auto"> 
-                        <form action="/admin/updateCategoryOffer?catId=<%= offerDetails._id %>" id="editForm" method="post">
+                        <form action="/admin/updateCategoryOffer?catId=<%= offerDetails._id %>" id="catOfferForm" method="post">
                           <% if(locals.offerDetails){%>
                             <div class="mb-4">
                               <label for="product_name" class="form-label">Offer Name</label>
-                              <input type="text" name="name" placeholder="Type here" class="form-control" id="name" value="<%= offerDetails.name %>">
-                              <p><span id="error1" style="display: none;" class="mt-15 err text-danger"></span></p>
+                              <input  type="text" name="name" placeholder="Type here" class="form-control" id="name" value="<%= offerDetails.name %>">
+                              <div id="catOfferName-error" class="error-message"></div>
                           </div>
                           <div class="mb-4">
                             <label class="form-label">Starting Date</label>
-                            <input name="startingDate" type="date" class="form-control" value="<%= offerDetails.startingDate.toISOString().split('T')[0] %>">
-                            <p><span id="error2" style="display: none;" class="mt-15 err text-danger"></span></p>
+                            <input id="catStartingDate" name="startingDate" type="date" class="form-control" value="<%= offerDetails.startingDate.toISOString().split('T')[0] %>">
+                            <div id="catStartingDate-error" class="error-message"></div>
                         </div>
                         <div class="mb-4">
                             <label class="form-label">Ending Date</label>
-                            <input name="endingDate" type="date" class="form-control" value="<%= offerDetails.endingDate.toISOString().split('T')[0] %>">
-                            <p><span id="error3" style="display: none;" class="mt-15 err text-danger"></span></p>
+                            <input id="catEndingDate" name="endingDate" type="date" class="form-control" value="<%= offerDetails.endingDate.toISOString().split('T')[0] %>">
+                            <div id="catEndingDate-error" class="error-message"></div>
                         </div>
                         
                           
@@ -45,7 +45,7 @@
                           <div class="mb-4">
                               <label class="form-label">Category Discount</label>
                               <input placeholder="Type here" name="categoryDiscount" class="form-control" id="categoryDiscount" value="<%= offerDetails.categoryOffer.discount %>">
-                              <p><span id="error7" style="display: none;" class="mt-15 err text-danger"></span></p>
+                              <div id="catDiscount-error" class="error-message"></div>
                           </div>
                           <button type="submit" class="btn ms-auto d-block btn-primary btn-md rounded font-sm hover-up">Update</button>
                             
@@ -74,6 +74,7 @@
             </div>
         </footer>
     </main>
+    <script src="/public/js/categoryOfferValidation.js"></script>
     <script src="/public/admin-assets/js/vendors/jquery-3.6.0.min.js"></script>
     <script src="/public/admin-assets/js/vendors/bootstrap.bundle.min.js"></script>
     <script src="/public/admin-assets/js/vendors/select2.min.js"></script>

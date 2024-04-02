@@ -18,6 +18,12 @@ const userSchema = new mongoose.Schema({
     type:String,
     required:true
    },
+   refferalCode: {
+    type: String,
+    uppercase: true,
+    unique: true,
+    default: generateCouponCode,
+  },
    address:[{
     name:{type:String},
     mobile:{type:Number},
@@ -35,7 +41,18 @@ const userSchema = new mongoose.Schema({
 
   
 
-})
+});
+
+function generateCouponCode() {
+  const length = 8;
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let couponCode = "";
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    couponCode += characters.charAt(randomIndex);
+  }
+  return couponCode;
+}
 
 const User = mongoose.model('User',userSchema)
 module.exports = User

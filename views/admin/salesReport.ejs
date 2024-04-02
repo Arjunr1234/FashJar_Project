@@ -62,45 +62,56 @@
         <div class="card-body">
             <div class="col-md-13">
                 <div class="table-responsive">
-                    <table id="salesTable" class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th class="col-md-1 text-center">#</th>
-                                <th class="col-md-1 text-center">Order ID</th>
-                                <th class="col-md-2 text-center">Name</th>
-                                <th class="col-md-3 text-center">Product</th>
-                                <th class="col-md-1 text-center">Date</th>
-                                <th class="col-md-2 text-center">Payment</th>
-                                <th class="col-md-1 text-center">Status</th>
-                                <th class="col-md-1 text-center">Coupon</th>
-                                <th class="col-md-1 text-center">Price</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <h5 class="mb-2" style="color: green;">Total count : <%= salesData.length %></h5>
-                            <% if(locals.salesData){%>
-                                <% for(let i=0; i<salesData.length; i++){%>
-                                    <tr>
-                                        <td class="col-md-1 text-center"><%= i+1 %></td>
-                                        <td class="col-md-1 text-center"><%= salesData[i].orderId %></td>
-                                        <td class="col-md-2 text-center"><%= salesData[i].user.name %></td>
-                                        <td class="col-md-3 text-center"><%= salesData[i].productNew.productName %></td>
-                                        <td class="col-md-1 text-center"><%= salesData[i].orderedOn.toLocaleDateString() %></td>
-                                        <td class="col-md-2 text-center"><%= salesData[i].paymentMethod %></td>
-                                        <td class="col-md-1 text-center"><%= salesData[i].products.status %></td>
-                                        <td class="col-md-1 text-center">
-                                            <% if(salesData[i].coupon){%>
-                                                <p style="color: green;">Applied</p>
-                                            <%}else{%>
-                                                <p style="color: red;">Not Applied</p>
-                                            <%} %>
-                                        </td>
-                                        <td class="col-md-1 text-center"><%= salesData[i].products.quantity * salesData[i].products.productPrice %></td>
-                                    </tr>
+                    <div id="salesTable">
+                        <table  class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="col-md-1 text-center">#</th>
+                                    <th class="col-md-1 text-center">Order ID</th>
+                                    <th class="col-md-2 text-center">Name</th>
+                                    <th class="col-md-3 text-center">Product</th>
+                                    <th class="col-md-1 text-center">Date</th>
+                                    <th class="col-md-2 text-center">Payment</th>
+                                    <th class="col-md-1 text-center">Status</th>
+                                    <th class="col-md-1 text-center">Coupon</th>
+                                    <th class="col-md-1 text-center">Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <h5 class="mb-2" style="color: green;">Total count : <%= salesData.length %></h5>
+                                <% if(locals.salesData){%>
+                                    <% for(let i=0; i<salesData.length; i++){%>
+                                        <tr>
+                                            <td class="col-md-1 text-center"><%= i+1 %></td>
+                                            <td class="col-md-1 text-center"><%= salesData[i].orderId %></td>
+                                            <td class="col-md-2 text-center"><%= salesData[i].user.name %></td>
+                                            <td class="col-md-3 text-center"><%= salesData[i].productNew.productName %></td>
+                                            <td class="col-md-1 text-center"><%= salesData[i].orderedOn.toLocaleDateString() %></td>
+                                            <td class="col-md-2 text-center"><%= salesData[i].paymentMethod %></td>
+                                            <td class="col-md-1 text-center"><%= salesData[i].products.status %></td>
+                                            <td class="col-md-1 text-center">
+                                                <% if(salesData[i].coupon){%>
+                                                    <p style="color: green;">Applied <span><%= salesData[i].coupon.discount %>%</span></p>
+                                                <%}else{%>
+                                                    <p style="color: red;">Not Applied</p>
+                                                <%} %>
+                                            </td>
+                                            <td class="col-md-1 text-center"><%= salesData[i].products.quantity * salesData[i].products.productPrice %></td>
+                                        </tr>
+                                    <% } %>
                                 <% } %>
-                            <% } %>
-                        </tbody>
-                    </table>
+                            </tbody>
+                           
+                
+                        </table>
+                        <div class="totalPrice ml-20">
+                            <h4><span class="text-primary">Total Sales</span> : <%= salesData.length %></h4>
+                            <h4><span class="text-primary">Total Price</span> : ₹<%= totalDiscountedProductPrice %></h4>
+                            <h4><span class="text-primary">Total Discount</span> : ₹<%= totalDiscountPrice  %></h4>
+                        </div>
+
+                    </div>
+                   
                     
                 </div>
             </div>

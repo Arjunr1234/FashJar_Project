@@ -12,8 +12,8 @@ const objectId = require("mongoose").Types.ObjectId
 
 const loadWishlistPage = async(req, res)=>{
           console.log("Entered into loadWishlistPage in wishlistController")
-
-          const wishlistData = await wishlist.findOne()
+          const userId = new objectId(req.session.user._id)
+          const wishlistData = await wishlist.findOne({userId:userId})
           const productArray = [];
           console.log("This is wishlist data: ",wishlistData)
           if(wishlistData){

@@ -1,5 +1,7 @@
 const session = require("express-session");
 const admin = require("../models/adminModel");
+const fs = require('fs');
+const path = require('path');
 const flash = require("express-flash");
 const User = require("../models/userModel");
 const category = require("../models/categoryModel")
@@ -142,11 +144,7 @@ const loadHome = async (req, res)=>{
         { $limit: 10 },
       ]);
           console.log("This is the best product : ",bestSellingProduct)
-    //     console.log("This is the best brand: ", bestBrand)
-    //    console.log("This is the category : ",bestCategory)
-    //  console.log("This is yearly report : ",yearlyReport)
-    //console.log("This is monthlyReport: ",monthlyReport)
-    // console.log("This is orderData : ",orderData);
+   
 
       res.render("adminHome",{
         orderData,
@@ -483,7 +481,7 @@ const loadCategoryPage = async (req, res) => {
 
    const listUnlistProduct = async(req, res)=>{
     try {  
-          console.log("Entered into list unlist of Product");
+          
           const prodId = req.query.id;
           console.log(prodId);
           const findPrd = await product.findById({_id:prodId});
@@ -613,11 +611,24 @@ const deleteImage = async(req, res)=>{
                     console.log("Enter into delete image in adminController");
                   
                   const { id, imageName } = req.body;
+
+
+                  const imagePath = path.join(__dirname, '..', 'public', 'uploads', 'product-images', imageName);
+
+    
+    if (fs.existsSync(imagePath)) {
+      
+      fs.unlinkSync(imagePath);
+      console.log("The image is unlinked")
+    } else {
+      console.log("File does not exist.");
+      return res.status(404).json({ message: "File not found." });
+    }
     
     const productData = await product.findByIdAndUpdate(
       { _id: id },
       { $pull: { productImage: imageName } },
-      { new: true } // Optional: Return the updated document
+      { new: true } 
     );
     
     res.json({message:true})

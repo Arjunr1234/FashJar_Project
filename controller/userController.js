@@ -54,6 +54,7 @@ const insertUserWithVerify = async function(req, res) {
       console.log("req in insert user");
 
       const UserData = req.session.insertedData;
+      console.log("This is the userData: now :",UserData)
       const response = await userHelper.doSignup(UserData, req.session.otpMatched);
       console.log(response)
 
@@ -62,6 +63,53 @@ const insertUserWithVerify = async function(req, res) {
         req.flash("message", error);
         return res.redirect("/register");
       } else {
+
+         if(UserData.refferalCode){
+          const userWithRefferalCode = await User.findOne({refferalCode:UserData.refferalCode});
+          
+
+          if(userWithRefferalCode){
+            
+            const userHaveWallet = await wallet.findOne({ userId: userWithRefferalCode._id });
+           
+
+
+            if (userHaveWallet) {
+              const data = {
+                  amount: 200,
+                  date: new Date(),
+                  paymentMethod: "Referral Reward",
+                  isReceived: true
+              };
+          
+              const updating = await wallet.updateOne(
+                  { userId: userWithRefferalCode._id },
+                  {
+                      $push: { walletDatas: data },
+                      $inc: { balance: 200 }
+                  }
+              );
+          } else {
+              const creating = await wallet.create({
+                  userId: userWithRefferalCode._id, 
+                  balance: 200,
+                  walletDatas: [
+                      {
+                          amount: 200,
+                          date: new Date(),
+                          paymentMethod: "Referral Reward",
+                          isReceived: true
+                      },
+                  ],
+              });
+          }
+          
+          }
+
+          
+         }
+
+
         const message = response.message;
         req.flash("message", message);
         return res.redirect('/');
@@ -126,7 +174,15 @@ const loadUserHome = async function (req, res) {
           if(!findingWallet){  
             const createWallet = await wallet.create({
               userId:req.session.user._id,
-              balance:0
+              balance: 100,
+              walletDatas: [
+                  {
+                      amount: 100,
+                      date: new Date(),
+                      paymentMethod: "Welcome Reward",
+                      isReceived: true
+                  },
+              ],
             })
 
           }
@@ -275,18 +331,18 @@ const loadVeiwProduct = async(req, res)=>{
          console.log("This is the product view products (athe ith thanne):",products)
         //  console.log("offerprice: ",products.offerPrice)
 ////////////////////////////////////////////////////////////////////////////////////////////////
-        const userId = userData._id
-        const wishlistData = await wishlist.findOne({userId:new Object(userId)})
+        // const userId = userData._id
+        // const wishlistData = await wishlist.findOne({userId:new Object(userId)})
 
-        console.log("This is wishlist data: ",wishlistData)
+        // console.log("This is wishlist data: ",wishlistData)
 
-        var check = wishlistData.products.find(function(product) {
-          return  product.productId.toString() === productId.toString();
+        // var check = wishlistData.products.find(function(product) {
+        //   return  product.productId.toString() === productId.toString();
           
           
-        });
+        // });
 
-        console.log("This is check:????????????????????",check);
+        // console.log("This is check:????????????????????",check);
 ////////////////////////////////////////////////////////////////////////////////////////////////////
          
          res.render("productView",{products,userData});
@@ -330,7 +386,7 @@ const loadShopProduct = async(req, res)=>{
 
                 const categoryData = await category.find()
                 console.log("This is category data: ",categoryData)
-                const filteredProduct = await product.find({isBlocked:false}).lean()
+                const filteredProduct = await product.find({isBlocked:false}).lean();
 
                 for(let i=0; i<filteredProduct.length; i++){
                   const product = filteredProduct[i];
@@ -342,24 +398,197 @@ const loadShopProduct = async(req, res)=>{
                 res.render("shop",{categoryData, filteredProduct})
 }
 
-const filterCatergoryProducts = async(req, res)=>{
-                    console.log("Entered into fileterCategory in userController");
-                    const categoryId = req.query.catId;
-                    const categoryData = await category.find();
-                    console.log("This is category Id:",categoryId);
-                    const filteredProduct = await product.find({category:new ObjectId(categoryId)}).lean();
+const filterShopProducts = async(req, res)=>{
+                  
+                  console.log("Entered into filetershopProducts in userController");
+                  const categoryData = await category.find()
+                  const value = req.query.criteria;
+                  console.log("This is the value: ", value);
 
-                    for(let i=0; i<filteredProduct.length; i++){
-                      const product = filteredProduct[i];
+                  if(value === 'lowToHigh'){
+                     console.log("We have to sort item based on lowtoHigh");
+
+                     const filteredTheProduct = await product.find({isBlocked:false}).lean();
+
+                     for(let i=0; i<filteredTheProduct.length; i++){
+                      const product = filteredTheProduct[i];
                       const calculatedPrice = await offerHelper.newOfferPrice(product)
                       product.offerPrice = calculatedPrice
                     }
+                    function sortByOfferPrice(products) {
+                      return products.sort((a, b) => a.offerPrice - b.offerPrice);
+                    }
+                    
+                    var filteredProduct = sortByOfferPrice(filteredTheProduct);
 
-                    console.log("This is filtered Product: ",filteredProduct);
+                     console.log("This is the sortedProdcuts product: ",filteredProduct)
 
-                    res.render("shop",{filteredProduct,categoryData})
-               
+
+                  }else if(value === 'highToLow'){
+                         console.log("Entered in to high to Low");
+
+                         const filteredTheProduct = await product.find({isBlocked:false}).lean();
+
+                         for(let i=0; i<filteredTheProduct.length; i++){
+                          const product = filteredTheProduct[i];
+                          const calculatedPrice = await offerHelper.newOfferPrice(product)
+                          product.offerPrice = calculatedPrice
+                        }
+                        function sortByOfferPrice(products) {
+                          return products.sort((a, b) => b.offerPrice - a.offerPrice);
+                        }
+                        
+                        var filteredProduct = sortByOfferPrice(filteredTheProduct);
+    
+                         console.log("This is the sortedProdcuts product: ",filteredProduct)
+
+
+
+                  }else if(value === 'a-z'){
+                         console.log("Entered into a-z");
+
+                         const filteredTheProduct = await product.find({isBlocked:false}).lean();
+
+                         for(let i=0; i<filteredTheProduct.length; i++){
+                          const product = filteredTheProduct[i];
+                          const calculatedPrice = await offerHelper.newOfferPrice(product)
+                          product.offerPrice = calculatedPrice
+                        }
+                        function sortProductsByName(products) {
+                          return products.sort((a, b) => a.productName.localeCompare(b.productName));
+                        }
+                        
+                        var filteredProduct = sortProductsByName(filteredTheProduct);
+    
+                         console.log("This is the sortedProdcuts product: ",filteredProduct)
+
+
+
+
+                  }
+
+                  res.render("shop",{filteredProduct,categoryData})
+                                 
 }
+
+const filterCatergoryProducts = async(req, res)=>{
+                        console.log("Entered into filterCategoryProducts in userController");
+
+                        const categoryId = req.query.catId;
+                        console.log("This is category Id: ",categoryId);
+                        const categoryData = await category.find();
+
+                        const filteredProduct = await product.find({category:new ObjectId(categoryId)}).lean();
+
+                             for(let i=0; i<filteredProduct.length; i++){
+                                     const product = filteredProduct[i];
+                                     const calculatedPrice = await offerHelper.newOfferPrice(product)
+                                     product.offerPrice = calculatedPrice
+                                }
+
+                             res.render("shopCategory",{filteredProduct,categoryData,categoryId});   
+
+
+
+
+}
+
+const categoryWiseFiltering = async(req, res)=>{
+                      console.log("Entered into  catcategoryWiseFiltering");
+                      const value = req.query.criteria;
+                      const categoryData = await category.find()
+                      const categoryId = req.query.categoryId;
+                      console.log("This is the value: ",value);
+                      console.log("This is categoryId: ",categoryId);
+
+                      if(value === 'lowToHigh'){
+                          
+                          console.log("Entered into lowToHigh");
+                          const filteredTheProduct = await product.find({isBlocked:false,category:new ObjectId(categoryId)}).lean();
+                          console.log("This is the filtered product: ",filteredTheProduct)
+
+                          for(let i=0; i<filteredTheProduct.length; i++){
+                            const product = filteredTheProduct[i];
+                            const calculatedPrice = await offerHelper.newOfferPrice(product)
+                            product.offerPrice = calculatedPrice
+                          }
+                          function sortByOfferPrice(products) {
+                            return products.sort((a, b) => a.offerPrice - b.offerPrice);
+                          }
+                          
+                          var filteredProduct = sortByOfferPrice(filteredTheProduct);
+      
+                           console.log("This is the sortedProdcuts product: ",filteredProduct)
+
+                      }else if(value === 'highToLow'){
+                        console.log("Entered in to high to Low");
+
+                        const filteredTheProduct = await product.find({isBlocked:false,category:new ObjectId(categoryId)}).lean();
+
+                        for(let i=0; i<filteredTheProduct.length; i++){
+                         const product = filteredTheProduct[i];
+                         const calculatedPrice = await offerHelper.newOfferPrice(product)
+                         product.offerPrice = calculatedPrice
+                       }
+                       function sortByOfferPrice(products) {
+                         return products.sort((a, b) => b.offerPrice - a.offerPrice);
+                       }
+                       
+                       var filteredProduct = sortByOfferPrice(filteredTheProduct);
+   
+                        console.log("This is the sortedProdcuts product: ",filteredProduct)
+
+
+
+                 }else if(value === 'a-z'){
+                        console.log("Entered into a-z");
+
+                        const filteredTheProduct = await product.find({isBlocked:false,category:new ObjectId(categoryId)}).lean();
+
+                        for(let i=0; i<filteredTheProduct.length; i++){
+                         const product = filteredTheProduct[i];
+                         const calculatedPrice = await offerHelper.newOfferPrice(product)
+                         product.offerPrice = calculatedPrice
+                       }
+                       function sortProductsByName(products) {
+                         return products.sort((a, b) => a.productName.localeCompare(b.productName));
+                       }
+                       
+                       var filteredProduct = sortProductsByName(filteredTheProduct);
+   
+                        console.log("This is the sortedProdcuts product: ",filteredProduct)
+
+
+
+
+                 }
+
+
+                      res.render("shopCategory",{filteredProduct,categoryId,categoryData})
+
+
+}
+
+
+
+// const filterCatergoryProducts = async(req, res)=>{
+//                     console.log("Entered into fileterCategory in userController");
+//                     const categoryId = req.query.catId;
+//                     const categoryData = await category.find();
+//                     console.log("This is category Id:",categoryId);
+//                     const filteredProduct = await product.find({category:new ObjectId(categoryId)}).lean();
+
+//                     for(let i=0; i<filteredProduct.length; i++){
+//                       const product = filteredProduct[i];
+//                       const calculatedPrice = await offerHelper.newOfferPrice(product)
+//                       product.offerPrice = calculatedPrice
+//                     }
+
+//                     console.log("This is filtered Product: ",filteredProduct);
+
+//                     res.render("shop",{filteredProduct,categoryData})
+               
+// }
 
 const searchProduct = async(req, res)=>{
                   console.log("Entered into search product in userController");
@@ -397,12 +626,95 @@ const searchProduct = async(req, res)=>{
                   res.render("shop",{filteredProduct,categoryData})
 }
 
+const loadEmaiEnterInForgotpassword = async(req, res)=>{
+                      console.log("Enter into loadEmaiEnterInForgotpassword in userController");
 
+                      res.render("enterEmailForgotPassword")
+}
+
+
+const verifyingTheEmail = async(req, res)=>{
+                        console.log("Entered into verifyingTheEmail in userController");
+
+                         const receivedEmail = req.body.email
+                         req.session.storedEmail = receivedEmail
+
+                        const checkUserExist = await User.findOne({email:receivedEmail});
+                        console.log("Thsi is Existing user: ",checkUserExist);
+
+                        if(checkUserExist){
+                          const result = await otpHelper.sendOtpForgotPassword(receivedEmail);
+                          console.log("This is the result: ",result)
+                          const expiryTime = 60;
+                          req.session.otpExpiry = Date.now()+expiryTime*1000;
+                          req.session.otp = result.otp;
+                          console.log("This is the otp in the session : ",req.session.otp);
+                          
+
+                          if(result.status){
+                            res.redirect("/postEmailData");
+                          }
+
+                        }else{
+                          req.flash("error","User not Exist");
+
+                          res.redirect("/")
+                        }
+}
+
+const loadOtpForgotPassword = async(req, res)=>{
+                       console.log("Entered into loadOtpForgotPassword in userController");
+                       
+                       const error = req.flash("error")
+                       res.render("otpForgotPassword",{error});
+}
+
+const loadEnterNewPassword = async(req, res)=>{
+                       console.log("Entered into loadEnter new PasswordPage in userController");
+
+                       res.render("enterPassForgotPassword")
+}
+
+const  changePassword = async(req, res)=>{
+                       console.log("Enter into changePassword in userController");
+                       
+                       try {
+
+                        console.log("This is the email: ",req.session.storedEmail);
+
+                       console.log("This is the data received: ", req.body)
+                       const userData = await User.findOne({email:req.session.storedEmail}).lean();
+                       const userId = new ObjectId(userData._id);
+                       console.log("This is the userId: ",userId);
+
+                       const { newPassword, confirmPassword} = req.body;
+
+                       if(confirmPassword === newPassword){
+                        const hashedPassword = await bcrypt.hash(newPassword,10);
+                        const updatePassword = await User.updateOne({_id:userId},{password:hashedPassword});
+
+                        if(updatePassword.modifiedCount === 1){
+                          console.log("Passowrd is updated!!");
+                          req.flash("message","Updated Successfully")
+                          res.redirect("/")
+                        }
+                        
+                       }
+
+                        
+                       } catch (error) {
+                        console.log(error)
+                        
+                       }
+
+}
 
 
 
 
 module.exports = { 
+
+
               loadSample,
               loginLoad,
               loadRegister,
@@ -416,7 +728,14 @@ module.exports = {
               loadGuestUserHome,
               loadShopProduct,
               filterCatergoryProducts,
-              searchProduct
+              searchProduct,
+              loadEmaiEnterInForgotpassword,
+              verifyingTheEmail,
+              loadOtpForgotPassword,
+              loadEnterNewPassword,
+              changePassword,
+              filterShopProducts,
+              categoryWiseFiltering
 
               
               

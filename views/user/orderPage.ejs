@@ -3,6 +3,7 @@
    .cart-container {
        margin-bottom: 20%; /* Adjust the value as needed */
    }
+   
 </style>
 
    <main class="main">
@@ -33,6 +34,7 @@
                              
                               <th class="col-md-2 text-center">Orderd On</th>
                               <th class="col-md-2 text-center">Total Amount</th>
+                              <th class="col-md-2 text-center">Status</th>
                               <th class="col-md-2 text-center">Payment Method</th>
                               <!-- <th class="col-md-1 text-center">Quantity</th> -->
                               
@@ -47,6 +49,14 @@
                                         <td class="col-md-1 text-center"><%= orderData[i].orderId %></td>
                                         <td class="col-md-2 text-center"><%= orderData[i].orderedOn.toLocaleDateString('en-GB') %></td>
                                         <td class="col-md-2 text-center">₹<%= orderData[i].totalAmount %> </td>
+                                        <td class="col-md-2 text-center">
+                                            
+                                            <% if(orderData[i].status === "pending"){%>
+                                                <span id="status" class="badge rounded-pill alert-success">Confirmed</span>
+                                                <%}else if(orderData[i].status === "payment Failed"){%>
+                                                    <span id="status" class="badge rounded-pill alert-danger">Payment Failed</span>
+                                                    <%} %>
+                                        </td>
                                         <td class="col-md-2 text-center"><%= orderData[i].paymentMethod %></td>
                                         <td class="col-edit col-md-1 text-center  ">
                                             <a href="/viewOrderDetails?orderId=<%= orderData[i]._id %>" class="btn btn-sm  font-sm btn-action btn-warning" style="width: 65%">View</a>

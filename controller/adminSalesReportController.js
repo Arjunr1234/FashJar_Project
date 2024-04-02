@@ -38,6 +38,8 @@ const loadSalesReport = async(req, res)=>{
                         orderId: 1,
                         "user.name": 1,
                         "productNew.productName": 1,
+                        "productNew.regularPrice":1,
+                        "productNew.discount":1,
                         orderedOn: 1,
                         paymentMethod: 1,
                         coupon: 1, 
@@ -48,11 +50,24 @@ const loadSalesReport = async(req, res)=>{
                 }
                 ])
 
+                let totalRegularPrice = 0;
+                let totalDiscountedProductPrice = 0;
+
+                for(let i=0; i<salesData.length; i++){
+                          totalRegularPrice = totalRegularPrice + (salesData[i].productNew.regularPrice * salesData[i].products.quantity);
+                          totalDiscountedProductPrice = totalDiscountedProductPrice + (salesData[i].products.productPrice * salesData[i].products.quantity);
+                }
+               const totalDiscountPrice = totalRegularPrice - totalDiscountedProductPrice
+
                 console.log("This is the final Data : ",salesData);
+
+                console.log("This is total Price: ",totalRegularPrice);
+                console.log("This is totalDiscountedProductPrice: ",totalDiscountedProductPrice);
+                console.log("This is the overall discount: ",totalDiscountPrice)
 
 
                 
-                res.render("salesReport",{salesData})
+                res.render("salesReport",{salesData, totalDiscountedProductPrice, totalDiscountPrice})
                  
 }
 
@@ -109,6 +124,8 @@ const filterReport = async (req, res)=>{
                           orderId: 1,
                           "user.name": 1,
                           "productNew.productName": 1,
+                          "productNew.regularPrice":1,
+                          "productNew.discount":1,
                           orderedOn: 1,
                           paymentMethod: 1,
                           coupon: 1, 
@@ -119,10 +136,18 @@ const filterReport = async (req, res)=>{
                   }
                   ]);
                   
-                  console.log("This is the week  data: ",salesData)
+                
 
                   
-
+                  var totalRegularPrice = 0;
+                  var totalDiscountedProductPrice = 0;
+  
+                  for(let i=0; i<salesData.length; i++){
+                    totalRegularPrice = totalRegularPrice + (salesData[i].productNew.regularPrice * salesData[i].products.quantity);
+                    totalDiscountedProductPrice = totalDiscountedProductPrice + (salesData[i].products.productPrice * salesData[i].products.quantity);
+          }
+                 var totalDiscountPrice = totalRegularPrice - totalDiscountedProductPrice
+  
 
 
 
@@ -176,6 +201,8 @@ const filterReport = async (req, res)=>{
                           orderId: 1,
                           "user.name": 1,
                           "productNew.productName": 1,
+                          "productNew.regularPrice":1,
+                          "productNew.discount":1,
                           orderedOn: 1,
                           paymentMethod: 1,
                           coupon: 1, 
@@ -185,6 +212,20 @@ const filterReport = async (req, res)=>{
                       }
                   }
                   ]);
+
+                  
+                var totalRegularPrice = 0;
+                var totalDiscountedProductPrice = 0;
+
+                for(let i=0; i<salesData.length; i++){
+                  totalRegularPrice = totalRegularPrice + (salesData[i].productNew.regularPrice * salesData[i].products.quantity);
+                  totalDiscountedProductPrice = totalDiscountedProductPrice + (salesData[i].products.productPrice * salesData[i].products.quantity);
+        }
+               var totalDiscountPrice = totalRegularPrice - totalDiscountedProductPrice
+
+               
+
+              
 
 
 
@@ -238,6 +279,8 @@ const filterReport = async (req, res)=>{
                           orderId: 1,
                           "user.name": 1,
                           "productNew.productName": 1,
+                          "productNew.regularPrice":1,
+                          "productNew.discount":1,
                           orderedOn: 1,
                           paymentMethod: 1,
                           coupon: 1, 
@@ -247,6 +290,16 @@ const filterReport = async (req, res)=>{
                       }
                   }
                   ]);
+
+                  var totalRegularPrice = 0;
+                  var totalDiscountedProductPrice = 0;
+  
+                  for(let i=0; i<salesData.length; i++){
+                    totalRegularPrice = totalRegularPrice + (salesData[i].productNew.regularPrice * salesData[i].products.quantity);
+                    totalDiscountedProductPrice = totalDiscountedProductPrice + (salesData[i].products.productPrice * salesData[i].products.quantity);
+          }
+                 var totalDiscountPrice = totalRegularPrice - totalDiscountedProductPrice
+  
 
                   
                 }else if(receivedData === 'day'){
@@ -296,6 +349,8 @@ const filterReport = async (req, res)=>{
                           orderId: 1,
                           "user.name": 1,
                           "productNew.productName": 1,
+                          "productNew.regularPrice":1,
+                          "productNew.discount":1,
                           orderedOn: 1,
                           paymentMethod: 1,
                           coupon: 1, 
@@ -305,6 +360,16 @@ const filterReport = async (req, res)=>{
                       }
                   }
                   ]);
+
+                  var totalRegularPrice = 0;
+                  var totalDiscountedProductPrice = 0;
+  
+                  for(let i=0; i<salesData.length; i++){
+                    totalRegularPrice = totalRegularPrice + (salesData[i].productNew.regularPrice * salesData[i].products.quantity);
+                    totalDiscountedProductPrice = totalDiscountedProductPrice + (salesData[i].products.productPrice * salesData[i].products.quantity);
+          }
+                 var totalDiscountPrice = totalRegularPrice - totalDiscountedProductPrice
+  
 
 
 
@@ -342,6 +407,8 @@ const filterReport = async (req, res)=>{
                           orderId: 1,
                           "user.name": 1,
                           "productNew.productName": 1,
+                          "productNew.regularPrice":1,
+                          "productNew.discount":1,
                           orderedOn: 1,
                           paymentMethod: 1,
                           coupon: 1, 
@@ -352,10 +419,28 @@ const filterReport = async (req, res)=>{
                   }
                   ]);
 
+                  var totalRegularPrice = 0;
+                  var totalDiscountedProductPrice = 0;
+  
+                  for(let i=0; i<salesData.length; i++){
+                    totalRegularPrice = totalRegularPrice + (salesData[i].productNew.regularPrice * salesData[i].products.quantity);
+                    totalDiscountedProductPrice = totalDiscountedProductPrice + (salesData[i].products.productPrice * salesData[i].products.quantity);
+          }
+                 var totalDiscountPrice = totalRegularPrice - totalDiscountedProductPrice
+  
+
+
+
+
 
                 }
+          
+          console.log("This si the salesData at the end: ",salesData)
 
-                res.render("salesReport",{salesData})
+          console.log("This is total Price: ",totalRegularPrice);
+          console.log("This is totalDiscountedProductPrice: ",totalDiscountedProductPrice);
+          console.log("This is the overall discount: ",totalDiscountPrice)
+                res.render("salesReport",{salesData,totalDiscountPrice,totalDiscountedProductPrice})
 
 
 
@@ -407,6 +492,8 @@ var salesData = await order.aggregate([
         orderId: 1,
         "user.name": 1,
         "productNew.productName": 1,
+        "productNew.regularPrice":1,
+        "productNew.discount":1,
         orderedOn: 1,
         paymentMethod: 1,
         coupon: 1, 
@@ -417,9 +504,18 @@ var salesData = await order.aggregate([
 }
 ]);
 
+var totalRegularPrice = 0;
+var totalDiscountedProductPrice = 0;
+
+for(let i=0; i<salesData.length; i++){
+  totalRegularPrice = totalRegularPrice + (salesData[i].productNew.regularPrice * salesData[i].products.quantity);
+  totalDiscountedProductPrice = totalDiscountedProductPrice + (salesData[i].products.productPrice * salesData[i].products.quantity);
+}
+var totalDiscountPrice = totalRegularPrice - totalDiscountedProductPrice
+
 
 console.log("This si the custom sales data: ",salesData)
-res.render("salesReport",{salesData})
+res.render("salesReport",{salesData, totalDiscountedProductPrice, totalDiscountPrice})
 
                       
 
