@@ -3,6 +3,10 @@
    .cart-container {
        margin-bottom: 20%; /* Adjust the value as needed */
    }
+   .retryPaymentBtn, .invoiceDownloadBtn{
+    border-radius: 20px;
+    font-size: 16px;
+   }
 </style>
 
    <main class="main">
@@ -17,25 +21,129 @@
        </div>
       
         <div class="card">
-              <div class="text-center ">
-                <h2 class="mt-30 ">Details</h1>
-              </div>
+          <div class="row justify-content-center">
+            <div class="col-12 col-md-6">
+                <div class="text-center">
+                    <h2 class="mt-30">Details</h2>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="text-center mt-30">
+                    <% if(orders[0].mainOrderStatus === "pending"){%>
+                      <a class="invoiceDownloadBtn btn-sm btn-primary mr-20" id="invoice">Download invoice</a>
+
+                      <%}else if(orders[0].mainOrderStatus === "payment Failed"){%>
+                        
+                        <a class="retryPaymentBtn btn-sm btn-warning mr-20" id="retryPaymentBtn">Retry Payment</a>
+
+                        <%} %>
+                   
+                    <input type="hidden" id="productDetails" value="<%= JSON.stringify(orders) %>">
+                </div>
+            </div>
+        </div>
           <div class="card-body">
             <div class="col-md-12">
                
              
       
               <div class="table-responsive">
+                <% if(orders[0].mainOrderStatus === "pending"){%>
                   <table class="table table-hover">
+                    <thead>
+                     
+                        <tr>
+                            <th class="col-md-2 text-center" >Image</th>
+                            <th class="col-md-3 text-center">Name</th>
+                            <th class="col-md-1 text-center">Price</th>
+                            <th class="col-md-1 text-center">Size</th>
+                            <th class="col-md-1 text-center">Quantity</th>
+                            <th class="col-md-2 text-center">Status</th>
+                            <th class="col-md-2 text-center">Cancell/Return</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                                 <% for(let i=0; i<orders.length;i++) {%>
+                                  <tr>
+                                    <td class="col-image col-md-2 text-center">
+                                      <div class="itemside">
+                                        <div class="left">
+                                            <img  style="max-width:30%; height: auto;" src="/public/uploads/product-images/<%= orders[i].image[0]%>" 
+                                                 class="img-sm img-thumbnail" 
+                                                 alt="Item" 
+                                                 width="100" 
+                                                 height="100" 
+                                                 
+                                            >
+                                        </div>
+                                    </div>
+                                    
+                                    </td>
+                                    <td class="col-name col-md-3 text-center"><%= orders[i].name %></td>
+                                    <td class="col-price col-md-1 text-center">₹<%= orders[i].orderDetails.productPrice %> </td>
+                                    <td class="col-size col-md-1 text-center"><%= orders[i].orderDetails.size.toUpperCase() %></td>
+                                    <td class="col-quantity col-md-1 text-center"><%= orders[i].orderDetails.quantity %></td>
+                                    <th class="col-md-2 text-center">
+                                      <% if (orders[i].orderDetails.status == 'Pending') { %>
+                                        <span id="status" class="badge rounded-pill alert-warning"><%= orders[i].orderDetails.status %></span>
+                                    <% } else if (orders[i].orderDetails.status == 'Processing') {%>
+                                        <span id="status" class="badge rounded-pill alert-secondary"><%= orders[i].orderDetails.status %></span>
+                                    <% } else if (orders[i].orderDetails.status == 'Confirmed') {%>
+                                        <span id="status" class="badge rounded-pill alert-dark"><%=orders[i].orderDetails.status %></span>
+                                    <% } else if (orders[i].orderDetails.status == 'Shipped') {%>
+                                        <span id="status" class="badge rounded-pill alert-info"><%= orders[i].orderDetails.status %></span>
+                                    <% } else if (orders[i].orderDetails.status == 'OutForDelivery') {%>
+                                        <span id="status" class="badge rounded-pill alert-warning"><%= orders[i].orderDetails.status %></span>
+                                    <% } else if (orders[i].orderDetails.status == 'Delivered') {%>
+                                        <span id="status" class="badge rounded-pill alert-success"><%= orders[i].orderDetails.status %></span>
+                                    <% } else if (orders[i].orderDetails.status == 'cancelPending') {%>
+                                        <span id="status" class="badge rounded-pill alert-warning"><%= orders[i].orderDetails.status %></span>
+                                    <% } else {%>
+                                        <span id="status" class="badge rounded-pill alert-danger"><%= orders[i].orderDetails.status %></span>
+                                    <% } %>
+                                    </th>
+                                    </td>
+                                    <td class="col-cancell col-md-2 text-center">
+                                      <% if (orders[i].orderDetails.status === 'Delivered') { %>
+                                        <!-- Update the onclick attribute to call a JavaScript function -->
+                                        <a class="btn btn-sm font-sm btn-action btn-warning" style=" padding: 5px; font-size: 12px; background: rgb(255, 200, 0)" onclick="openReturnModal('<%= orders[i].orderId %>', '<%= orders[i].orderDetails.product %>', '<%= orders[i].orderDetails.size %>', '<%= orders[i].orderDetails.quantity %>','<%= orders[i].orderDetails.productPrice %>')">Return</a>
+                                      <% } else if( orders[i].orderDetails.status ===  "Cancelled"){%>
+
+                                        <%} else if( orders[i].orderDetails.status ===  "Return pending"){%>
+
+                                          <%}else if( orders[i].orderDetails.status ===  "Returned"){%>
+
+                                            <%}
+
+                                        else {%>
+                                          <a class="btn btn-sm font-sm btn-action btn-warning" style="  background:red" onclick="cancelProduct('<%= orders[i].orderId %>','<%= orders[i].orderDetails.product %>','<%= orders[i].orderDetails.size %>','<%= orders[i].orderDetails.quantity %>','<%= orders[i].orderDetails.productPrice %>','<%= orders[i].coupon.discount %>','<%= orders[i].paymentMethod %>')">Cancel</a>
+
+                                          <%} %>
+                                    </td>
+                                  
+                                   
+                                </tr>
+                                  
+                                  <%} %>
+    
+                           
+                                   
+                                    
+                                        
+                    </tbody>
+                  </table>
+                  <%}else if(orders[0].mainOrderStatus === "payment Failed"){%>
+                    <table class="table table-hover">
                       <thead>
+                       
                           <tr>
                               <th class="col-md-2 text-center" >Image</th>
                               <th class="col-md-3 text-center">Name</th>
-                              <th class="col-md-1 text-center">Price</th>
-                              <th class="col-md-1 text-center">Size</th>
-                              <th class="col-md-1 text-center">Quantity</th>
-                              <th class="col-md-2 text-center">Status</th>
-                              <th class="col-md-2 text-center">Cancell/Return</th>
+                              <th class="col-md-2 text-center">Price</th>
+                              <th class="col-md-2 text-center">Size</th>
+                              <th class="col-md-2 text-center">Quantity</th>
+                             
                               
                           </tr>
                       </thead>
@@ -56,47 +164,13 @@
                                       </div>
                                       
                                       </td>
-                                      <td class="col-name col-md-3 text-center"><%= orders[i].name %></td>
-                                      <td class="col-price col-md-1 text-center">₹<%= orders[i].orderDetails.productPrice %> </td>
-                                      <td class="col-size col-md-1 text-center"><%= orders[i].orderDetails.size.toUpperCase() %></td>
-                                      <td class="col-quantity col-md-1 text-center"><%= orders[i].orderDetails.quantity %></td>
-                                      <th class="col-md-2 text-center">
-                                        <% if (orders[i].orderDetails.status == 'Pending') { %>
-                                          <span id="status" class="badge rounded-pill alert-warning"><%= orders[i].orderDetails.status %></span>
-                                      <% } else if (orders[i].orderDetails.status == 'Processing') {%>
-                                          <span id="status" class="badge rounded-pill alert-secondary"><%= orders[i].orderDetails.status %></span>
-                                      <% } else if (orders[i].orderDetails.status == 'Confirmed') {%>
-                                          <span id="status" class="badge rounded-pill alert-dark"><%=orders[i].orderDetails.status %></span>
-                                      <% } else if (orders[i].orderDetails.status == 'Shipped') {%>
-                                          <span id="status" class="badge rounded-pill alert-info"><%= orders[i].orderDetails.status %></span>
-                                      <% } else if (orders[i].orderDetails.status == 'OutForDelivery') {%>
-                                          <span id="status" class="badge rounded-pill alert-warning"><%= orders[i].orderDetails.status %></span>
-                                      <% } else if (orders[i].orderDetails.status == 'Delivered') {%>
-                                          <span id="status" class="badge rounded-pill alert-success"><%= orders[i].orderDetails.status %></span>
-                                      <% } else if (orders[i].orderDetails.status == 'cancelPending') {%>
-                                          <span id="status" class="badge rounded-pill alert-warning"><%= orders[i].orderDetails.status %></span>
-                                      <% } else {%>
-                                          <span id="status" class="badge rounded-pill alert-danger"><%= orders[i].orderDetails.status %></span>
-                                      <% } %>
-                                      </th>
-                                      </td>
-                                      <td class="col-cancell col-md-2 text-center">
-                                        <% if (orders[i].orderDetails.status === 'Delivered') { %>
-                                          <!-- Update the onclick attribute to call a JavaScript function -->
-                                          <a class="btn btn-sm font-sm btn-action btn-warning" style="width: 50%; padding: 5px; font-size: 12px; background: rgb(255, 200, 0)" onclick="openReturnModal('<%= orders[i].orderId %>', '<%= orders[i].orderDetails.product %>', '<%= orders[i].orderDetails.size %>', '<%= orders[i].orderDetails.quantity %>','<%= orders[i].orderDetails.productPrice %>')">Return</a>
-                                        <% } else if( orders[i].orderDetails.status ===  "Cancelled"){%>
-
-                                          <%} else if( orders[i].orderDetails.status ===  "Return pending"){%>
-
-                                            <%}else if( orders[i].orderDetails.status ===  "Returned"){%>
-
-                                              <%}
-
-                                          else {%>
-                                            <a class="btn btn-sm font-sm btn-action btn-warning" style="width: 50%; padding: 5px; font-size: 12px; background:red" onclick="cancelProduct('<%= orders[i].orderId %>','<%= orders[i].orderDetails.product %>','<%= orders[i].orderDetails.size %>','<%= orders[i].orderDetails.quantity %>','<%= orders[i].orderDetails.productPrice %>','<%= orders[i].coupon.discount %>','<%= orders[i].paymentMethod %>')">Cancel</a>
-
-                                            <%} %>
-                                      </td>
+                                      <td class="col-name col-md-3 text-primary text-center"><h4 class="text-primary"><%= orders[i].name %></h4></td>
+                                      <td class="col-price col-md-2 text-center">₹<%= orders[i].orderDetails.productPrice %> </td>
+                                      <td class="col-size col-md-2 text-center"><%= orders[i].orderDetails.size.toUpperCase() %></td>
+                                      <td class="col-quantity col-md-2 text-center"><%= orders[i].orderDetails.quantity %></td>
+                                     
+                                      
+                                     
                                     
                                      
                                   </tr>
@@ -109,6 +183,9 @@
                                           
                       </tbody>
                     </table>
+                    
+                    <%} %>
+                  
                     <div class="modal fade" id="returnModal" tabindex="-1" role="dialog" aria-labelledby="returnModalLabel" aria-hidden="true">
                       <div class="modal-dialog" role="document">
                         <div class="modal-content">
@@ -155,6 +232,7 @@
    <!-- Preloader Start -->
    
    <!-- Vendor JS-->
+   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -180,6 +258,231 @@
    <!-- Template  JS -->
    <script src="/public/assets/js/maind134.js?v=3.4"></script>
    <script src="/public/assets/js/shopd134.js?v=3.4"></script>
+   <script src="https://unpkg.com/easyinvoice/dist/easyinvoice.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/easyinvoice/dist/easyinvoice.min.js"></script>
+
+   <script>
+   
+    $(document).ready(function() {
+      $("#retryPaymentBtn").click(function() {
+        // Access the data associated with the orders
+        // For example, you can log the data to the console
+        let orders = JSON.parse(document.getElementById('productDetails').value);
+        console.log("This is that order: ",orders);
+        const addressId = orders[0].address.addressId;
+        const paymentMethod = orders[0].paymentMethod;
+        const couponDiscount = orders[0].coupon.discount;
+        const couponId = orders[0].coupon.couponId;
+        const orderId = orders[0].orderId
+        const totalAmount =orders[0].totalAmount
+
+        console.log("This is addressId: ",addressId);
+        console.log("This is paymentMethod: ",paymentMethod);
+        console.log("This is coupon discount: ",couponDiscount);
+        console.log("This is totalAmount: ", totalAmount);
+        console.log("This is couponId: ",couponId);
+        
+
+        const data = {
+          address:addressId,
+          paymentMethod:paymentMethod,
+          totalPriceOfCart:totalAmount,globalCouponId:couponId,orderId
+        }
+
+        $.ajax({
+          url:"/placeOrder",
+          method:'POST',
+          data:JSON.stringify(data),
+          contentType:'application/json',
+          success:function(response){
+               console.log("This is response: ",response)
+                 if(response.razorpayStatus){
+                    console.log("Entered into response.razorpayStatus payment in ajax")
+                    razorpayPayment(response.instance, data)
+
+                }else {
+                    console.log("This is response: ",response)
+                    console.log("Entered in to else tostrify")
+                    Toastify({
+                        text: response.message,
+                         backgroundColor: "red",
+                     duration: 6000,
+                     position: "center" 
+                 }).showToast();
+             //    window.location.href = response.url
+        
+                
+                }
+                
+
+        
+                
+          },
+          error:function(error){
+            console.log("some error is happened in ajax placeOrder");
+            window.location.href = "/login"
+           }
+        })
+
+
+
+      });
+    });
+
+    function razorpayPayment(instance, data){
+       
+                  
+      var options = {
+          "key": "rzp_test_K8JS3lXn50mode", // Enter the Key ID generated from the Dashboard
+          "amount": instance.amount , // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+          "currency": "INR",
+          "name": "Fashjar",
+          "description": "Test Transaction",
+          "image": "https://example.com/your_logo",
+          "order_id": instance.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+          "handler": function (response){
+            //  alert(response.razorpay_payment_id);
+            //  alert(response.razorpay_order_id);
+            //  alert(response.razorpay_signature);
+
+              verifyPayment(response,instance,data)
+          },
+          "prefill": {
+              "name": "Gaurav Kumar",
+              "email": "gaurav.kumar@example.com",
+              "contact": "9000090000"
+          },
+          "notes": {
+              "address": "Razorpay Corporate Office"
+          },
+          "theme": {
+              "color": "#3399cc"
+          }
+      };
+      var rzp1 = new Razorpay(options);
+      rzp1.open();
+
+     
+    }
+
+    function verifyPayment(payment, order,data){
+      $.ajax({
+          url:'/retryVerifyPayment',
+          data:{payment, order, data},
+          method:'POST',
+          success:function(response){
+              if(response.success){
+                  window.location.href=response.url
+              }else{
+                  console.log("This is response: ",response);
+                  Toastify({
+                      text: response.message,
+                       backgroundColor: "red",
+                   duration: 6000,
+                   position: "center" 
+               }).showToast();
+
+              }
+          }
+      })
+  }
+
+   </script>
+
+   <script>
+    $(document).ready(function () {
+      $('#invoice').click(function (e) {
+          console.log("Entered into invoice");
+  
+          // Access the value of productDetails
+          let productDetails = JSON.parse(document.getElementById('productDetails').value);
+  
+          // Log the product details
+          console.log('Product Details:', productDetails);
+  
+          // Your further logic here...
+          e.preventDefault();
+
+          Swal.fire({
+            title: 'Do you want to download Invoice?',
+            showCancelButton: true,
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Cancel'
+          }).then((result)=>{
+            if(result.isConfirmed){
+              console.log("hai");
+
+              let filteredProducts = productDetails.filter((product) => {
+                return product.orderDetails.status === "Delivered";
+            });
+            
+              console.log("This is fileterprd: ",filteredProducts)
+              let products = filteredProducts.map((product) => ({
+                quantity: product.orderDetails.quantity,
+                description: product.name,
+                tax: 0,
+                price: product.orderDetails.productPrice
+              }));
+              console.log("This is products: ",products);
+
+              if (filteredProducts[0].coupon.discount > 0) {
+                const totalAmount = Math.floor((productDetails[0].totalAmount * 100)/(100-productDetails[0].coupon.discount)  )
+                const couponDiscount = totalAmount - productDetails[0].totalAmount
+                products.push({
+                  quantity: 1,
+                  description: "Coupon Deduction",
+                  tax: 0,
+                  price: -couponDiscount ,
+                })
+              }
+
+
+              const data = {
+                "apiKey": "free",
+                "mode": "development",
+                "documentTitle": "INVOICE Fashjar",
+                "currency": "INR",
+                "taxNotation": "GST",
+                "marginTop": 25,
+                "marginRight": 25,
+                "marginLeft": 25,
+                "marginBottom": 25,
+                "logo": "https://public.easyinvoice.cloud/img/logo_en_original.png",
+                "sender": {
+                  "company": "FashJar",
+                  "address": "Chemmanathukara,Vaikom",
+                  "zip": "686606",
+                  "city": "Vaikom",
+                  "country": "India"
+                },
+                "client": {
+                  "company": productDetails[0].address.name,
+                  "address": productDetails[0].address.house,
+                  "zip":  productDetails[0].address.pincode,
+                  "city": productDetails[0].address.city,
+                  "country": productDetails[0].address.country
+                },
+                "invoiceNumber": "2021.0001",
+                "invoiceDate": "30-03-2024",
+                "products": products,
+                "bottomNotice": "Thank you for your business."
+              };
+              console.log(data);
+
+              easyinvoice.createInvoice(data, function (result) {
+                easyinvoice.download('Fashjar-invoice.pdf', result.pdf);
+                console.log("success")
+              });
+            }
+          })
+      });
+  });
+
+
+  
+  
+  
+   </script>
 </body>
 <script>
    

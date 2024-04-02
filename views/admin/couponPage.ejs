@@ -14,23 +14,24 @@
                             <form id="addCoupon" action="/admin/postAddCoupon" method="post">
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Coupon name</label>
-                                    <input name="couponName" type="text" placeholder="Type here" class="form-control" id="product_name" />
+                                    <input name="couponName" type="text" placeholder="Type here" class="form-control" id="coupon_name" />
+                                    <div id="couponName-error" class="error-message"></div>
                                 </div>
                                
                                 <div class="mb-4">
                                   <label class="form-label">Starting Date</label>
-                                  <input name="startingDate" type="date" placeholder="mm/dd/yy" class="form-control">
-                                  <p><span id="error2" style="display: none;" class="mt-15 err text-danger"></span></p>
+                                  <input id="startingDate" name="startingDate" type="date" placeholder="mm/dd/yy" class="form-control">
+                                  <div id="startingDate-error" class="error-message"></div>
                               </div>
                               <div class="mb-4">
                                 <label class="form-label">Ending Date</label>
-                                <input name="endingDate" type="date" placeholder="mm/dd/yy" class="form-control">
-                                <p><span id="error2" style="display: none;" class="mt-15 err text-danger"></span></p>
+                                <input id="endingDate" name="endingDate" type="date" placeholder="mm/dd/yy" class="form-control">
+                                <div id="endingDate-error" class="error-message"></div>
                             </div>
                             <div class="mb-4">
                               <label class="form-label">Discount</label>
                               <input placeholder=" %" name="couponDiscount" class="form-control" id="couponDiscount">
-                              <p><span id="error7" style="display: none;" class="mt-15 err text-danger"></span></p>
+                              <div id="discount-error" class="error-message"></div>
                           </div>
                                 <div class="d-grid">
                                     <button class="btn btn-primary" type="submit">Create Coupon</button>
@@ -110,6 +111,7 @@
             </div>
         </footer>
     </main>
+    <script src="/public/js/couponValidation.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="/public/admin-assets/js/vendors/jquery-3.6.0.min.js"></script>

@@ -19,9 +19,9 @@ const transporter = nodemailer.createTransport({
 
 const sendOtp = (req,res)=>{
   try {    
-    const {name,email,mobile,password} = req.body
+    const {name,email,mobile,password,refferalCode} = req.body
      
-     req.session.insertedData = {name,email,mobile,password};
+     req.session.insertedData = {name,email,mobile,password,refferalCode};
      console.log(req.session.insertedData)
      req.session.storedEmail = email
     const otp = generateSixDigitNumber();

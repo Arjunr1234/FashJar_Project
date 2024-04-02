@@ -31,32 +31,33 @@
                   <div class="row">
                       <div class="col-md-6 mt-30">
                           <h2 class="content-title card-title mb-20">Coupon Edit</h2>
-                          <form id="addCategory" action="/admin/updateCoupon?couponId=<%= couponData._id %>" method="POST">
+                          <form id="addCoupon" action="/admin/updateCoupon?couponId=<%= couponData._id %>" method="POST">
                           
                           
                             <div class="mb-4">
                               <label for="product_name" class="form-label">Coupon name</label>
-                              <input name="couponName" type="text" placeholder="Type here" class="form-control" id="product_name"
+                              <input id="coupon_name" name="couponName" type="text" placeholder="Type here" class="form-control" id="product_name"
                                 value="<%= couponData.name %>" />
+                                <div id="couponName-error" class="error-message"></div>
                             </div>
                           
                             <div class="mb-4">
                               <label class="form-label">Starting Date</label>
-                              <input name="startingDate" type="date" class="form-control"
+                              <input id="startingDate" name="startingDate" type="date" class="form-control"
                                 value="<%= couponData.createdOn.toISOString().split('T')[0] %>">
-                              <p><span id="error2" style="display: none;" class="mt-15 err text-danger"></span></p>
+                                <div id="startingDate-error" class="error-message"></div>
                             </div>
                             <div class="mb-4">
                               <label class="form-label">Ending Date</label>
-                              <input name="endingDate" type="date" class="form-control"
+                              <input id="endingDate" name="endingDate" type="date" class="form-control"
                                 value="<%= couponData.expireOn.toISOString().split('T')[0] %>">
-                              <p><span id="error2" style="display: none;" class="mt-15 err text-danger"></span></p>
+                                <div id="endingDate-error" class="error-message"></div>
                             </div>
                             <div class="mb-4">
                               <label class="form-label">Discount</label>
                               <input placeholder=" %" name="couponDiscount" class="form-control" id="couponDiscount"
                                 value="<%= couponData.discount %>">
-                              <p><span id="error7" style="display: none;" class="mt-15 err text-danger"></span></p>
+                                <div id="discount-error" class="error-message"></div>
                             </div>
                             <div class="d-grid">
                               <button class="btn btn-primary" type="submit">Update coupon</button>
@@ -101,6 +102,100 @@
    
     <!-- Main Script -->
     <script src="/public/admin-assets/js/main.js" type="text/javascript"></script>
+    <script>
+      document.getElementById("addCoupon").addEventListener("submit", function(event) {
+        event.preventDefault();
+        if (validateAndSubmit()) {
+            this.submit();
+        }
+      });
+      
+      function validateAndSubmit() {
+        if (validateForm()) {
+            return true;
+        } else {
+            return false;
+        }
+      }
+      
+      function validateForm() {
+        resetErrorMessage();
+      
+        let isValid = true;
+        const couponName = document.getElementById("coupon_name").value.trim();
+        const startingDate = document.getElementById("startingDate").value.trim();
+        const endingDate = document.getElementById("endingDate").value.trim();
+        const discount = document.getElementById("couponDiscount").value.trim();
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+       
+        if (couponName === "") {
+          displayErrorMessage("couponName-error", "coupon name is required");
+          isValid = false;
+      }else if (/\d/.test(couponName)) {
+        displayErrorMessage("couponName-error", "Name should not contain numbers");
+        isValid = false;
+      }
+      
+      if (startingDate === "") {
+        displayErrorMessage("startingDate-error", "Starting date is required");
+        isValid = false;
+      }
+      // else {
+      //  const startDate = new Date(startingDate);
+      //  if (startDate < yesterday) {
+      //    displayErrorMessage("startingDate-error", "Starting date cannot be earlier than today");
+      //    isValid = false;
+      //  }
+     // }
+      
+      if (endingDate === "") {
+        displayErrorMessage("endingDate-error", "Starting date is required");
+        isValid = false;
+      } else {
+        const endDate = new Date(endingDate);
+        if (endDate < yesterday) {
+          displayErrorMessage("endingDate-error", "Starting date cannot be earlier than today");
+          isValid = false;
+        }
+      }
+      
+      if (discount === "") {
+        displayErrorMessage("discount-error", "Discount  is required");
+        isValid = false;
+      }else if(isNaN(discount)){
+        displayErrorMessage("discount-error","Discount should be a number")
+      } else if( discount < 0){
+        displayErrorMessage("discount-error","Discount Shouldn't less than zero")
+      }else if(discount > 100){
+        displayErrorMessage("discount-error","Discount should not greater that 100")
+      }
+      
+      
+      
+      
+        
+      
+        return isValid;
+      }
+      
+      
+      function displayErrorMessage(elementId, message) {
+        var errorElement = document.getElementById(elementId);
+        errorElement.innerText = message;
+        errorElement.style.display = "block";
+        errorElement.style.color = "red";
+      }
+      
+      function resetErrorMessage() {
+        var errorElements = document.querySelectorAll(".error-message");
+        errorElements.forEach(function(element) {
+            element.innerText = "";
+            element.style.display = "none";
+        });
+      }
+    </script>
     
 
     

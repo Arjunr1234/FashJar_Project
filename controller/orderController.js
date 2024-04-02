@@ -25,6 +25,8 @@ const { findById } = require('../models/adminModel');
             console.log("This is paymentMethod: ",receivedData.paymentMethod);
             console.log("This is userId in placdOrder:",userId);
             console.log("This is the received couponId: ",couponId);
+            console.log("This si the totalPrice of cart: ",totalPriceOfCart)
+            console.log("This is second totalPrice of Cart: ",receivedData.totalPriceOfCart)
 
 
 
@@ -125,19 +127,23 @@ const { findById } = require('../models/adminModel');
                    const orders = [];
                    if(orderData){
                     for(let i=0; i<orderData.products.length; i++){
-                        
+                       
                         const productData = await product.findOne({_id:orderData.products[i].product});
                         const orderedId = orderData._id
                         const orderDetails = orderData.products[i]
+                        const mainOrderStatus = orderData.status;
                         const productImage = productData.productImage;
                         const productName = productData.productName;
                         const orderAddress = orderData.address;
                         const couponData = orderData.coupon;
+                        const totalAmount = orderData.totalAmount;
                         const payment = orderData.paymentMethod
                       //  console.log("This is the product detais of each products:",productData);
                         const finalOrder = Object.assign({},
                           {image:productImage},
                           {name:productName},
+                          {mainOrderStatus:mainOrderStatus},
+                          {totalAmount:totalAmount},
                           {orderId:orderedId},
                           {orderDetails:orderDetails},
                           {address:orderAddress},
@@ -362,6 +368,7 @@ const { findById } = require('../models/adminModel');
                        res.json({success:true,url:"/orderIsPlaced"});
                  }
               }else{
+                console.log("payment is failed!!")
                 res.json({success:false,message:placedOrder.message,url:"/loadCartPage"})
                }
        
@@ -404,6 +411,110 @@ const { findById } = require('../models/adminModel');
 
   }
 
+  const updateOrderStatus = async(req, res)=>{
+                        console.log("Entered in to updateordereStatus in order controller");
+
+                        const receivedData = req.body.data;
+                       const userId = req.session.user._id;
+                       const orderId = req.body.data.orderId;
+
+    console.log("This is the received body: ",req.body);
+    console.log("This is the received data: ",receivedData);
+    console.log("This is the userId: ", userId);
+    console.log("This orderId: ",orderId)
+    
+    const result = await paymentHelper.verifyThePayment(req.body).then(async (response)=>{
+       console.log("payment is successfull");
+
+       const updateOrder = await order.updateOne(
+                                    {_id:new objectId(orderId)},
+                                     {$set:{status:"pending"}}          
+            );
+            console.log("This is updateOrder: ",updateOrder);
+            if(updateOrder.modifiedCount === 1){
+              res.json({success:true, url:"/orderIsPlaced"})
+            }else{
+              res.json({success:false, message:"Order is not Placed!!"}); 
+            }
+       
+    }).catch((err)=>{
+      res.json({success:false, message:'Payment Failed!!'});
+    })
+
+  }
+
+
+  const createOrderFailedPayment = async(req, res)=>{
+                       console.log("Entered into createOrderFailedPayment in orderController");
+                       console.log("This is the received data : ",req.body)
+                       const userId = req.session.user._id
+                       const receivedData = req.body
+
+                       const result = await placeOrderHelper.createOrderforFailedPayment(receivedData,userId)
+                       console.log("This is the result : ",result);
+                       if(result.status){
+                           const clearedCart = await placeOrderHelper.clearCart(userId);
+                            res.json({success:true, url:'/loadPaymentFailurePage'})
+                       }
+
+
+  }
+
+  const loadPaymentFailurePage = async(req, res)=>{
+                       console.log("Entered into loadPaymentFailurePage in orderController");
+
+                       res.render("paymentFailurePage")
+  }
+
+  const loadAddAddressInCheckoutPage = async(req, res)=>{
+                             console.log("Entered into load add address in checkout page");
+
+                             res.render("addAddressCheckoutPage");
+  }
+
+  const saveAddress = async(req, res)=>{
+                          
+                          
+
+                   try {
+
+                    const userId = req.session.user._id;
+
+                    const   {
+                      addresName,addressmobile,housename,pincode,townOrCity,district,state,country,submit
+                    }         = req.body;
+                    
+                    const receivedAddress = {
+                      name: addresName,
+                      mobile:addressmobile,
+                      houseName: housename,
+                      pincode: pincode,
+                      cityOrTown: townOrCity,
+                      district: district,
+                      state: state,
+                      country: country
+                    };
+
+                    const updateUserAdress = await user.updateOne(
+                      { _id: userId },
+                      { $push: { address: receivedAddress } }
+                    );
+                
+                    
+                   res.redirect('/proceedToCheckOut')
+
+
+
+                    
+                   } catch (error) {
+                    console.log(error)
+                    
+                   }
+
+
+  }
+  
+
 module.exports = {
   placeOrder,
   loadSuccessPage,
@@ -413,5 +524,10 @@ module.exports = {
   loadAddressEditCheckout,
   updateAddress,
   verifyPayment,
-  applyCoupon
+  applyCoupon,
+  createOrderFailedPayment,
+  updateOrderStatus,
+  loadPaymentFailurePage,
+  loadAddAddressInCheckoutPage,
+  saveAddress
 }

@@ -13,7 +13,7 @@ const coupon = require("../models/couponModel");
 const loadCartPage = async (req, res) => {
   try {
     console.log("Entered to loadCartPage");
-
+    const userData = req.session.user
     if (req.session.user) {
       const userId = req.session.user._id;
       const userCart = await cart.findOne({ userId: userId });
@@ -58,7 +58,7 @@ const loadCartPage = async (req, res) => {
         console.log("This is the cartData from cartRednderPage:",cartData)
       //  console.log("This is products: ",products);
         console.log("This is the product that is sending to CartPage: ", products)
-        res.render("cartPage", { products,TotalPriceOfCart,cartData });
+        res.render("cartPage", { products,TotalPriceOfCart,cartData,userData });
       } else {
         res.render("cartPage")
       }
@@ -411,7 +411,7 @@ const decreaseQuantity = async(req, res)=>{
 const loadCheckOutPage = async(req, res)=>{
            console.log("Entered in to loadCheckOutPage in the cartController");
             try {
-
+              const userData = req.session.user
               if(req.session.user){
                 const userId = req.session.user._id;
                 const cartData = await cart.findOne({userId:userId});
@@ -458,7 +458,7 @@ const loadCheckOutPage = async(req, res)=>{
                 console.log("this si that : ",couponData)
                  console.log("This is couponData: ",couponData)
                   
-                res.render("checkOutPage",{products, TotalPriceOfCart, userAddress,couponData})
+                res.render("checkOutPage",{products, TotalPriceOfCart, userAddress,couponData,userData})
               }else{
                 console.log("req.session.user is not found in loadCheckOutPage");
                 res.redirect('/');

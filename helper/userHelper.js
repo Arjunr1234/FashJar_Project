@@ -61,6 +61,7 @@ const doSignup = (userData, verify)=>{
                 email:userData.email,
                 mobile:userData.mobile,
                 password:password
+
               }
               
                 const data=  await  userModel.create(userD)

@@ -35,45 +35,55 @@
                        <% if (orderData && orderData.length > 0) { %>
                            <% for (let i = orderData.length - 1; i >= 0; i--) { %>
                           
+                                        <% if(orderData[i].status === "pending") {%>
+                                                
+                                          <tr>
+                                            <th class="col-md-1 text-center"><%= orderData[i].orderId %></th>
+                                            <th class="col-md-2 text-center"><%= orderData[i].userDetails.name %></th>
+                                            <th class="col-md-2 text-center"><%= orderData[i].userDetails.email %></th>
+                                            <th class="col-md-2 text-center"><%= orderData[i].paymentMethod %></th>
+                                            <th class="col-md-1 text-center">₹<%= orderData[i].totalAmount %></th>
+                                            <th class="col-md-1 text-center"><%= orderData[i].orderedOn.toLocaleDateString('en-GB') %></th>
+                                            <!-- <th class="text-center col-md-1">
+                                              <% if (orderData[i].status === 'pending') { %>
+                                                <span id="status<%= orderData[i]._id %>" class="badge rounded-pill alert-warning"><%= orderData[i].status %></span>
+                                              <% }else if(orderData[i].status === 'processing'){%>
+                                                <span id="status<%= orderData[i]._id %>" class="badge rounded-pill alert-secondary"><%= orderData[i].status %></span>
+                                              <%}else if(orderData[i].status === 'confirmed'){%>
+                                                <span id="status<%= orderData[i]._id %>" class="badge rounded-pill alert-dark"><%= orderData[i].status %></span>
+                                              <%}else if(orderData[i].status === 'shipped'){%>
+                                                <span id="status<%= orderData[i]._id %>" class="badge rounded-pill alert-info"><%= orderData[i].status %></span>
+                                              <%}else if(orderData[i].status === 'outForDelivery'){%>
+                                                <span id="status<%= orderData[i]._id %>" class="badge rounded-pill alert-warning"><%= orderData[i].status %></span>
+                                              <%}else if(orderData[i].status === 'delivered'){%>
+                                                 <span id="status<%= orderData[i]._id %>" class="badge rounded-pill alert-success"><%= orderData[i].status %></span>
+                                              <%}else if(orderData[i].status === 'cancelPending'){%>
+                                                <span id="status<%= orderData[i]._id %>" class="badge rounded-pill alert-warning"><%= orderData[i].status %></span>
+                                              <%}else{%>
+                                                <span id="status<%= orderData[i]._id %>" class="badge rounded-pill alert-danger"><%= orderData[i].status %></span>
+                                              <%}
+                                               %>
+                                            </th>
+                                            -->
+                                            <td class="text-center">
+                                              <a href="/admin/viewOrderDetails?orderId=<%= orderData[i]._id %>"><button class="btn btn-primary">View </button></a>
+                                             </td>
+                                          </tr>
+                                          
 
+                                          <%}
+                                          %>
+                                        
+                                        
+                                      
 
-                                  <tr>
-                                    <th class="col-md-1 text-center"><%= orderData[i].orderId %></th>
-                                    <th class="col-md-2 text-center"><%= orderData[i].userDetails.name %></th>
-                                    <th class="col-md-2 text-center"><%= orderData[i].userDetails.email %></th>
-                                    <th class="col-md-2 text-center"><%= orderData[i].paymentMethod %></th>
-                                    <th class="col-md-1 text-center">₹<%= orderData[i].totalAmount %></th>
-                                    <th class="col-md-1 text-center"><%= orderData[i].orderedOn.toLocaleDateString('en-GB') %></th>
-                                    <!-- <th class="text-center col-md-1">
-                                      <% if (orderData[i].status === 'pending') { %>
-                                        <span id="status<%= orderData[i]._id %>" class="badge rounded-pill alert-warning"><%= orderData[i].status %></span>
-                                      <% }else if(orderData[i].status === 'processing'){%>
-                                        <span id="status<%= orderData[i]._id %>" class="badge rounded-pill alert-secondary"><%= orderData[i].status %></span>
-                                      <%}else if(orderData[i].status === 'confirmed'){%>
-                                        <span id="status<%= orderData[i]._id %>" class="badge rounded-pill alert-dark"><%= orderData[i].status %></span>
-                                      <%}else if(orderData[i].status === 'shipped'){%>
-                                        <span id="status<%= orderData[i]._id %>" class="badge rounded-pill alert-info"><%= orderData[i].status %></span>
-                                      <%}else if(orderData[i].status === 'outForDelivery'){%>
-                                        <span id="status<%= orderData[i]._id %>" class="badge rounded-pill alert-warning"><%= orderData[i].status %></span>
-                                      <%}else if(orderData[i].status === 'delivered'){%>
-                                         <span id="status<%= orderData[i]._id %>" class="badge rounded-pill alert-success"><%= orderData[i].status %></span>
-                                      <%}else if(orderData[i].status === 'cancelPending'){%>
-                                        <span id="status<%= orderData[i]._id %>" class="badge rounded-pill alert-warning"><%= orderData[i].status %></span>
-                                      <%}else{%>
-                                        <span id="status<%= orderData[i]._id %>" class="badge rounded-pill alert-danger"><%= orderData[i].status %></span>
-                                      <%}
-                                       %>
-                                    </th>
-                                    -->
-                                    <td class="text-center">
-                                      <a href="/admin/viewOrderDetails?orderId=<%= orderData[i]._id %>"><button class="btn btn-primary">View </button></a>
-                                     </td>
-                                  </tr>
-                                  
+                               
                                   
                                 
                               <% } %>
                             <% } %>
+                            
+
                             
 
                            

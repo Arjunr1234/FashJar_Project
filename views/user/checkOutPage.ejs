@@ -1,4 +1,6 @@
 <%- include("../partials/userHeader")%>
+
+      
     <div class="mobile-header-active mobile-header-wrapper-style">
         <div class="mobile-header-wrapper-inner">
             <div class="mobile-header-top">
@@ -80,9 +82,15 @@
                 
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="mb-25">
-                            <h4>Billing Details</h4>
+                        <div class="row mb-25">
+                            <div class="col-md-6 text-right mt-5">
+                                <h4>Billing Details</h4>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <a class="btn btn-sm btn-primary" href="/loadAddAddressInCheckoutPage">Add Address</a> 
+                            </div>
                         </div>
+                        
                         
                         <div class="row mb-25">
                           <div class="col">
@@ -175,7 +183,10 @@
                                         </tr>
                                         <tr>
                                             <th>Coupon</th>
-                                            <td class="text-center" colspan="2" id="couponAppliedText">Not applied</td>
+                                            <td class="text-center" colspan="2" > <span id="couponAppliedText">Not applied</span> <a href="/proceedToCheckOut"><i class="fi-rs-cross  " id="removeCoupon" style="display: none; color:red" ></i></a> </td>
+                                            
+                                            
+                                            
                                         </tr>
                                         <tr>
                                             <th>Total</th>
@@ -419,21 +430,7 @@
             </div>
         </div>
     </footer>
-    <!-- Preloader Start -->
-    <div id="preloader-active">
-        <div class="preloader d-flex align-items-center justify-content-center">
-            <div class="preloader-inner position-relative">
-                <div class="text-center">
-                    <h5 class="mb-5">Now Loading</h5>
-                    <div class="loader">
-                        <div class="bar bar1"></div>
-                        <div class="bar bar2"></div>
-                        <div class="bar bar3"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    
     <!-- Vendor JS-->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
@@ -499,7 +496,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 var applyButtons = document.querySelectorAll("#couponModal .btn-action");
                 applyButtons.forEach(function(applyButton) {
                     applyButton.addEventListener("click", function(event) {
-                        // Retrieve the coupon ID from the data-id attribute
+                        
                         globalCouponId = applyButton.dataset.id; 
                         var couponCode = applyButton.dataset.code; 
                         var couponName = applyButton.dataset.name; 
@@ -520,12 +517,17 @@ document.addEventListener("DOMContentLoaded", function() {
                             data:couponData,
                             success:function(response){
                                 if(response.success){
-                                    console.log("this is the price: ", response.couponPrice)
+                                    console.log("this is the price: ", response.couponPrice);
                                     document.getElementById('totalPriceOfCarts').innerHTML = response.couponPrice
-                                    document.getElementById('couponAppliedText').innerHTML = 'Coupon is applied';
+                                    document.getElementById('couponAppliedText').innerHTML = `Coupon ${discount}% is applied` ;
+                                    
                                     document.getElementById('couponAppliedText').style.color = 'green';
-                                    document.getElementById('couponusing').style.display = 'none'
-                                }
+                                    document.getElementById('couponusing').style.display = 'none';
+                                   document.getElementById('removeCoupon').style.display= 'inline-block'
+
+                                                         
+                                                         
+                                                            }
                             }
                         });
                         
@@ -565,8 +567,9 @@ function otherFunction() {
         console.log("This is selected Address: ",selectedAddress);
         console.log("This is the payment option: ",selectPaymentMethod);
         console.log("Total Price of Cart: ",totalPriceOfCart);
-        console.log("This is global couponId: ",globalCouponId)
-
+        console.log("This is global couponId: ",globalCouponId);
+        
+        
         const data = {
           address:selectedAddress,
           paymentMethod:selectPaymentMethod,
@@ -600,9 +603,6 @@ function otherFunction() {
         
                 
                 }
-                
-
-        
                 
           },
           error:function(error){
@@ -646,6 +646,11 @@ function otherFunction() {
         };
         var rzp1 = new Razorpay(options);
         rzp1.open();
+
+        rzp1.on("payment.failed", function (response) {
+            console.log('Payment failed:', response.error.description);
+            handleFailure(response,data);
+        });
       }
 
     function verifyPayment(payment, order,data){
@@ -669,6 +674,30 @@ function otherFunction() {
                 }
             }
         })
+    }
+
+    function handleFailure(response, data){
+        console.log("Entered into handele failure");
+        console.log("This is the data: ",data)
+
+        createOrderWithStatusPending(data);
+       
+    }
+
+    function createOrderWithStatusPending(data){
+          console.log("Entered into createOrderWithStatus Pending ajax");
+        $.ajax({
+            url:"/createOrderWithstatusPaymentFailed",
+            method:"POST",
+            data:data,
+            success:function(response){
+                if(response.success){
+                    window.location.href = response.url
+                }
+
+            }
+        })
+
     }
       
     </script>

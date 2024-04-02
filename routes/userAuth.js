@@ -47,7 +47,9 @@ router.post('/newPassword',userController.changePassword)
 //==================Shop==============================
 router.get('/shop',isUser,userController.loadShopProduct);
 router.get('/filterCategory',isUser,userController.filterCatergoryProducts);
-router.post('/searchProducts',isUser,userController.searchProduct)
+router.get('/filter',isUser, userController.filterShopProducts)
+router.post('/searchProducts',isUser,userController.searchProduct);
+router.get('/filterTheCategory',isUser,userController.categoryWiseFiltering);
 
 //===============GuestUser===========================
 
@@ -74,7 +76,8 @@ router.post('/changepassword',isUser,profileController.changePassword);
 router.post('/editUserDetails',isUser,profileController.editUserDetails);
 router.get('/addressEdit',isUser,profileController.loadAddressEdit);
 router.post('/updateAddressData',isUser,profileController.updateUserAddress)
-router.get('/viewOrders',isUser,profileController.loadOrderDetails)
+router.get('/viewOrders',isUser,profileController.loadOrderDetails);
+
 
 //===================Order============================================
 
@@ -86,7 +89,12 @@ router.post('/retrunProduct',isUser,orderController.returnProduct);
 router.get('/editAddressCheckout',isUser, orderController.loadAddressEditCheckout);
 router.post('/updateAddressInCheckoutPage',isUser,orderController.updateAddress);
 router.post('/verifyPayment', isUser, orderController.verifyPayment);
-router.post('/applyCoupon',isUser,orderController.applyCoupon)
+router.post('/retryVerifyPayment',isUser,orderController.updateOrderStatus)
+router.post('/applyCoupon',isUser,orderController.applyCoupon);
+router.post('/createOrderWithstatusPaymentFailed',isUser,orderController.createOrderFailedPayment);
+router.get('/loadPaymentFailurePage',isUser,orderController.loadPaymentFailurePage);
+router.get('/loadAddAddressInCheckoutPage',isUser,orderController.loadAddAddressInCheckoutPage);
+router.post('/addAddressInCheckoutPage',isUser,orderController.saveAddress)
 
 //===========================Wishlist========================================
 

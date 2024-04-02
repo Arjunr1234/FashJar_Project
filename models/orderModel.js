@@ -30,6 +30,7 @@ const orderSchema = new mongoose.Schema({
     }
   }],
   address:{
+    addressId:mongoose.Types.ObjectId,
     name:String,
     house:String,
     state:String,
@@ -52,7 +53,7 @@ const orderSchema = new mongoose.Schema({
   },
   status:{
     type:String,
-    enum:["pending", "processing", "confirmed", "outForDelivery", "shipped", "delivered", "cancelled", "return Pending", "return"],
+    enum:["pending", "processing", "confirmed", "outForDelivery", "shipped", "delivered", "cancelled", "return Pending", "return","payment Failed"],
     default:"pending"
   },
   orderId:{
