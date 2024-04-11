@@ -12,17 +12,18 @@ const coupon = require("../models/couponModel");
 
 const loadCartPage = async (req, res) => {
   try {
-    console.log("Entered to loadCartPage");
+    
     const userData = req.session.user
     if (req.session.user) {
       const userId = req.session.user._id;
-      const userCart = await cart.findOne({ userId: userId });
+      const userCart = await cart.findOne({ userId: userId }).lean();
+      
       let products = [];
 
       if (userCart) {
         for (let i = 0; i < userCart.items.length; i++) {
           const cartProduct = await product.findById(userCart.items[i].productId); 
-          console.log("This is the items in the cartProduct", cartProduct)
+          
           const calculatedPrice = await offerHelper.newOfferPrice(cartProduct)
           const size = userCart.items[i].size;
           const sizeQuantity = cartProduct.size[size].quantity
@@ -54,11 +55,20 @@ const loadCartPage = async (req, res) => {
           const saveTotalPrice = await cart.updateOne({userId:userId},{$set:{totalAmount:TotalPriceOfCart}})
 
         }
-        console.log("This si the total Price:",TotalPriceOfCart);
-        console.log("This is the cartData from cartRednderPage:",cartData)
-      //  console.log("This is products: ",products);
-        console.log("This is the product that is sending to CartPage: ", products)
-        res.render("cartPage", { products,TotalPriceOfCart,cartData,userData });
+    
+
+        const filteredData = products.filter(product => !product.isBlocked);
+        //============================================================================
+          
+            
+          
+
+        //============================================================================
+
+        
+        
+
+        res.render("cartPage", { products:filteredData,TotalPriceOfCart,cartData,userData });
       } else {
         res.render("cartPage")
       }
@@ -75,20 +85,16 @@ const addToCart = async (req, res) => {
   try {
     
     if(req.session.user){
-      console.log("Entered into add to cart in controller");
+      
       const productId = req.body.id;
       const size = req.body.size;
       const offerPrice = req.body.offerPrice;
-      console.log("This is the offerPrice in addToCart: ",offerPrice)
-  
-      console.log("Product ID:", productId);
-      console.log("Size clicked:",size);
+      
        const userId = req.session.user._id;
        req.session.userId = userId
-       console.log("This is offerPrice: ",offerPrice)
-       console.log("This is userId: ",userId)
-      const productData = await product.findOne({_id:productId})
-      console.log(productData);
+       
+       const productData = await product.findOne({_id:productId})
+       console.log(productData);
 
       const cartItems = {
         productId : productId,
@@ -107,8 +113,7 @@ const addToCart = async (req, res) => {
             size: size 
         }
       }});
-      console.log("This is already Have Cart: ", userAlreadyHaveCart);
-      console.log("This is productAlreadyInCArt :", productAlerdyInCart);
+     
 
       if(userAlreadyHaveCart && !productAlerdyInCart){
           await cart.updateOne({userId:userId},
@@ -138,12 +143,13 @@ const addToCart = async (req, res) => {
 }
  const productWithSizeCartCheck = async(req, res)=>{
 
-              console.log("Entered into productWithSizeCartCheck");
+              
               const id = req.query.id;
               const size = req.query.size
-              console.log(id);
-              console.log(size);
+              const userId = req.session.user._id;
+              
               const checkProduct = await cart.findOne({
+                  userId:userId,
                         
                           "items":{
                             $elemMatch:{
@@ -163,10 +169,10 @@ const addToCart = async (req, res) => {
               console.log(checkProduct)
 
               if(checkProduct){
-                console.log("respone:true is sended")
+                
                 res.json({response:true})
               }else{
-                console.log("response false is sended")
+               
                 res.json({response:false})
               }
               
@@ -175,14 +181,12 @@ const addToCart = async (req, res) => {
  const deleteCartedItems = async(req, res)=>{
      try {
 
-      console.log("Entered into deleteCartItems");
+      
 
      const productId = req.query.id;
      const size = req.query.size;
      const receivedUserId = req.query.userId;
-     console.log(productId);
-     console.log(size);;
-     console.log("This is userId: ",receivedUserId);
+     
 
      const deletedProduct = await cart.updateOne(
                {userId:receivedUserId},
@@ -195,7 +199,7 @@ const addToCart = async (req, res) => {
                 }
                }
      )
-     console.log("This is deleted Products: " ,deletedProduct)
+    
         if(deletedProduct){
           res.json({response:true})
         }else{
@@ -211,110 +215,16 @@ const addToCart = async (req, res) => {
 
  }
 
-//  const changeQuantity = async(req, res)=>{
 
-//                     console.log("Entered in to changeQuantity in Cartcontroller")
-//                     const receivedUserId = new ObjectId(req.query.userId);
-//                     const receivedProductId = req.query.productId;
-//                     const alpha = parseInt(req.query.alpha);
-//                     const receivedSize = req.query.productSize;
-//                     console.log("This is received userId: ",receivedUserId);
-//                     console.log("This is receivedProdcutId : ",receivedProductId);
-//                     console.log("This is alpha : ",alpha);
-//                     console.log("This is received productSize :",receivedSize);
-
-//                     let products = await product.findOne({ _id: receivedProductId });
-
-//                     if (products && products.size && products.size[receivedSize]) {
-//                       var sizeQuantityInProduct = products.size[receivedSize].quantity;
-//                       console.log(`Quantity for size ${receivedSize}: ${sizeQuantityInProduct}`);
-//                     } else {
-//                       console.log(`Product with ID ${receivedProductId} or size ${receivedSize} not found.`);
-//                     }
-//                     const cartD = await cart.findOne({ userId: receivedUserId }, { _id: 0, items: 1 });
-//                     console.log("The cartData: ", cartD);
-                    
-//                     function getQuantity(productId, size, cart) {
-//                       const item = cart.items.find(item =>
-//                         item.productId.equals(productId) && item.size === size
-//                       );
-                    
-//                       return item ? item.quantity : 0;
-//                     }
-                    
-//                     const result = getQuantity(
-//                       new ObjectId(receivedProductId), // replace with your actual productId
-//                       receivedSize, // replace with your actual size
-//                       cartD
-//                     );
-                    
-//                   //  console.log("This is the cart quantity size: ", result);
-                    
-                   
-//                   const cartSizeQuantity = result;
-//                   const productSizeQuantity = parseInt(sizeQuantityInProduct);
-//                   console.log("Thsi is cartsize Quantity : ",cartSizeQuantity);
-//                   console.log("This is productsize Quanttiy ;  ",productSizeQuantity);
-
-//                   if(productSizeQuantity > cartSizeQuantity || alpha === -1){
-
-//                     console.log("Entered into else of quatity exceed");
-
-//                     const user = await cart.find({userId:receivedUserId})
-//                     if(alpha === 1){
-//                       const updateQuantity1 = await cart.updateOne({userId:receivedUserId,"items":{
-//                         $elemMatch:{
-//                           productId:receivedProductId,
-//                           size:receivedSize
-//                         }
-//                     }},
-//                     {$inc: {
-//                       "items.$.quantity": 1
-//                     }})
-//                     res.json({response:true})
-
-//                     }else if(alpha === -1){
-//                       const updateQuantity2 = await cart.updateOne({userId:receivedUserId,"items":{
-//                         $elemMatch:{
-//                           productId:receivedProductId,
-//                           size:receivedSize
-//                         }
-//                     }},
-//                     {$inc: {
-//                       "items.$.quantity": -1
-//                     }})
-//                     res.json({response:true})
-
-//                     }
-                    
-//                   }else{
-
-//                     console.log("Entered in to quantity exceed")
-//                     res.json({response:false})
-                   
-
-
-//                   }
-
-
-// }
 
 const incrementQuantity = async (req, res)=>{
-  console.log("Entered into increment quantity of cartController");
+  
   
   const {productId,size,index,stock,productPrice } = req.body
   const price = parseInt(productPrice)
   const prdId = new ObjectId(productId)
   const userId = new ObjectId(req.session.user._id)
-  console.log("Thi s is new userId: ",userId);
-  console.log("This i s prdID: ",prdId)
-  console.log("This is productId: ",new ObjectId(productId));
-  console.log("This size of product: ",size);
-  console.log("This is index :",index);
-  console.log("This is stock of prodcut: ",parseInt(stock));
-  console.log("This is price: ",price)
-  console.log("This is Productprice : ",productPrice)
-  console.log("This is userId: ",req.session.user._id)
+ 
   const cartData = await cart.findOne({userId:new ObjectId(req.session.user._id)})
 
   const cartD = await cart.findOne({ userId: new ObjectId(req.session.user._id) }, { _id: 0, items: 1 });
@@ -326,7 +236,7 @@ const incrementQuantity = async (req, res)=>{
     return item ? item.quantity : 0;
   }
   const cartQuantity = getQuantity(new ObjectId(productId), size, cartD );
-  console.log("This is the new cartQuanty: ",cartQuantity)
+ 
 
   if(parseInt(stock) > parseInt(cartQuantity)){
     if(parseInt(cartQuantity)<10){
@@ -342,28 +252,28 @@ const incrementQuantity = async (req, res)=>{
         },
         { new: true }
       );
-             console.log("show that  increment: ",increment)
+             
        const cartData  = await cart.findOne({userId:new ObjectId(req.session.user._id)})
-       console.log("This is cartData totalAnount: ",cartData.totalAmount)
+       
        res.json({status:true,totalAmount:cartData.totalAmount})
 
-       console.log("This is incremented :",increment)
+     
 
     }else{
-      console.log("10 unit is exceed per cart");
+      
       res.json({status:false,response:"execeedLimit"})
     }
     
     
   }else{
-    console.log("storck is less")
+   
     res.json({status:false,response:"stockLess"})
   }
 
 
 }
 const decreaseQuantity = async(req, res)=>{
-        console.log("Entered into decrease quantity in the cartController");
+       
 
         const {productId,size,index,stock,productPrice } = req.body;
         const price = parseInt(productPrice)
@@ -376,7 +286,7 @@ const decreaseQuantity = async(req, res)=>{
                         return item ? item.quantity : 0;
                       }
                       const cartQuantity = getQuantity(new ObjectId(productId), size, cartD );
-                      console.log("This is the new cartQuanty: ",cartQuantity)
+                     
 
                       if(parseInt(cartQuantity)>1){
                         const decrement = await cart.findOneAndUpdate(
@@ -398,24 +308,24 @@ const decreaseQuantity = async(req, res)=>{
                           }
                         );
                         
-                         console.log("this is decrement:",decrement);
+                         
                          const cartData  = await cart.findOne({userId:new ObjectId(req.session.user._id)})
                          res.json({status:true,totalAmount:cartData.totalAmount})
 
                       }else{
-                        console.log('Error: quantity is 1')
+                        
                         res.json({status:false,quantity:"equalToOne"})
                       }
 }
 
 const loadCheckOutPage = async(req, res)=>{
-           console.log("Entered in to loadCheckOutPage in the cartController");
+          
             try {
               const userData = req.session.user
               if(req.session.user){
                 const userId = req.session.user._id;
                 const cartData = await cart.findOne({userId:userId});
-                console.log("This is the cartData in loadCheckoutPage :",cartData);
+                
                 let products = [];
                 if(cartData){
                   for(let i=0; i<cartData.items.length; i++){
@@ -445,22 +355,20 @@ const loadCheckOutPage = async(req, res)=>{
                                      {userId:new ObjectId(userId) },
                                      {$set:{totalAmount:TotalPriceOfCart}}
                   )
-                   console.log("This is the final proudcts: ",products);
-                   console.log("This is the total price of the cart: ",TotalPriceOfCart);
+                 
                 }
                  const userAddress = await user.findOne({_id:userId},{address:1})
-                 // console.log("This is the userAddress in loadCheckOutPage ", userAddress);
+                
                  
 
                  const couponData = await coupon.find({isActive:true,
                   "usedByUser": { "$nin": [new ObjectId(userId)] }
                 })
-                console.log("this si that : ",couponData)
-                 console.log("This is couponData: ",couponData)
+               
                   
                 res.render("checkOutPage",{products, TotalPriceOfCart, userAddress,couponData,userData})
               }else{
-                console.log("req.session.user is not found in loadCheckOutPage");
+               
                 res.redirect('/');
               }
               

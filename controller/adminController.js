@@ -143,7 +143,7 @@ const loadHome = async (req, res)=>{
         { $sort: { totalCount: -1 } },
         { $limit: 10 },
       ]);
-          console.log("This is the best product : ",bestSellingProduct)
+          
    
 
       res.render("adminHome",{
@@ -160,25 +160,25 @@ const loadHome = async (req, res)=>{
 }
 
 const loadAdminHome = async (req, res)=>{
-         console.log('Received POST request to /adminloging');
+         
          const logEmail = req.body.email;
          const logPassword = req.body.password;
-         console.log('Email:', logEmail);
-         console.log('Password:', logPassword);
+         
+         
         try {
            const loggedUser = await admin.findOne({
                        email:logEmail,
                        password:logPassword
            })
-           console.log(loggedUser)
+           
            if(loggedUser){
-             console.log("yes there is a logged user")
+             
               req.session.admin = loggedUser._id
               res.redirect("/admin/adminHome")
               
            }
            else{
-              console.log("There is no logged user")
+              
              req.flash("error","Invalid UserId or Password")
               res.redirect("/admin/login")
            }
@@ -195,7 +195,7 @@ const loadAdminLogout = (req, res)=>{
                   if(req.session.admin){
                      req.session.destroy((err)=>{
                         if(err){
-                          console.log("Error in logout");
+                          console.log(err)
                         }else{
                           res.redirect("/admin/login")
                         }
@@ -203,7 +203,7 @@ const loadAdminLogout = (req, res)=>{
                   }else{
                     res.redirect("/admin/login")
                   }
-}
+            }
 
  
 
@@ -240,7 +240,7 @@ const loadAdminLogout = (req, res)=>{
 
 const loadCategoryPage = async (req, res) => {
   if (req.session.admin) {
-      console.log("Entered into loadCategory");
+      
       try {
           const categoryD = await category.find();
           console.log(category); 
@@ -258,14 +258,11 @@ const loadCategoryPage = async (req, res) => {
 };
 
 
-  // const loadCategory = (req, res)=>{
-  //    const message = req.flash("message")
-  //    res.render("catagoryPage",{message})
-  // }
+  
 
   const blockUser = async (req, res) => {
     try {
-      console.log("Enter to the block user page");
+      
       const userId = req.query.id;
       console.log(userId);
       const findUser = await User.findById({ _id: userId });
@@ -276,7 +273,7 @@ const loadCategoryPage = async (req, res) => {
         await User.findByIdAndUpdate({ _id: userId }, { $set: { isActive: true } });
       }
   
-      res.json({ success: true }); // Send a JSON response
+      res.json({ success: true }); 
     } catch (error) {
       console.log(error.message);
       res.status(500).json({ success: false, error: error.message }); // Handle errors
@@ -286,7 +283,7 @@ const loadCategoryPage = async (req, res) => {
 
     const listUnlistCategory = async(req, res)=>{
                    try{
-                     console.log("Entered in to listUnlist catetory why entered")
+                     
                      const catId = req.query.id;
                      console.log(catId);
                      const findCat = await category.findById({_id:catId})
@@ -294,7 +291,7 @@ const loadCategoryPage = async (req, res) => {
                      if(findCat.isListed === true){
                       const catData = await category.findByIdAndUpdate({_id:catId},{$set:{isListed:false}})
                       res.json({success:true})
-                      console.log("true to false");
+                      
                      }else{
                       const catData = await category.findByIdAndUpdate({_id:catId},{$set:{isListed:true}})
                       res.json({success:true})
@@ -319,18 +316,18 @@ const loadCategoryPage = async (req, res) => {
   }
 
   const addCategory = async (req, res) => {
-    console.log("Entered into addcategory");
+    
     const categoryName = req.body.name;
-    console.log(categoryName);
+    
     const checkingName = await category.find({ name: { $regex: new RegExp("^" + categoryName + "$", "i") } });
-    console.log(checkingName);
+    
   
     if (checkingName.length === 0) {
       try {
-        console.log("Enter into try catch");
+        
   
         const receivedData = req.body;
-        console.log(receivedData);
+        
   
         const categoryData = {
           name: receivedData.name,
@@ -338,7 +335,7 @@ const loadCategoryPage = async (req, res) => {
         };
   
         const data = await category.create(categoryData);
-        console.log("Data is Added to the Database");
+        
         req.flash("message", "Added Successfully!!");
         res.redirect("/admin/category");
       } catch (error) {
@@ -361,11 +358,11 @@ const loadCategoryPage = async (req, res) => {
 
        const updateCategory = async (req, res) => {
         try {
-          console.log("Entered into updateCategory");
+          
           const categoryId = req.query.categoryId;
           const updatedData = req.body;
       
-          console.log("Updated Data:", updatedData);
+          
       
           const categoryData = await category.findByIdAndUpdate(
             { _id: categoryId },
@@ -378,7 +375,7 @@ const loadCategoryPage = async (req, res) => {
             { new: true } // This option returns the modified document instead of the original
           );
       
-          console.log("Updated Data:", categoryData);
+          
           res.redirect("/admin/category");
         } catch (error) {
           console.log(error.message);
@@ -397,14 +394,21 @@ const loadCategoryPage = async (req, res) => {
                             as: "newfield"
                           }
                         }
-                      ])
+                      ]);
+                      let itemsPerPage = 9
+                      let currentPage = parseInt(req.query.page) || 1
+                      let startIndex = (currentPage-1)* itemsPerPage
+                      let endIndex = startIndex + itemsPerPage
+                      let totalPages = Math.ceil(productDetails.length/itemsPerPage)
+                      const currentProduct = productDetails.slice(startIndex,endIndex);
+
                       
-                      console.log(productDetails)
+                     
                       
 
                       
                        
-                       res.render("productPage",{productDetails})
+                       res.render("productPage",{productDetails:currentProduct, totalPages, currentPage})
    }
    
 
@@ -424,11 +428,9 @@ const loadCategoryPage = async (req, res) => {
    const addingProduct = async(req, res)=>{
             try { 
               
-              console.log("Entered into adding product");
+              
               const dateFormatted = new Date().toISOString().replace(/[-T:.Z]/g, '');
-             // const imageName = dateFormatted + '_' + files.originalname;
-           //  const imageName = req.file && Array.isArray(req.file) ? req.file.map((x) => x.originalname) : [];
-           // const imageName = req.files.map((file) => `${dateFormatted}_${file.originalname}`);
+            
               const imageName = [];
               if (req.files && req.files.length > 0) {
                 for (let i = 0; i < req.files.length; i++) {
@@ -436,7 +438,7 @@ const loadCategoryPage = async (req, res) => {
                 }
             }
 
-              // const imageName = req.files.map((x)=>x.originalname)
+              
              console.log(imageName)
              const  receivedproductData = req.body;
              const productData = {
@@ -488,11 +490,11 @@ const loadCategoryPage = async (req, res) => {
           if(findPrd.isBlocked === true){
             const productData = await product.findByIdAndUpdate({_id:prodId},{$set:{isBlocked:false}});
             res.json({success:true})
-            console.log("true to false");
+            
           }else{
             const productData = await product.findByIdAndUpdate({_id:prodId},{$set:{isBlocked:true}})
             res.json({success:true})
-            console.log("false to true");
+            
           }
       
     } catch (error) {
@@ -506,18 +508,15 @@ const loadCategoryPage = async (req, res) => {
   
   const loadProductEdit = async (req, res) => {
     try {
-      // Extract the product ID from query parameters
+      
       const productId = req.query.id;
-      console.log("This is the received id: ", productId);
+      
   
       // Fetch category data
       const categoryData = await category.find();
       const productData = await product.find({_id:productId})
       const selectedCat = await category.findOne({_id:productData[0].category})
       
-      console.log("This is the product Data from loadProductedit : ",productData)
-  
-      console.log("This is the product data from loadProductEdit", productData[0].category);
       
   
       // Render the product edit page with the fetched data
@@ -560,7 +559,7 @@ const loadCategoryPage = async (req, res) => {
 
         // Validate ObjectId
         if (!mongoose.Types.ObjectId.isValid(productId)) {
-            console.log("Invalid product ID");
+            
             return res.status(400).json({ success: false, message: 'Invalid product ID' });
         }
 
@@ -592,11 +591,11 @@ const loadCategoryPage = async (req, res) => {
         const editedData = await product.findByIdAndUpdate(productId, productData, { new: true });
 
         if (!editedData) {
-            console.log("Product not found");
+            
             return res.status(404).json({ success: false, message: 'Product not found' });
         }
 
-        console.log("This is the edited product:", editedData);
+        
         
         res.redirect('/admin/products');
     } catch (error) {
@@ -608,7 +607,7 @@ const loadCategoryPage = async (req, res) => {
 const deleteImage = async(req, res)=>{
                   try {
 
-                    console.log("Enter into delete image in adminController");
+                    
                   
                   const { id, imageName } = req.body;
 
@@ -619,9 +618,9 @@ const deleteImage = async(req, res)=>{
     if (fs.existsSync(imagePath)) {
       
       fs.unlinkSync(imagePath);
-      console.log("The image is unlinked")
+      
     } else {
-      console.log("File does not exist.");
+      
       return res.status(404).json({ message: "File not found." });
     }
     
@@ -643,7 +642,7 @@ const deleteImage = async(req, res)=>{
 }
 
 const loadOrderPage = async (req, res)=>{
-      console.log("Entered into loadOrderPage in adminController")
+      
        
        try {
         const orderData = await order.aggregate([
@@ -674,10 +673,25 @@ const loadOrderPage = async (req, res)=>{
             }
           }
         ]);
+
+
+               let itemsPerPage = 8;
+               let currentPage = parseInt(req.query.page) || 1;
+               let totalPages = Math.ceil(orderData.length / itemsPerPage);
+               let lastPage = totalPages;
+               
+               
+               let startIndex = orderData.length - (currentPage * itemsPerPage);
+               let endIndex = startIndex + itemsPerPage;
+               if (startIndex < 0) {
+                   endIndex += startIndex; 
+                   startIndex = 0;
+               }
         
+               const currentProduct = orderData.slice(startIndex, endIndex);
         
-       console.log("This is order Data :",orderData)
-        res.render("orderDetails",{orderData})
+       
+             res.render("orderDetails",{orderData:currentProduct, totalPages, currentPage})
         
        } catch (error) {
         console.log(error)
@@ -687,7 +701,7 @@ const loadOrderPage = async (req, res)=>{
       }
 
 const loadViewOrderPage = async(req, res)=>{
-                console.log("Entered into loadViewOrderPage in adminControll");
+                
                 
                 try {  
                   const orderId = req.query.orderId;
@@ -731,7 +745,7 @@ const loadViewOrderPage = async(req, res)=>{
                   ]);
                   
                   
-                 console.log("This is the checkData :", orderData);
+                 
                   
                   res.render("viewOrderDetailsAdmin",{orderData});
                   
@@ -745,19 +759,13 @@ const loadViewOrderPage = async(req, res)=>{
 
 
 const changeOrderStatus = async (req, res) => {
-  console.log("Entered into changeorderStatus in adminController");
+  
 
   try {
       const { orderId, productId, productSize, status,productPrice,userId,quantity } = req.body;
       const receivedPrice = parseInt(productPrice);
       const receivedQuantity = parseInt(quantity)
-      // console.log("This is orderId: ", new mongoose.Types.ObjectId(orderId));
-      // console.log("This is status: ", status);
-      // console.log("This is productId:",productId);
-      // console.log("This is productSize: ",productSize);
-      // console.log("This is the productPrice: ",receivedPrice);
-      // console.log("This is the userId: ",userId);
-      // console.log("This is the quantity: ",receivedQuantity)
+      
 
      
       const changingData = await order.updateOne(
@@ -780,10 +788,10 @@ const changeOrderStatus = async (req, res) => {
           
     
 
-      console.log("This is changingData: ", changingData);
+      
       if (changingData.modifiedCount > 0) {
 
-        console.log('Product status updated successfully.');
+        
         if(status === 'Returned'){
           const totalPrice = receivedPrice * receivedQuantity
 
@@ -801,13 +809,13 @@ const changeOrderStatus = async (req, res) => {
                 $inc: { balance: totalPrice }
             }
             );
-            console.log("This is updateResult : ",updateResult)
+            
 
         }
         
         res.json({ success: true });
     } else {
-        console.log('No matching order or product found.');
+        
         res.json({ success: false });
     }
     

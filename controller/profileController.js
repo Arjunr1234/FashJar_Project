@@ -13,19 +13,18 @@ const loadProfile = async (req, res)=>{
    try {
     
     const walletData = await wallet.findOne({userId:new objectId(req.session.user._id)})
-    console.log("This is wallet Data : ",walletData)
+    
 
     if(req.session.user){
       const userId = req.session.user._id;
-   console.log("This is the req.session.user :",req.session.user)
-   console.log('This is userId : ',userId);
+   
    const userData = await user.findOne({_id:userId})
-   console.log("This is userData :",userData)
+   
 
 
     res.render("userProfile",{userData, walletData})
     }else{
-      console.log("req.session.user is not found in loadprofile profileController")
+      console.log("req.session.user is not found in loadprofile profileController");
     }
     
    } catch (error) {
@@ -35,9 +34,9 @@ const loadProfile = async (req, res)=>{
 } 
 
 const   saveUserAdress= async (req, res) => {
-  console.log("Entered into saveUserAddress in profileController");
+  
 
-  // Extract data from the request body
+  
   const receivedAddress = {
     name: req.body.addresName,
     mobile: req.body.addressmobile,
@@ -54,7 +53,7 @@ const   saveUserAdress= async (req, res) => {
   const userId = req.session.user._id;
 
   try {
-    // Find the user by ID and push the new address to the 'address' array
+    
     const updateUserAdress = await user.updateOne(
       { _id: userId },
       { $push: { address: receivedAddress } }
@@ -73,11 +72,10 @@ const   saveUserAdress= async (req, res) => {
 
 
 const deleteAddress = async (req, res) => {
-  console.log("Entered in deleteAddress of profileController");
+  
   const receivedUserId = req.query.userId;
   const receivedAddressId = req.query.addressId;
-  console.log(receivedUserId);
-  console.log(receivedAddressId);
+  
 
   try {
       const deletedAddress = await user.updateOne(
@@ -102,7 +100,7 @@ const deleteAddress = async (req, res) => {
 };
 
 const changePassword = async (req, res) => {
-  console.log('Entered into changePassword in profileController');
+  
 
   try {
     const userId = req.session.user._id;
@@ -110,20 +108,20 @@ const changePassword = async (req, res) => {
     const newPassword = req.body.newpassword;
     const confirmPassword = req.body.confirmpassword;
 
-    console.log('Request Body:', req.body);
+    
 
     const userData = await user.findById({ _id: userId });
-    console.log('User Data:', userData);
+    
 
     if (!userData) {
-      console.log('User not found');
+      
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    console.log('Hashed Password:', userData.password);
+    
 
     const currentPasswordMatches = await bcrypt.compare(currentPassword, userData.password);
-    console.log('Current Password Matches:', currentPasswordMatches);
+    
 
     if (currentPasswordMatches) {
       if (newPassword === confirmPassword) {
@@ -132,10 +130,10 @@ const changePassword = async (req, res) => {
           const savePasswordAndCheck = await user.updateOne({ _id: userId }, { password: hashedNewPassword });
 
           if (savePasswordAndCheck.modifiedCount === 1) {
-            console.log('Password changed successfully');
+            
             return res.json({ success: true, url: "/profile" });
           } else {
-            console.log('Password not changed');
+            
             return res.json({ success: false, message: 'Password not changed' });
           }
         } catch (error) {
@@ -143,11 +141,11 @@ const changePassword = async (req, res) => {
           return res.json({ success: false, message: 'Internal server error' });
         }
       } else {
-        console.log("confirm password not same newPassword");
+        
         return res.json({ success: false, message: 'Confirm password not same as new password' });
       }
     } else {
-      console.log('Current password is incorrect');
+      
       return res.json({ success: false, message: 'Enter your correct password' });
     }
   } catch (error) {
@@ -161,28 +159,28 @@ const changePassword = async (req, res) => {
 
 const editUserDetails = async (req, res)=>{
 
-        console.log("Entered in editUserDetails in profileController");
+        
         const receivedPassword = req.body.password;
 
         const userData = await user.findOne({_id:req.session.user._id})
-        console.log("This is the userData : ",userData)
+        
 
         const receivedData = {
                  name:req.body.name,
                  mobile:parseInt(req.body.mobile)
         }
-         console.log("This is receiveData : ",receivedData);
+         
 
 
          const checkPassword = await bcrypt.compare(receivedPassword, userData.password);
-         console.log(checkPassword);
+         
 
          if(checkPassword){
           const updateUserData = await user.updateOne({_id:req.session.user._id},{$set:receivedData})
           res.json({success:true})
-        // res.redirect('/profile')
+        
          }else{
-          console.log("password is incorrect");
+          
           res.json({success:false, message:"Enter the correct Password"})
          }
 
@@ -190,9 +188,9 @@ const editUserDetails = async (req, res)=>{
 
 const loadAddressEdit = async(req, res)=>{
         const receivedAddressId = req.query.addressId
-        console.log(receivedAddressId);
+        
         const addressData = await user.findOne({_id:req.session.user._id},{"address":{$elemMatch:{_id:receivedAddressId}}})
-        console.log("This is the addressData :",addressData)
+        
              
          res.render("userAddressEdit",{addressData})
             
@@ -203,9 +201,9 @@ const updateUserAddress = async (req, res)=>{
 
   try {
          
-        console.log("Entered into updateUserAddress of profileController");
+        
         const addressId = req.query.addressId
-        console.log(addressId)
+        
         const userId = req.session.user._id;
 
         const receivedAddress = {
@@ -231,12 +229,27 @@ const updateUserAddress = async (req, res)=>{
 }
 
 const loadOrderDetails = async (req, res)=>{
-               console.log("Entered into loadOrderDetails in orderController");
+               
                if(req.session.user){
                 const userData = req.session;
                const orderData = await order.find({userId:req.session.user._id})
-               console.log("This is orderData",orderData)
-               res.render("orderPage",{orderData,userData})
+
+               let itemsPerPage = 8;
+               let currentPage = parseInt(req.query.page) || 1;
+               let totalPages = Math.ceil(orderData.length / itemsPerPage);
+               let lastPage = totalPages;
+               
+               
+               let startIndex = orderData.length - (currentPage * itemsPerPage);
+               let endIndex = startIndex + itemsPerPage;
+               if (startIndex < 0) {
+                   endIndex += startIndex; 
+                   startIndex = 0;
+               }
+        
+               const currentProduct = orderData.slice(startIndex, endIndex);
+               
+               res.render("orderPage",{orderData:currentProduct,userData, totalPages, currentPage})
                }else{
                 console.log("User is not found in loadorderDetais")
                 res.redirect("/")

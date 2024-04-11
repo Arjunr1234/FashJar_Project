@@ -10,14 +10,14 @@ const ObjectId = require("mongoose").Types.ObjectId
 
 
 const placeOrderHelp = async (body, userId) => {
-  console.log("Entered into placeOrder in placeOrderHelper");
+  
   return new Promise(async (resolve, reject) => {
     try {
           const couponId = body.globalCouponId
           const userIdData = new ObjectId(userId)
           
           if(couponId){
-            console.log("user has couponId")
+            
             const addingUserToCoupon = await coupon.updateOne(
                                      {_id:new ObjectId(couponId)},
                                      { $push: { "usedByUser": userIdData } }
@@ -135,7 +135,7 @@ const placeOrderHelp = async (body, userId) => {
               totalAmount: userCart.totalAmount
             });
             response.status = true;
-            console.log("This is orderPlacing: ",orderPlacing) 
+             
             resolve(response);
           }
           
@@ -147,7 +147,7 @@ const placeOrderHelp = async (body, userId) => {
       
       } else {
         // Handle the case where userCart is null
-        console.error("User cart not found for userId:", userId);
+        
         resolve({ status: false, message: "User cart not found" });
       }
     } catch (error) {
@@ -161,7 +161,7 @@ const placeOrderHelp = async (body, userId) => {
 
 
   const clearCart = async(userId)=>{
-    console.log("Entered into clearCart of placeOrderHelper");
+    
     return new Promise(async(resolve, reject)=>{
       try {
         const result = await cart.deleteOne({userId:userId});
@@ -178,14 +178,14 @@ const placeOrderHelp = async (body, userId) => {
 
 
   const createOrderforFailedPayment = async (body, userId) => {
-    console.log("Entered into createOrderforFailedPayment in placeOrderHelper");
+    
     return new Promise(async (resolve, reject) => {
       try {
             const couponId = body.globalCouponId
             const userIdData = new ObjectId(userId)
             
             if(couponId){
-              console.log("user has couponId")
+              
               const addingUserToCoupon = await coupon.updateOne(
                                        {_id:new ObjectId(couponId)},
                                        { $push: { "usedByUser": userIdData } }
@@ -305,7 +305,7 @@ const placeOrderHelp = async (body, userId) => {
                 status:"payment Failed"
               });
               response.status = true;
-              console.log("This is orderPlacing: ",orderPlacing) 
+               
               resolve(response);
             }
             

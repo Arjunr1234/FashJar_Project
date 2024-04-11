@@ -11,18 +11,18 @@ const objectId = require("mongoose").Types.ObjectId
 
 
 const loadWishlistPage = async(req, res)=>{
-          console.log("Entered into loadWishlistPage in wishlistController")
+        
           const userId = new objectId(req.session.user._id)
           const wishlistData = await wishlist.findOne({userId:userId})
           const productArray = [];
-          console.log("This is wishlist data: ",wishlistData)
+          
           if(wishlistData){
             for(pro of wishlistData.products){
-              console.log("This is products: ",pro)
+              
               wishlistProduct = await product.findOne({_id:new objectId(pro.productId)})
-              console.log("This is each product:",wishlistProduct )
+              
               const calculatedPrice = await newOfferPrice(wishlistProduct);
-              console.log("This is calculated offerPrice: ",calculatedPrice);
+              
               const finalProduct = Object.assign({},wishlistProduct.toObject(),
               {offerPrice:calculatedPrice}
               )
@@ -30,7 +30,7 @@ const loadWishlistPage = async(req, res)=>{
                 productArray.push(finalProduct)
               }
             }
-            console.log("This is the array :",productArray)
+            
           }else{
             console.log("No product in wishlist data is found!!")
           }
@@ -42,7 +42,7 @@ const loadWishlistPage = async(req, res)=>{
 
 
 const addToWishlist = async(req, res)=>{
-       console.log("Entered into addtowishlist in wishlistcontroller");
+       
        
        const {productId} = req.body
        const userId = new objectId(req.session.user._id);
@@ -59,26 +59,25 @@ const addToWishlist = async(req, res)=>{
           }
         }
       })
-      console.log("This is alredy have wishlist: ",alredyhaveWishlist);
-      console.log("product is alredy in the wishlist : ",productAlredyInWishlist);
+    
       if(alredyhaveWishlist && !productAlredyInWishlist){
-        console.log("user alredy have a wishlist!!! the push the product")
+        
         await wishlist.updateOne({userId:userId},
                                {$push:{products:wishlistData}}
           )
-          console.log("Item is pushed")
+          
 
           res.json({status:"added",message:"Item is added to wishlist!!"})
       }else if(alredyhaveWishlist && productAlredyInWishlist){
-        console.log("product is alredy in the wishlist please remove it");
+        
         await wishlist.updateOne({userId:userId},
           { $pull: { products: { productId: productId } } }
           )
-          console.log("Item is pulled");
+          
           res.json({status:"removed",message:"Item is removed from wishlist!!"})
 
       }else{
-        console.log("new usesr wish list is created");
+        
         const createWishlist = await wishlist.create({
           userId:userId,
           products:[wishlistData]
@@ -93,7 +92,7 @@ const addToWishlist = async(req, res)=>{
 }
 
 const deleteWishlist = async(req, res)=>{
-           console.log("Entered into delete wishlist of wishlist controller")
+           
           try {
             const {productId} = req.body
             const userId = req.session.user._id
@@ -115,44 +114,56 @@ const deleteWishlist = async(req, res)=>{
 }
 
 const addToCart = async(req, res)=>{
-            console.log("Entered into addto cart in wishlistController");
-            const {size, productId} = req.body;
-            console.log("This is productId : ",productId);
-            console.log("This is size : ",size);
-            const userId = req.session.user._id
-            const products = await product.findById(productId);
-            const offerPrice = await newOfferPrice(products);
-            
-            const stock = products.size[size].quantity
-            console.log("This is the avaliable stock: ",stock)
-            const productAlredyExistsInCart = await cart.findOne({userId:userId,"items.productId":productId,"items.size":size});
-            console.log("This is the status of productAlreadyExists : ",productAlredyExistsInCart);
+  
+  const {size, productId} = req.body;
+  
+  const userId = req.session.user._id
+  const products = await product.findById(productId);
+  const offerPrice = await newOfferPrice(products);
+  
+  const stock = products.size[size].quantity
+  
+  const productAlredyExistsInCart = await cart.findOne({userId:userId,"items.productId":productId,"items.size":size});
+  
 
-            const newItem = {
-              productId:productId,
-              quantity:1,
-              price:offerPrice,
-              size:size,
-              subTotal:offerPrice
-             }
+  const newItem = {
+    productId:productId,
+    quantity:1,
+    price:offerPrice,
+    size:size,
+    subTotal:offerPrice
+   }
 
 
-            if (productAlredyExistsInCart) {
-    console.log("Product is already in the cart");
-    res.json({ status: false, message: 'Item is Already in the Cart!!' });
+  if (productAlredyExistsInCart) {
+
+res.json({ status: false, message: 'Item is Already in the Cart!!' });
 } else {
-    const updateCart = await cart.updateOne(
-        { userId: userId },
-        { $push: { items: newItem } }
-    );
-    
-    if (updateCart.modifiedCount === 1) {
-        console.log("The item is pushed to cart");
-        res.json({ status: true, url: '/loadCartPage' });
-    } else {
-        console.log("Failed to push item to cart");
-        res.json({ status: false, message: 'Failed to add item to the cart' });
-    }
+const findCart = await cart.findById(userId);
+
+const updateCart = await cart.updateOne(
+{ userId: userId },
+{ 
+  $setOnInsert: { 
+    userId: userId, // Set userId if document is inserted
+    createdOn: new Date(), // Set createdOn timestamp if document is inserted
+    totalAmount: offerPrice // Set totalAmount to 0 if document is inserted
+ },
+  $push: { items: newItem } },
+  { upsert: true }
+);
+
+
+if(updateCart.upsertedCount === 1){
+res.json({ status: true, url: '/loadCartPage' });
+}
+else if (updateCart.modifiedCount === 1) {
+
+res.json({ status: true, url: '/loadCartPage' });
+} else {
+
+res.json({ status: false, message: 'Failed to add item to the cart' });
+}
 }
 
 

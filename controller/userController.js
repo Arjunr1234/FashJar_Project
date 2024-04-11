@@ -5,6 +5,7 @@ const otpHelper = require("../helper/otpHelper")
 const userHelper = require("../helper/userHelper")
 const { response } = require("express")
 const bcrypt = require("bcrypt")
+const order = require("../models/orderModel");
 const product = require("../models/productModel")
 const category = require("../models/categoryModel")
 const cart = require("../models/cartModel");
@@ -44,19 +45,17 @@ const insertUserWithVerify = async function(req, res) {
     
     const sendedOtp = req.session.otp;
     const verifyOtp = req.body.otp;
-    console.log(sendedOtp);
-    console.log(verifyOtp);
-    console.log("start Checking");
+    
 
     if (sendedOtp === verifyOtp  && Date.now() < req.session.otpExpiry) {
-      console.log("otp entered before time expires");
+      
       req.session.otpMatched = true;
-      console.log("req in insert user");
+      
 
       const UserData = req.session.insertedData;
-      console.log("This is the userData: now :",UserData)
+      
       const response = await userHelper.doSignup(UserData, req.session.otpMatched);
-      console.log(response)
+      
 
       if (!response.status) {
         const error = response.message;
@@ -115,7 +114,7 @@ const insertUserWithVerify = async function(req, res) {
         return res.redirect('/');
       }
     } else {
-       console.log("failed otp verification");
+       
        req.session.otpExpiry = false;
        
       req.flash("error", "Enter correct otp");
@@ -136,21 +135,18 @@ const insertUserWithVerify = async function(req, res) {
 const loginHome = async (req, res) => {
   try {
     const response = await userHelper.loginHome(req.body);
-    console.log(response)
+    
     if (response.login) {
       req.session.user = response.user;
-      //console.log('User logged in successfully:', response.user,);
-      console.log("user is login",response)
+      
       res.redirect("/userHome");
     } else {
-      //console.log('Login failed:', response.loginMessage);
-      //res.render("login", { errorMessage: response.loginMessage });
-      console.log("error",response)
+      
       req.flash("error",response.loginMessage)
       res.redirect('/')
     }
   } catch (error) {
-    //console.error('Error in loginHome:', error);
+    
       res.status(500).send('Internal Server Error');
   }
 };
@@ -209,8 +205,12 @@ const loadUserHome = async function (req, res) {
           const categoryData = await category.find({isListed:true})
 
           const cartData = await cart.findOne({userId:userData._id})
+
+          
+
          
-          console.log("This is place berfore entering into the forloop")
+         
+          
           
           for(let i=0; i<productData.length; i++){
             const product = productData[i];
@@ -225,14 +225,20 @@ const loadUserHome = async function (req, res) {
              const calculatedPrice = await offerHelper.newOfferPrice(product)
              product.offerPrice = calculatedPrice
            }
-        //  console.log("This is the productData: ",productData);
+        
           
-        //  console.log("This is new Added Products:" ,newAddedProducts)
+        
+        let itemsPerPage = 9
+        let currentPage = parseInt(req.query.page) || 1
+        let startIndex = (currentPage-1)* itemsPerPage
+        let endIndex = startIndex +itemsPerPage
+        let totalPages = Math.ceil(productData.length/itemsPerPage)
+        const currentProduct = productData.slice(startIndex,endIndex);
           
-          res.render("userHome", { productData,categoryData,userData,newAddedProducts });
+        res.render("userHome", { productData:currentProduct, totalPages, currentPage ,categoryData,userData,newAddedProducts });
       } else {
           res.redirect("/");
-      }
+      } 
   } catch (error) {
       console.log(error.message);
   }
@@ -269,9 +275,7 @@ const loadLogout = (req, res) => {
         console.log("Error in logout:", err);
         res.status(500).json({ response: false, error: "Logout failed" });
       } else {
-        // Only one response should be sent, either redirect or JSON
-      //  res.json({ response: true });
-        // or
+       
          res.redirect("/");
       }
     });
@@ -296,7 +300,7 @@ const loadOtpVerify = async function(req,res,next){
 
 
 const loadSample = async (req, res)=>{
-  console.log("Entered into loadSample");
+  
   const products  = await product.find({_id:'65cdd01b55d639d38a200df2'})
   const productData = await product.aggregate([
     {
@@ -319,7 +323,7 @@ const loadSample = async (req, res)=>{
 
 
 const loadVeiwProduct = async(req, res)=>{
-        console.log("Entered to the loadview product");
+        
          const productId = req.query.id;
          const userData = req.session.user
          
@@ -328,7 +332,7 @@ const loadVeiwProduct = async(req, res)=>{
          products.offerPrice = calculatedPrice
 
          
-         console.log("This is the product view products (athe ith thanne):",products)
+         
         //  console.log("offerprice: ",products.offerPrice)
 ////////////////////////////////////////////////////////////////////////////////////////////////
         // const userId = userData._id
@@ -351,14 +355,14 @@ const loadVeiwProduct = async(req, res)=>{
 
 const displaySize = async(req, res)=>{
   try {
-     console.log("Entered in to display Size")
+     
     if(req.session.user){
       const id = req.params.id;
       const size = req.params.size;
       
 
       const productData = await product.find({_id:id})
-      //console.log("This is product data :" , productData)
+      
 
       const small = productData[0].size.s.quantity
       const medium = productData[0].size.m.quantity
@@ -385,7 +389,7 @@ const displaySize = async(req, res)=>{
 const loadShopProduct = async(req, res)=>{
 
                 const categoryData = await category.find()
-                console.log("This is category data: ",categoryData)
+                
                 const filteredProduct = await product.find({isBlocked:false}).lean();
 
                 for(let i=0; i<filteredProduct.length; i++){
@@ -393,20 +397,29 @@ const loadShopProduct = async(req, res)=>{
                   const calculatedPrice = await offerHelper.newOfferPrice(product)
                   product.offerPrice = calculatedPrice
                 }
-                console.log("This is the filetered products: ",filteredProduct);
+                
 
-                res.render("shop",{categoryData, filteredProduct})
+                let itemsPerPage = 9;
+                let currentPage = parseInt(req.query.page) || 1;
+                let startIndex = (currentPage-1) * itemsPerPage;
+                let endIndex = startIndex + itemsPerPage;
+                let totalPages = Math.ceil(filteredProduct.length/itemsPerPage);
+                const currentProduct = filteredProduct.slice(startIndex,endIndex);
+
+                res.render("shop",{categoryData, filteredProduct:currentProduct, totalPages, currentPage})
 }
 
 const filterShopProducts = async(req, res)=>{
                   
-                  console.log("Entered into filetershopProducts in userController");
+                  
                   const categoryData = await category.find()
                   const value = req.query.criteria;
-                  console.log("This is the value: ", value);
+                  const totalPages = 1;
+                  const currentPage = 1;
+                  
 
                   if(value === 'lowToHigh'){
-                     console.log("We have to sort item based on lowtoHigh");
+                     
 
                      const filteredTheProduct = await product.find({isBlocked:false}).lean();
 
@@ -421,11 +434,11 @@ const filterShopProducts = async(req, res)=>{
                     
                     var filteredProduct = sortByOfferPrice(filteredTheProduct);
 
-                     console.log("This is the sortedProdcuts product: ",filteredProduct)
+                     
 
 
                   }else if(value === 'highToLow'){
-                         console.log("Entered in to high to Low");
+                         
 
                          const filteredTheProduct = await product.find({isBlocked:false}).lean();
 
@@ -440,12 +453,12 @@ const filterShopProducts = async(req, res)=>{
                         
                         var filteredProduct = sortByOfferPrice(filteredTheProduct);
     
-                         console.log("This is the sortedProdcuts product: ",filteredProduct)
+                         
 
 
 
                   }else if(value === 'a-z'){
-                         console.log("Entered into a-z");
+                         
 
                          const filteredTheProduct = await product.find({isBlocked:false}).lean();
 
@@ -460,22 +473,25 @@ const filterShopProducts = async(req, res)=>{
                         
                         var filteredProduct = sortProductsByName(filteredTheProduct);
     
-                         console.log("This is the sortedProdcuts product: ",filteredProduct)
+                       
+
 
 
 
 
                   }
 
-                  res.render("shop",{filteredProduct,categoryData})
+                
+
+                  res.render("shop",{filteredProduct,categoryData,totalPages,currentPage})
                                  
 }
 
 const filterCatergoryProducts = async(req, res)=>{
-                        console.log("Entered into filterCategoryProducts in userController");
+                        
 
                         const categoryId = req.query.catId;
-                        console.log("This is category Id: ",categoryId);
+                        
                         const categoryData = await category.find();
 
                         const filteredProduct = await product.find({category:new ObjectId(categoryId)}).lean();
@@ -486,7 +502,14 @@ const filterCatergoryProducts = async(req, res)=>{
                                      product.offerPrice = calculatedPrice
                                 }
 
-                             res.render("shopCategory",{filteredProduct,categoryData,categoryId});   
+                                let itemsPerPage = 9;
+                                let currentPage = parseInt(req.query.page) || 1;
+                                let startIndex = (currentPage-1)* itemsPerPage;
+                                let endIndex = startIndex + itemsPerPage;
+                                let totalPages = Math.ceil(filteredProduct.length/itemsPerPage);
+                                const currentProduct = filteredProduct.slice(startIndex,endIndex);
+
+                             res.render("shopCategory",{filteredProduct:currentProduct,totalPages, currentPage,categoryData,categoryId});   
 
 
 
@@ -494,18 +517,19 @@ const filterCatergoryProducts = async(req, res)=>{
 }
 
 const categoryWiseFiltering = async(req, res)=>{
-                      console.log("Entered into  catcategoryWiseFiltering");
+                      
                       const value = req.query.criteria;
-                      const categoryData = await category.find()
+                      const categoryData = await category.find();
+                      const totalPages = 1;
+                      const currentPage = 1;
                       const categoryId = req.query.categoryId;
-                      console.log("This is the value: ",value);
-                      console.log("This is categoryId: ",categoryId);
+                      
 
                       if(value === 'lowToHigh'){
                           
-                          console.log("Entered into lowToHigh");
+                          
                           const filteredTheProduct = await product.find({isBlocked:false,category:new ObjectId(categoryId)}).lean();
-                          console.log("This is the filtered product: ",filteredTheProduct)
+                          
 
                           for(let i=0; i<filteredTheProduct.length; i++){
                             const product = filteredTheProduct[i];
@@ -518,10 +542,10 @@ const categoryWiseFiltering = async(req, res)=>{
                           
                           var filteredProduct = sortByOfferPrice(filteredTheProduct);
       
-                           console.log("This is the sortedProdcuts product: ",filteredProduct)
+                          
 
                       }else if(value === 'highToLow'){
-                        console.log("Entered in to high to Low");
+                        
 
                         const filteredTheProduct = await product.find({isBlocked:false,category:new ObjectId(categoryId)}).lean();
 
@@ -536,12 +560,12 @@ const categoryWiseFiltering = async(req, res)=>{
                        
                        var filteredProduct = sortByOfferPrice(filteredTheProduct);
    
-                        console.log("This is the sortedProdcuts product: ",filteredProduct)
+                        
 
 
 
                  }else if(value === 'a-z'){
-                        console.log("Entered into a-z");
+                        
 
                         const filteredTheProduct = await product.find({isBlocked:false,category:new ObjectId(categoryId)}).lean();
 
@@ -556,7 +580,7 @@ const categoryWiseFiltering = async(req, res)=>{
                        
                        var filteredProduct = sortProductsByName(filteredTheProduct);
    
-                        console.log("This is the sortedProdcuts product: ",filteredProduct)
+                        
 
 
 
@@ -564,34 +588,17 @@ const categoryWiseFiltering = async(req, res)=>{
                  }
 
 
-                      res.render("shopCategory",{filteredProduct,categoryId,categoryData})
+                      res.render("shopCategory",{filteredProduct,categoryId,categoryData,totalPages, currentPage})
 
 
 }
 
 
 
-// const filterCatergoryProducts = async(req, res)=>{
-//                     console.log("Entered into fileterCategory in userController");
-//                     const categoryId = req.query.catId;
-//                     const categoryData = await category.find();
-//                     console.log("This is category Id:",categoryId);
-//                     const filteredProduct = await product.find({category:new ObjectId(categoryId)}).lean();
 
-//                     for(let i=0; i<filteredProduct.length; i++){
-//                       const product = filteredProduct[i];
-//                       const calculatedPrice = await offerHelper.newOfferPrice(product)
-//                       product.offerPrice = calculatedPrice
-//                     }
-
-//                     console.log("This is filtered Product: ",filteredProduct);
-
-//                     res.render("shop",{filteredProduct,categoryData})
-               
-// }
 
 const searchProduct = async(req, res)=>{
-                  console.log("Entered into search product in userController");
+                  
                   const receivedData = req.body.productName
                   const categoryData = await category.find();
                   const filteredProduct = await product.aggregate([
@@ -621,34 +628,34 @@ const searchProduct = async(req, res)=>{
                     product.offerPrice = calculatedPrice
                   }
 
-                  console.log("This is the searched data: ",filteredProduct);
+                  
 
                   res.render("shop",{filteredProduct,categoryData})
 }
 
 const loadEmaiEnterInForgotpassword = async(req, res)=>{
-                      console.log("Enter into loadEmaiEnterInForgotpassword in userController");
+                      
 
                       res.render("enterEmailForgotPassword")
 }
 
 
 const verifyingTheEmail = async(req, res)=>{
-                        console.log("Entered into verifyingTheEmail in userController");
+                        
 
                          const receivedEmail = req.body.email
                          req.session.storedEmail = receivedEmail
 
                         const checkUserExist = await User.findOne({email:receivedEmail});
-                        console.log("Thsi is Existing user: ",checkUserExist);
+                        
 
                         if(checkUserExist){
                           const result = await otpHelper.sendOtpForgotPassword(receivedEmail);
-                          console.log("This is the result: ",result)
+                          
                           const expiryTime = 60;
                           req.session.otpExpiry = Date.now()+expiryTime*1000;
                           req.session.otp = result.otp;
-                          console.log("This is the otp in the session : ",req.session.otp);
+                          
                           
 
                           if(result.status){
@@ -663,29 +670,29 @@ const verifyingTheEmail = async(req, res)=>{
 }
 
 const loadOtpForgotPassword = async(req, res)=>{
-                       console.log("Entered into loadOtpForgotPassword in userController");
+                       
                        
                        const error = req.flash("error")
                        res.render("otpForgotPassword",{error});
 }
 
 const loadEnterNewPassword = async(req, res)=>{
-                       console.log("Entered into loadEnter new PasswordPage in userController");
+                       
 
                        res.render("enterPassForgotPassword")
 }
 
 const  changePassword = async(req, res)=>{
-                       console.log("Enter into changePassword in userController");
+                       
                        
                        try {
 
-                        console.log("This is the email: ",req.session.storedEmail);
+                        
 
-                       console.log("This is the data received: ", req.body)
+                       
                        const userData = await User.findOne({email:req.session.storedEmail}).lean();
                        const userId = new ObjectId(userData._id);
-                       console.log("This is the userId: ",userId);
+                       
 
                        const { newPassword, confirmPassword} = req.body;
 
@@ -694,7 +701,7 @@ const  changePassword = async(req, res)=>{
                         const updatePassword = await User.updateOne({_id:userId},{password:hashedPassword});
 
                         if(updatePassword.modifiedCount === 1){
-                          console.log("Passowrd is updated!!");
+                          
                           req.flash("message","Updated Successfully")
                           res.redirect("/")
                         }

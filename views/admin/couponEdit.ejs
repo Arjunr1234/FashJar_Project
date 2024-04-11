@@ -151,25 +151,29 @@
      // }
       
       if (endingDate === "") {
-        displayErrorMessage("endingDate-error", "Starting date is required");
+        displayErrorMessage("endingDate-error", "Ending date is required");
         isValid = false;
-      } else {
-        const endDate = new Date(endingDate);
-        if (endDate < yesterday) {
-          displayErrorMessage("endingDate-error", "Starting date cannot be earlier than today");
-          isValid = false;
-        }
-      }
+      } 
+     // else {
+      //  const endDate = new Date(endingDate);
+      //  if (endDate < yesterday) {
+      //    displayErrorMessage("endingDate-error", "Ending date cannot be earlier than today");
+      //    isValid = false;
+      //  }
+     // }
       
       if (discount === "") {
         displayErrorMessage("discount-error", "Discount  is required");
         isValid = false;
       }else if(isNaN(discount)){
         displayErrorMessage("discount-error","Discount should be a number")
+        isValid = false
       } else if( discount < 0){
-        displayErrorMessage("discount-error","Discount Shouldn't less than zero")
-      }else if(discount > 100){
-        displayErrorMessage("discount-error","Discount should not greater that 100")
+        displayErrorMessage("discount-error","Discount Shouldn't less than zero");
+        isValid = false
+      }else if(discount > 99){
+        displayErrorMessage("discount-error","Discount should less that 100");
+        isValid = false
       }
       
       

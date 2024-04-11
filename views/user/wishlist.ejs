@@ -254,15 +254,7 @@
         </div>
     </div>
     <main class="main">
-        <div class="page-header breadcrumb-wrap">
-            <div class="container">
-                <div class="breadcrumb">
-                    <a href="index.html" rel="nofollow">Home</a>
-                    <span></span> Shop
-                    <span></span> Wishlist
-                </div>
-            </div>
-        </div>
+        
         <section class="mt-50 mb-50">
             <div class="container">
                 <div class="row">
@@ -297,7 +289,13 @@
                                               <td class="price " data-offer-price="<%= productArray[i].offerPrice %>"  data-title="Price"><span>₹</span><span id="offerPrice"><%= productArray[i].offerPrice %> </span></td>
                                               
                                               <td class="text-right" data-title="Cart">
-                                                <button class="btn btn-sm addToCartBtn" data-product-id="<%= productArray[i]._id %>"><i class="fi-rs-shopping-bag mr-5"></i>Add to cart</button>
+                                                <%   if(productArray[i].isBlocked === false){%>
+                                                    <button class="btn btn-sm addToCartBtn" data-product-id="<%= productArray[i]._id %>"><i class="fi-rs-shopping-bag mr-5"></i>Add to cart</button>
+                                                    <%}else{%>
+                                                        <h5 class="text-danger">Product Unavailable</h5>
+                                                        
+                                               <%} %>
+                                                
                                               </td>
                                               <td class="action" data-title="Remove"><i class="fi-rs-trash" onclick="deleteWishlist('<%= productArray[i]._id %>')"></i></td>
                                           </tr>

@@ -6,7 +6,7 @@ const error1 = document.getElementById('error1');
 const error2 = document.getElementById('error2');
 const error3 = document.getElementById('error3');
 const error4 = document.getElementById('error4');  
-const regForm = document.getElementById('logform');
+const regForm = document.getElementById('regform');
 
 function emailValidate(e){
   const emailVal = emailId.value;

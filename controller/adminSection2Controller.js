@@ -18,7 +18,7 @@ const ObjectId = require("mongoose").Types.ObjectId
 
 
 const loadCategoryOfferPage = async(req, res)=>{
-  console.log("Entered into loadCatergoryofferPage in adminsection2Controller");
+ 
 
   const categoryOfferData = await CategoryOfferModel.aggregate([
     {
@@ -33,7 +33,7 @@ const loadCategoryOfferPage = async(req, res)=>{
       $unwind: "$categoryDetails" // Unwind the joined data array
     }
   ])
-  console.log("This is the data: ",categoryOfferData);
+ 
      
   res.render("categoryOffer",{categoryOfferData})
    
@@ -42,7 +42,7 @@ const loadCategoryOfferPage = async(req, res)=>{
 }
 
 const loadProductOfferPage = async(req, res)=>{
-  console.log("Entered into loadProductOfferPage in adminsection2Controller");
+
 
   const productOfferData = await productOffer.aggregate([
     {
@@ -70,11 +70,11 @@ const loadProductOfferPage = async(req, res)=>{
       }
     }
   ])
-  console.log("Thsi si the data : ",productOfferData)
+ 
   res.render("productOffer",{productOfferData});
 }
 const loadAddProductOffer = async(req, res)=>{
-  console.log("Entered into loadAddProductOffer in adminsection2Controller");
+ 
   const productData = await product.find({},{productName:1}).lean();
   
 
@@ -91,11 +91,11 @@ const loadAddProductOffer = async(req, res)=>{
         productData[i].offerStatus = false
     }
 }
-console.log("This is the productData sended to AddProductOffer: ",productData)
+
   res.render("addProductOffer",{productData});
 }
 const loadAddCategoryOffer = async(req, res)=>{
-  console.log("Entered into loadAddCategoryOffer in adminSection2Controller");
+  
   const categoryData = await category.find({}, { name: 1 }).lean();
  
 
@@ -106,14 +106,14 @@ const loadAddCategoryOffer = async(req, res)=>{
     const offer = await categoryOffer.findOne({ 'categoryOffer.category': categoryId });
 
     if (offer) {
-        console.log(`Category "${categoryData[i].name}" has an offer:`);
+        
         categoryData[i].offerStatus = true
     } else {
-        console.log(`Category "${categoryData[i].name}" does not have an offer.`);
+        
         categoryData[i].offerStatus = false;
     }
 }
-console.log("This is the cateogroyData: ",categoryData)
+
 
 
 
@@ -121,8 +121,8 @@ console.log("This is the cateogroyData: ",categoryData)
 }
 
 const addingProductOffer = async (req, res) => {
-  console.log("Entered into adding productOffer in adminSection2Controller");
-  console.log("This is the data: ", req.body);
+  
+  
   
   try {
     
@@ -157,8 +157,8 @@ const addingProductOffer = async (req, res) => {
   }
 };
 const addCategoryOffer = async (req, res) => {
-  console.log("Entered into adding category offer in adminSection2Controller");
-  console.log("This is the data: ", req.body);
+ 
+  
   
   try {
     // Extract data from the request body
@@ -194,23 +194,23 @@ const addCategoryOffer = async (req, res) => {
 };
 
 const deleteProductOffer = async(req, res)=>{
-        console.log("Entered into deleteProductOffer ");
+        
 
         const offerId = new ObjectId(req.query.id);
-        console.log(offerId)
+      
 
         const deleteOffer = await productOffer.deleteOne({_id:offerId})
-         console.log(deleteOffer)
+         
          if(deleteOffer.deletedCount === 1){
           res.json({success:true})
          }
 
 }
 const deleteCategoryOffer = async(req, res)=>{
-                           console.log("Entered into deleteCategoryOffer adminSection2Controller");
+                           
 
                            const offerId = new ObjectId(req.query.catOfferId);
-                           console.log("Thi s is the offerId: ",offerId)
+                           
                            const deleteOffer = await categoryOffer.deleteOne({_id:offerId})
                            console.log(deleteOffer)
                            if(deleteOffer.deletedCount === 1){
@@ -220,11 +220,11 @@ const deleteCategoryOffer = async(req, res)=>{
 }
 
 const loadEditProductOffer = async (req, res)=>{
-  console.log("Entered into loadEditProductOffer");
+  
   const offerId = req.query.id;
   const receivedProductId = req.query.prdId;
- // console.log("This is productId: ",productId)
-  console.log("This is the offerId: ",offerId);
+ 
+  
   const prdOfferData = await productOffer.findById(offerId).lean();
   const productData = await product.find({},{productName:1}).lean();
   const thatProduct = await product.findById(receivedProductId).lean()
@@ -241,8 +241,7 @@ const loadEditProductOffer = async (req, res)=>{
     if (offer) {
        if(productData[i]._id.toString() === receivedProductId.toString()){
            
-           console.log("Entered into special if")
-           console.log("productData[i]._id:",productData[i]._id.toString())
+          
           
            productData[i].offerStatus = false
        }else{
@@ -254,17 +253,16 @@ const loadEditProductOffer = async (req, res)=>{
         productData[i].offerStatus = false
     }
 }
-  console.log("This is productData: ",productData)
-  console.log("This is prdOfferData : ",prdOfferData)
+ 
 
   res.render("editProductOffer",{prdOfferData, productData})
 
 }
 const loadEditCategoryOffer = async(req, res)=>{
-  console.log("Entered into loadEditCategoryOffer ");
+  
 
   const categoryData = await category.find({}, { name: 1 }).lean();
-  console.log("This is cateogoryData =: ",categoryData)
+  
   const offerId = req.query.id;
   const receivedCatId = req.query.catId
   const offerDetails = await categoryOffer.findById(offerId).lean()
@@ -272,10 +270,7 @@ const loadEditCategoryOffer = async(req, res)=>{
   const name = thatCategory.name;
   offerDetails.categoryOffer.categoryName = name;
   
-  console.log("This is offerId: ",offerId);
-  console.log("This is receivedCatId : ",receivedCatId)
-  console.log("This is that category: ",thatCategory)
-  console.log("This is offerDetails: ",offerDetails)
+ 
 
   for (let i = 0; i < categoryData.length; i++) {
   const categoryId = categoryData[i]._id;
@@ -295,16 +290,16 @@ const loadEditCategoryOffer = async(req, res)=>{
       categoryData[i].offerStatus = false;
   }
 }
-console.log("This is the categoryData: ",categoryData)
+
   res.render("editCategoryOffer",{categoryData, offerDetails})
 }
 
 const updateProductOffer = async(req, res)=>{
-  console.log("Entered into updateProductOffer in adminSection2Controller");
+  
   const offerId = req.query.offerId
-  console.log("This is offerId : ",offerId);
+  
   const { name, startingDate, endingDate, product, discount } = req.body
-  console.log(req.body)
+  
 
   const updateOffer = await productOffer.updateOne(
                                             {_id:new ObjectId(offerId)},
@@ -328,8 +323,8 @@ const updateProductOffer = async(req, res)=>{
 }
 const updateCategoryOffer = async(req, res)=>{
 
-  console.log("Entered into updateCategory ");
-  console.log(req.body);
+  
+  
   const offerId = req.query.catId
   const {name, startingDate, endingDate, category, categoryDiscount} = req.body;
 
@@ -356,18 +351,18 @@ const updateCategoryOffer = async(req, res)=>{
 }
 
 const loadCouponPage = async(req, res)=>{
-     console.log("Entered into loadCoupon Page ");
+     
 
      const couponData = await coupon.find()
-     console.log("Thi s is coupon data: ", couponData)
+     
 
      res.render("couponPage",{couponData})
 }
 
 const createCoupons = async(req, res)=>{
-  console.log("Entered into saveCoupon data in adminSection2Controller");
+  
 
-  console.log("This is the received data: ",req.body)
+  
   const { couponName,startingDate,endingDate,couponDiscount } = req.body;
   const startDate = new Date(startingDate);
   const endDate = new Date(endingDate);
@@ -379,28 +374,28 @@ const createCoupons = async(req, res)=>{
                             discount: parseInt(couponDiscount),
 
                                           })
-                                          console.log("This is the new: ",createCoupon)
+                                          
 
             res.redirect('/admin/loadCouponPage')
 }
 
 const loadCouponEdit = async(req, res)=>{
-                      console.log("Entered into loadCouponEdit in adminSection2Controller");
-                      couponId = req.query.couponId
-                      console.log("This is the id: ",couponId)
+                      
+                      const  couponId = req.query.couponId
+                      
                       const couponData = await coupon.findById(couponId)
-                      console.log("This is the  coupons: ",couponData)
+                      
                       res.render('couponEdit',{couponData})
 }
 
 const updateCoupon = async(req, res)=>{
               
-               console.log("Entered into update coupon in adminSection2Controller");
+               
                const couponId = req.query.couponId;
                const { couponName,startingDate,endingDate,couponDiscount } = req.body;
                const startDate = new Date(startingDate);
                const endDate = new Date(endingDate);
-               console.log("This is the  data: ",req.body);
+               
 
                const update = await coupon.updateOne(
                                  {_id:couponId},
@@ -417,11 +412,11 @@ const updateCoupon = async(req, res)=>{
 
 const deleteCoupon = async(req, res)=>{
                  
-                     console.log("Entered into deleteCoupon in adminSection2Controller");
+                     
                      const couponId = new ObjectId(req.body.id);
-                     console.log("Thsi is the id: ",couponId)
+                     
                      const couponDelete = await coupon.deleteOne({_id:couponId});
-                     console.log("This i s delete: ",couponDelete)
+                     
                      if(couponDelete.deletedCount){
                       res.json({success:true});
                      }else{

@@ -12,15 +12,7 @@
         }
     </style>
 
-    <div class="page-header breadcrumb-wrap">
-        <div class="container">
-            <div class="breadcrumb">
-                <a href="index.html" rel="nofollow">Home</a>
-                <span></span> Pages
-                <span></span> Account
-            </div>
-        </div>
-    </div>
+   
     <section class="pt-30 pb-150">
         <div class="container">
             <div class="row">
@@ -493,14 +485,27 @@
   function deleteAddress(userId, addressId,event){
         event.preventDefault();
 
-    $.ajax({
-      url:`/deleteAddress?userId=${userId}&addressId=${addressId}`,
-      method:'GET',
-      contentType:'application/json',
-      success:function(response){
-         location.reload()
-      }
-    });
+        Swal.fire({
+            text: "Are you sure you want to remove address?",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            cancelButtonText: "Cancel"
+          }).then((result)=>{
+            if(result.value){
+
+                $.ajax({
+                    url:`/deleteAddress?userId=${userId}&addressId=${addressId}`,
+                    method:'GET',
+                    contentType:'application/json',
+                    success:function(response){
+                       location.reload()
+                    }
+                  });
+
+            }
+          })
+
+    
    
   }
 

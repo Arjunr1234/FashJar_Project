@@ -160,14 +160,7 @@
         </div>
     </div>
     <main class="main">
-        <div class="page-header breadcrumb-wrap">
-            <div class="container">
-                <div class="breadcrumb">
-                    <a href="index.html" rel="nofollow">Home</a>
-                    <span></span> Shop
-                </div>
-            </div>
-        </div>
+       
         <section class="mt-50 mb-50">
             <div class="container">
                 <div class="row">
@@ -248,6 +241,26 @@
                                 <%} %>
                             
                             <%} %>
+
+                            <% if (locals.totalPages){ %>
+                                <nav aria-label="Page navigation example" >
+                                    <ul class="pagination justify-content-center">
+                                    <% if (currentPage > 1) { %>
+                                      <li class="page-item ">
+                                        <a class="page-link" href="/shop?page=<%=currentPage-1%>" >Previous</a>
+                                      </li>
+                                      <% } %>
+                                     
+                                      <li class="page-item"><a class="btn btn-sm active" ><%=currentPage%></a></li>
+                                    
+                                      <% if (currentPage < totalPages) { %>
+                                      <li class="page-item">
+                                        <a class="page-link" href="/shop?page=<%=currentPage+1%>">Next</a>
+                                      </li>
+                                      <% } %>
+                                    </ul>
+                                  </nav>
+                                  <% } %>
                             
                            
                           
@@ -256,18 +269,7 @@
                            
                         </div>
                         <!--pagination-->
-                        <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
-                            <nav aria-label="Page navigation example">
-                                <ul class="pagination justify-content-start">
-                                    <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">02</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">03</a></li>
-                                    <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">16</a></li>
-                                    <li class="page-item"><a class="page-link" href="#"><i class="fi-rs-angle-double-small-right"></i></a></li>
-                                </ul>
-                            </nav>
-                        </div>
+                       
                     </div>
                     <div class="col-lg-3 primary-sidebar sticky-sidebar">
                         <div class="row">
@@ -297,8 +299,8 @@
                                     <img src="/public/assets/imgs/shop/thumbnail-3.jpg" alt="#">
                                 </div>
                                 <div class="content pt-10">
-                                    <h5><a href="shop-product-detail.html">Chen Cardigan</a></h5>
-                                    <p class="price mb-0 mt-5">$99.50</p>
+                                    <h5><a href="#">Chen Cardigan</a></h5>
+                                    <p class="price mb-0 mt-5">₹99.50</p>
                                     <div class="product-rate">
                                         <div class="product-rating" style="width:90%"></div>
                                     </div>
@@ -309,8 +311,8 @@
                                     <img src="/public/assets/imgs/shop/thumbnail-4.jpg" alt="#">
                                 </div>
                                 <div class="content pt-10">
-                                    <h6><a href="shop-product-detail.html">Chen Sweater</a></h6>
-                                    <p class="price mb-0 mt-5">$89.50</p>
+                                    <h6><a href="#">Chen Sweater</a></h6>
+                                    <p class="price mb-0 mt-5">₹89.50</p>
                                     <div class="product-rate">
                                         <div class="product-rating" style="width:80%"></div>
                                     </div>
@@ -321,8 +323,8 @@
                                     <img src="/public/assets/imgs/shop/thumbnail-5.jpg" alt="#">
                                 </div>
                                 <div class="content pt-10">
-                                    <h6><a href="shop-product-detail.html">Colorful Jacket</a></h6>
-                                    <p class="price mb-0 mt-5">$25</p>
+                                    <h6><a href="#">Colorful Jacket</a></h6>
+                                    <p class="price mb-0 mt-5">₹25</p>
                                     <div class="product-rate">
                                         <div class="product-rating" style="width:60%"></div>
                                     </div>
@@ -334,7 +336,7 @@
                             <div class="banner-text">
                                 <span>Women Zone</span>
                                 <h4>Save 17% on <br>Office Dress</h4>
-                                <a href="shop-grid-right.html">Shop Now <i class="fi-rs-arrow-right"></i></a>
+                                <a href="#">Shop Now <i class="fi-rs-arrow-right"></i></a>
                             </div>
                         </div>
                     </div>

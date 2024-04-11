@@ -22,14 +22,14 @@ const sendOtp = (req,res)=>{
     const {name,email,mobile,password,refferalCode} = req.body
      
      req.session.insertedData = {name,email,mobile,password,refferalCode};
-     console.log(req.session.insertedData)
-     req.session.storedEmail = email
+     
+    req.session.storedEmail = email
     const otp = generateSixDigitNumber();
     const expiryTime = 60
     req.session.otpExpiry = Date.now()+expiryTime*1000;
-    console.log("generate otp: "+otp);
+    
     const userEmail = email;
-    console.log("This is the user email: " + userEmail);
+    
 
     if(!userEmail){
       return res.status(400).json({error:"Error or Invalid Email"});
@@ -47,11 +47,11 @@ const sendOtp = (req,res)=>{
         console.log(error);
         return res.status(500).json({error:"Error sending OTP email"});
       }
-      console.log("otp sended to the user email");
+    
     });
-    console.log("2");
+    
     req.session.otp = otp;
-   // res.json({message:"OTP Sent to Your Email, Check it!!!"});
+   
     res.redirect('/sendotp');
     
   } catch (error) {
@@ -67,13 +67,13 @@ const resendOtp = (req,res)=>{
   try {    
     
      
-     const userEmail =  req.session.storedEmail 
+    const userEmail =  req.session.storedEmail 
     const otp = generateSixDigitNumber();
     const expiryTime = 60
     req.session.otpExpiry = Date.now()+expiryTime*1000;
-    console.log("resended generate otp: "+otp);
     
-    console.log("This is the user email: " + userEmail);
+    
+    
 
     if(!userEmail){
       return res.status(400).json({error:"Error or Invalid Email"});
@@ -91,13 +91,13 @@ const resendOtp = (req,res)=>{
         console.log(error);
         return res.status(500).json({error:"Error sending OTP email"});
       }else{
-        console.log("otp sended to the user email");
+        
       }
       
     });
     console.log("2");
     req.session.otp = otp;
-   // res.json({message:"OTP Sent to Your Email, Check it!!!"});
+   
     res.redirect('/sendotp');
     
   } catch (error) {
@@ -114,13 +114,11 @@ const verify = async (req, res )=>{
   try{
   const sendedOtp = req.session.otp;
   const verifyOtp = req.body.otp;
-  console.log(sendedOtp);
-  console.log(verifyOtp);
-  console.log("start Checking");
+  
 
   if(sendedOtp === verifyOtp){
     if(Date.now()<req.session.otpExpiry){
-      console.log("otp entered before time expires");
+      
       req.session.otpMatched = true;
       req.flash("message","Successfully Registred")
       //const result = await User.create(req.session.insertedData);
@@ -130,7 +128,7 @@ const verify = async (req, res )=>{
       res.redirect('/')
     }
   }else{
-    console.log("failed otp verification");
+    
     req.session.otpExpiry = false;
    req.flash( "error","Registration Failed!!")
     res.redirect('/register')
@@ -143,13 +141,11 @@ const verifyOtpForgotPassword = async (req, res )=>{
   try{
   const sendedOtp = req.session.otp;
   const verifyOtp = req.body.otp;
-  console.log("This is sendedotp: ",sendedOtp);
-  console.log("This is verifyOtp: ",verifyOtp);
-  console.log("start Checking");
+  ;
 
   if(sendedOtp === verifyOtp){
     if(Date.now()<req.session.otpExpiry){
-      console.log("otp entered before time expires");
+     
       req.session.otpMatched = true;
     
 
@@ -158,7 +154,7 @@ const verifyOtpForgotPassword = async (req, res )=>{
       res.redirect('/verify-otp-forgotPassword')
     }
   }else{
-    console.log("failed otp verification");
+    
     req.session.otpExpiry = false;
    req.flash( "error","Invalid otp!!")
    res.redirect('/postEmailData')
@@ -169,7 +165,7 @@ const verifyOtpForgotPassword = async (req, res )=>{
 
 
 const sendOtpForgotPassword = (email)=>{
-               console.log("Entered into sendOtpForgotPassword ");
+               
                
               
              
@@ -177,8 +173,7 @@ const sendOtpForgotPassword = (email)=>{
                return new Promise((resolve, reject)=>{
 
                 const otp = generateSixDigitNumber();
-                console.log("This is the email: ",email);
-                console.log("This is the otp : ",otp);
+               
                
                
  
@@ -195,7 +190,7 @@ const sendOtpForgotPassword = (email)=>{
                    console.log(error);
                    return res.status(500).json({error:"Error sending OTP email"});
                  }
-                 console.log("otp sended to the user email");
+                 
                });
                resolve({status:true,otp:otp})
                

@@ -43,7 +43,12 @@ function validateForm() {
   if (endingDate === "") {
     displayErrorMessage("prdEndingDate-error", "Ending date is required");
     isValid = false;
-  } else {
+  }else if(endingDate < startingDate){
+    displayErrorMessage("prdEndingDate-error", "Should greater than starting date");
+    isValid = false;
+
+  }
+   else {
     const endDate = new Date(endingDate);
     if (endDate < yesterday) {
       displayErrorMessage("prdEndingDate-error", "Ending date cannot be earlier than today");
@@ -57,8 +62,8 @@ function validateForm() {
   } else if (discount < 0) {
     displayErrorMessage("prdDiscount-error", "Discount shouldn't be less than zero");
     isValid = false;
-  } else if (discount > 100) {
-    displayErrorMessage("prdDiscount-error", "Discount should not be greater than 100");
+  } else if (discount > 99) {
+    displayErrorMessage("prdDiscount-error", "Discount should less than 100");
     isValid = false;
   }
 
