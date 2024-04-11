@@ -6,18 +6,14 @@ const isUser = async(req, res,next)=>{
   try {
     if (req.session.user) {
       const check = await user.findOne({ _id: req.session.user }, { _id: 0, isActive: 1 });
-      console.log("This data in Middleware", check);
+    
   
       if (check.isActive) {
-        console.log("user is not blocked");
+        
         next();
       } else {
-        console.log("user is blocked");
-        // req.session.destroy((err) => {
-        //   if (err) {
-        //     console.log("Error in destroying session:", err);
-        //   }
-        // });
+        
+        
         delete req.session.user
         res.redirect("/");
       }

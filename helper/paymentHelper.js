@@ -11,7 +11,7 @@ var instance = new Razorpay({
 
 function generateRazorpay(Id,amount){
   return new Promise((resolve, rejects)=>{
-      console.log("This is the Id: ",Id)
+      
     var options = {
       amount: amount * 100,  // amount in the smallest currency unit
       currency: "INR",
@@ -27,7 +27,7 @@ function generateRazorpay(Id,amount){
 }
 
 function verifyThePayment(body){
-        console.log("Entered into paymentHelper in verifyPayment");
+        
         return new Promise((resolve, reject)=>{
           const crypto = require('crypto');
           let hmac = crypto.createHmac('sha256', secretKey);

@@ -6,8 +6,7 @@ const categoryOffer = require("../models/categoryOfferModel");
 
 
 const calculateOfferPrice = async (productData)=>{
-  console.log("Entered into offerHelper in helper");
-
+  
 
   return new Promise(async (resolve, reject)=>{
        try {
@@ -31,9 +30,7 @@ const calculateOfferPrice = async (productData)=>{
 const newOfferPrice = async (product)=>{
                    
                  
-                   console.log("Entered into newOfferPrice in offerHelper");
                    
-
 
 
                    return new Promise(async(resolve,reject)=>{

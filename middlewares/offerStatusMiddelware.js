@@ -2,7 +2,7 @@ const productOffer = require("../models/productOfferModel");
 const categoryOffer = require("../models/categoryOfferModel")
 
 const changeOfferStatus = async (req, res, next) => {
-  console.log("Entered into change offerStatus");
+  
   try {
       
       const resultPrd = await productOffer.updateMany(

@@ -216,13 +216,7 @@
                                             <!-- <div class="pro-details-brand">
                                                 <span> Brands: <a href="shop-grid-right.html">Bootstrap</a></span>
                                             </div> -->
-                                            <div class="product-rate-cover text-end">
-                                                <div class="product-rate d-inline-block">
-                                                    <div class="product-rating" style="width:90%">
-                                                    </div>
-                                                </div>
-                                                <span class="font-small ml-5 text-muted"> (25 reviews)</span>
-                                            </div>
+                                           
                                         </div>
                                        
                                         <div class="clearfix product-price-cover">
@@ -271,44 +265,52 @@
                                                
                                             </ul>
                                         </div>
-                                        <div class="attr-detail attr-size">
-                                            <strong class="mr-10">Size</strong>
-                                            <ul class="list-filter size-filter font-small">
-                                                <li><a  onclick="sizeClick('<%= products._id %>','s')">S</a></li>
-                                                <li ><a  onclick="sizeClick('<%= products._id %>','m')">M</a></li>
-                                                <li><a  onclick="sizeClick('<%= products._id %>','l')">L</a></li>
+
+                                        <% if(products.isBlocked){%>
+                                               <h4 class="text-danger mt-4">Product is Unavailable!!</h4>
+                                            <%}else{%>
+
+                                                <div class="attr-detail attr-size">
+                                                    <strong class="mr-10">Size</strong>
+                                                    <ul class="list-filter size-filter font-small">
+                                                        <li><a  onclick="sizeClick('<%= products._id %>','s')">S</a></li>
+                                                        <li ><a  onclick="sizeClick('<%= products._id %>','m')">M</a></li>
+                                                        <li><a  onclick="sizeClick('<%= products._id %>','l')">L</a></li>
+                                                       
+                                                    </ul>
+                                                </div>
+                                                
+                                                
+                                                <div class="bt-1 border-color-1 mt-30 mb-30"></div>
                                                
-                                            </ul>
-                                        </div>
-                                        
-                                        
-                                        <div class="bt-1 border-color-1 mt-30 mb-30"></div>
-                                       
-                                        <% if(locals.userData ) {%>         
-                                           
-                                            <div class="detail-extralink">
-                                               
-                                                <div class="col-md-6"> <!-- Adjust the column size based on your layout -->
-                                                    <%- console.log("This is in ejs file: ",products) %>
-                                                    <div class="product-extra-link2">
-                                                    <button onclick="addToCart('<%= products._id %>')" id="addToCartButton" type="button" class="btn btn-primary button  button-add-to-cart">Add to cart</button>
-                                                    
-                                                    <a aria-label="Add To Wishlist" class="action-btn hover-up" onclick="addToWishlistToggle('<%= products._id %>')"><span id="heart<%= products._id %>"><i class="fi-rs-heart"></i></span></a>
+                                                <% if(locals.userData ) {%>         
+                                                   
+                                                    <div class="detail-extralink">
+                                                       
+                                                        <div class="col-md-6"> <!-- Adjust the column size based on your layout -->
+                                                            
+                                                            <div class="product-extra-link2">
+                                                            <button onclick="addToCart('<%= products._id %>')" id="addToCartButton" type="button" class="btn btn-primary button  button-add-to-cart">Add to cart</button>
+                                                            
+                                                            <a aria-label="Add To Wishlist" class="action-btn hover-up" onclick="addToWishlistToggle('<%= products._id %>')"><span id="heart<%= products._id %>"><i class="fi-rs-heart"></i></span></a>
+                                                            </div>
+                                                        </div>
                                                     </div>
+                                              <%} else {%>
+                                            <div class="detail-extralink">
+                                                   
+                                                <div class="col-md-6"> 
+                                                 
+                                                    <a href="/" class="btn btn-primary">Add to cart</a>
+                                                    <!-- <button  id="addToCartButton" type="submit" class="btn btn-primary">Add to cart</button> -->
                                                 </div>
                                             </div>
-                                      <%} else {%>
-                                    <div class="detail-extralink">
-                                           
-                                        <div class="col-md-6"> 
-                                         
-                                            <a href="/" class="btn btn-primary">Add to cart</a>
-                                            <!-- <button  id="addToCartButton" type="submit" class="btn btn-primary">Add to cart</button> -->
-                                        </div>
-                                    </div>
-                                            
-                                              
-                                    <%} %>
+                                                    
+                                                      
+                                            <%} %>
+                                                
+                                                <%} %>
+                                      
                                         <ul class="product-meta font-xs color-grey mt-50">
                                             <li class="mb-5">SKU: <a href="#">FWM15VKT</a></li>
                                             <li class="mb-5">Tags: <a href="#" rel="tag">Cloth</a>, <a href="#" rel="tag">Women</a>, <a href="#" rel="tag">Dress</a> </li>

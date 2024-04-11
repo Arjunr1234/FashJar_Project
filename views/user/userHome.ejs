@@ -255,9 +255,9 @@
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link active" id="nav-tab-one" data-bs-toggle="tab" data-bs-target="#tab-one" type="button" role="tab" aria-controls="tab-one" aria-selected="true">Featured</button>
                                 </li>
-                                <li class="nav-item" role="presentation">
+                                <!-- <li class="nav-item" role="presentation">
                                     <button class="nav-link" id="nav-tab-two" data-bs-toggle="tab" data-bs-target="#tab-two" type="button" role="tab" aria-controls="tab-two" aria-selected="false">Popular</button>
-                                </li>
+                                </li> -->
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link" id="nav-tab-three" data-bs-toggle="tab" data-bs-target="#tab-three" type="button" role="tab" aria-controls="tab-three" aria-selected="false">New added</button>
                                 </li>
@@ -298,7 +298,7 @@
                                                             <a href="/viewProduct?id=<%= productData[i]._id %>"></a>
                                                         </div>
                                                         <h2><a href="/viewProduct?id=<%= productData[i]._id %>"><%= productData[i].productName %></a></h2>
-                                                        <div class="rating-result" title="90%">
+                                                        <div class="rating-results" title="90%">
                                                             <span>
                                                                 <span style="color: red;"> <%= Math.floor((1 - ( productData[i].offerPrice / productData[i].regularPrice)) * 100) %>%</span>
                                                             </span>
@@ -315,6 +315,26 @@
 
                                             <%} %>
                                         <%} %>
+
+                                        <% if (totalPages){ %>
+                                            <nav aria-label="Page navigation example" >
+                                                <ul class="pagination justify-content-center">
+                                                <% if (currentPage > 1) { %>
+                                                  <li class="page-item ">
+                                                    <a class="page-link" href="/userHome?page=<%=currentPage-1%>" >Previous</a>
+                                                  </li>
+                                                  <% } %>
+                                                 
+                                                  <li class="page-item"><a class="btn btn-sm active" ><%=currentPage%></a></li>
+                                                
+                                                  <% if (currentPage < totalPages) { %>
+                                                  <li class="page-item">
+                                                    <a class="page-link" href="/userHome?page=<%=currentPage+1%>">Next</a>
+                                                  </li>
+                                                  <% } %>
+                                                </ul>
+                                              </nav>
+                                              <% } %>
                                     
                                     
                                     
@@ -332,8 +352,9 @@
                                 <div class="row product-grid-4">
                                     
                                     
-                                    
-                                    
+                                   
+                                 
+                                                     
                                     
                                     
                                     
@@ -363,11 +384,7 @@
                                                              <img class="hover-img" src="/public/uploads/product-images/<%= newAddedProducts[i].productImage[1] %>" alt="">
                                                          </a>
                                                      </div>
-                                                     <div class="product-action-1">
-                                                         <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-                                                         <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                         <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-                                                     </div>
+                                                     
                                                      <div class="product-badges product-badges-position product-badges-mrg">
                                                          <span class="hot">Hot</span>
                                                      </div>
@@ -377,7 +394,7 @@
                                                          <a href="/viewProduct?id=<%= newAddedProducts[i]._id %>">Clothing</a>
                                                      </div>
                                                      <h2><a href="/viewProduct?id=<%= newAddedProducts[i]._id %>"><%= newAddedProducts[i].productName %></a></h2>
-                                                     <div class="rating-result" title="90%">
+                                                     <div class="rating-results" title="90%">
                                                          <span style="color: red;">
                                                              <%= Math.floor((1 - ( newAddedProducts[i].offerPrice / newAddedProducts[i].regularPrice)) * 100) %>
                                                          %</span>

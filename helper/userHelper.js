@@ -5,22 +5,22 @@ const { verify } = require('./otpHelper');
 
 
 const loginHome = (userData) => {
-  console.log(userData);
+  
   return new Promise(async (resolve, reject) => {
     try {
       let user = await userModel.findOne({ email: userData.email });
       let response = {};
 
       if (user) {
-        console.log('The user is now at loginhome and found the user');
-        console.log(user.isActive);
+        
+        
         if (user.isActive) {
           bcrypt.compare(userData.password, user.password).then((result) => {
             if (result) {
-              console.log(result);
+              
               response.user = user;
               response.login = true;
-              console.log(response);
+              
               resolve(response);
             } else {
               response.loginMessage = "Invalid email or password";
@@ -47,13 +47,13 @@ const doSignup = (userData, verify)=>{
       $or: [{email:userData.email},{mobile:userData.mobile}],
      })
      const response = {};
-     console.log("hello");
+     
       if(!userExist){
-        console.log("user not exit");
-        console.log(userData.password)
+        
+        
 
           if(verify){
-            console.log("verified");
+            
             try{
               const password = await bcrypt.hash(userData.password,10);
               const userD = {
@@ -69,7 +69,7 @@ const doSignup = (userData, verify)=>{
                 response.status = true;
                 response.message = "Signedup Successfully";
                 resolve(response);
-                console.log(data);
+                
               
 
             }catch(error){
@@ -93,10 +93,7 @@ const checkUserExist = async (req, res, next)=>{
             const enteredPhone = req.body.mobile
             const checkEmail = await userModel.findOne({email:enteredEmail});
             const checkPhone = await userModel.findOne({mobile:enteredPhone});
-            console.log("This is the entred email ", enteredEmail);
-            console.log("This is the entered phone ",enteredPhone);
-            console.log("This is checked email",checkEmail);
-            console.log("Thsi is checked phone",checkPhone);
+           
             if(checkEmail){
                     const error = req.flash("error","Email already registred!!")
                     res.redirect("/register")

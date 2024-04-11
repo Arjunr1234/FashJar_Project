@@ -152,20 +152,12 @@
         </div>
     </div>
     <main class="main">
-        <div class="page-header breadcrumb-wrap">
-            <div class="container">
-                <div class="breadcrumb">
-                    <a href="index.html" rel="nofollow">Home</a>
-                    <span></span> Shop
-                    <span></span> Your Cart
-                </div>
-            </div>
-        </div>
+        
         <section class="mt-50 mb-50">
             <div class="container cart-container">
                 <div class="row">
                     <% if(locals.products) {%>
-                    <% if(products.length>0){%>
+                    <% if(products.length>0 ){%>
                         <div class="col-12">
                             <div class="table-responsive">
                                
@@ -184,6 +176,8 @@
                                     <tbody>
                                        
                                             <% for(let i = 0; i < products.length; i++) { %>
+
+                                                
     
                                                 <tr>
                                                     <td class="image product-thumbnail"><img src="/public/uploads/product-images/<%= products[i].productImage[0] %>" alt="#"></td>
