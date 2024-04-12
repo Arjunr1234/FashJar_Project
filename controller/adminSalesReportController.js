@@ -5,8 +5,10 @@ const product = require("../models/productModel");
 
 
 
-const loadSalesReport = async(req, res)=>{
+const loadSalesReport = async(req, res, next)=>{
                 
+
+              try {
 
                 const salesData = await order.aggregate([
                   {
@@ -64,12 +66,20 @@ const loadSalesReport = async(req, res)=>{
 
                 
                 res.render("salesReport",{salesData, totalDiscountedProductPrice, totalDiscountPrice})
+                
+              } catch (error) {
+                console.error("Error in loadSalesReport: ", error);
+                next(error);
+                
+              }
                  
 }
 
-const filterReport = async (req, res)=>{
+const filterReport = async (req, res, next)=>{
                 
-                const receivedData =  req.body.timePeriod;
+                try {
+
+                  const receivedData =  req.body.timePeriod;
                 
 
                 if(receivedData === 'week'){
@@ -433,15 +443,23 @@ const filterReport = async (req, res)=>{
           
          
                 res.render("salesReport",{salesData,totalDiscountPrice,totalDiscountedProductPrice})
+                  
+                } catch (error) {
+                  console.error("Error in filter report: ",error);
+                  next(error);
+                  
+                }
 
 
 
 }
 
-const filterCustomDateOrder = async (req, res)=>{
+const filterCustomDateOrder = async (req, res, next)=>{
   
 
-const { startingDate, endingDate} = req.body;
+   try {
+
+    const { startingDate, endingDate} = req.body;
 
 const startDate = new Date(startingDate);
 const endDate = new Date(endingDate);
@@ -508,6 +526,12 @@ var totalDiscountPrice = totalRegularPrice - totalDiscountedProductPrice
 
 
 res.render("salesReport",{salesData, totalDiscountedProductPrice, totalDiscountPrice})
+    
+   } catch (error) {
+       console.error("Error in filterCustomDateOrder: ", error);
+       next(error)
+    
+   }
 
                       
 

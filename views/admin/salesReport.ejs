@@ -36,15 +36,17 @@
                         </form>
                     </div>
                     <div class="col-lg-8 col-md-6">
-                        <form action="/admin/fileterDateRange" method="post">
+                        <form action="/admin/fileterDateRange" method="post" id="dateFilter">
                             <div class="row">
                                 <div class="col-md-4 col-4 text-center">
                                     <p>Starting Date</p>
-                                    <input type="date" id="startdate" name="startingDate" class="form-control" value="">
+                                    <input type="date" id="startdate" name="startingDate"  class="form-control" value="">
+                                    <div id="startingDate-error" class="error-message"></div>
                                 </div>
                                 <div class="col-md-4 col-4 text-center">
                                     <p>Ending Date</p>
                                     <input type="date" id="enddate" name="endingDate" class="form-control" value="">
+                                    <div id="endingDate-error" class="error-message"></div>
                                 </div>
                                 <div class="col-md-4 col-4 text-center align-self-end">
                                     <p>&nbsp;</p>
@@ -123,6 +125,77 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+<script>
+    document.getElementById("dateFilter").addEventListener("submit", function(event) {
+        event.preventDefault();
+        if (validateAndSubmit()) {
+            this.submit();
+        }
+      });
+
+      function validateAndSubmit() {
+        if (validateForm()) {
+            return true;
+        } else {
+            return false;
+        }
+      }
+
+
+      function validateForm() {
+        resetErrorMessage();
+      console.log("Its start to working");
+        let isValid = true;
+        
+        const startingDate = document.getElementById("startdate").value.trim();
+        const endingDate = document.getElementById("enddate").value.trim();
+
+        if(startingDate === ""){
+            displayErrorMessage("startingDate-error","Enter Starting date");
+            isValid = false
+        }
+        
+        if(endingDate === ""){
+            displayErrorMessage("endingDate-error","Enter Ending date");
+            isValid = false;
+        }else if(endingDate < startingDate){
+            displayErrorMessage("endingDate-error","Should greater than starting date");
+            isValid = false
+        }
+
+        
+        
+        
+       
+        
+      
+        
+      
+        
+       
+      
+        return isValid;
+      }
+
+
+
+      function displayErrorMessage(elementId, message) {
+        var errorElement = document.getElementById(elementId);
+        errorElement.innerText = message;
+        errorElement.style.display = "block";
+        errorElement.style.color = "red";
+      }
+      
+      function resetErrorMessage() {
+        var errorElements = document.querySelectorAll(".error-message");
+        errorElements.forEach(function(element) {
+            element.innerText = "";
+            element.style.display = "none";
+        });
+      }
+
+</script>
 
 <script>
     // Function to download the sales report as PDF

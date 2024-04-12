@@ -8,7 +8,7 @@ const wallet = require("../models/walletModel");
 const objectId = require("mongoose").Types.ObjectId
 
 
-const loadProfile = async (req, res)=>{
+const loadProfile = async (req, res,next)=>{
    
    try {
     
@@ -28,31 +28,34 @@ const loadProfile = async (req, res)=>{
     }
     
    } catch (error) {
-    console.log(error)
+    console.error("Error found on loadProfile : ",error);
+    next(error)
     
    }
 } 
 
-const   saveUserAdress= async (req, res) => {
+const   saveUserAdress= async (req, res, next) => {
   
 
   
-  const receivedAddress = {
-    name: req.body.addresName,
-    mobile: req.body.addressmobile,
-    houseName: req.body.housename,
-    pincode: req.body.pincode,
-    cityOrTown: req.body.townOrCity,
-    district: req.body.district,
-    state: req.body.state,
-    country: req.body.country
-  };
-
   
-
-  const userId = req.session.user._id;
 
   try {
+
+    const receivedAddress = {
+      name: req.body.addresName,
+      mobile: req.body.addressmobile,
+      houseName: req.body.housename,
+      pincode: req.body.pincode,
+      cityOrTown: req.body.townOrCity,
+      district: req.body.district,
+      state: req.body.state,
+      country: req.body.country
+    };
+  
+    
+  
+    const userId = req.session.user._id;
     
     const updateUserAdress = await user.updateOne(
       { _id: userId },
@@ -66,18 +69,19 @@ const   saveUserAdress= async (req, res) => {
   } catch (error) {
     console.error("Error updating user:", error);
     
-    res.status(500).send("Internal Server Error");
+    next(error);
   }
 };
 
 
-const deleteAddress = async (req, res) => {
+const deleteAddress = async (req, res, next) => {
   
-  const receivedUserId = req.query.userId;
-  const receivedAddressId = req.query.addressId;
-  
+ 
 
   try {
+    const receivedUserId = req.query.userId;
+    const receivedAddressId = req.query.addressId;
+    
       const deletedAddress = await user.updateOne(
           { _id: receivedUserId },
           {
@@ -95,11 +99,12 @@ const deleteAddress = async (req, res) => {
       }
   } catch (error) {
       console.error("Error deleting address:", error);
+      next(error)
      
   }
 };
 
-const changePassword = async (req, res) => {
+const changePassword = async (req, res, next) => {
   
 
   try {
@@ -149,17 +154,19 @@ const changePassword = async (req, res) => {
       return res.json({ success: false, message: 'Enter your correct password' });
     }
   } catch (error) {
-    console.error('Error:', error);
-    return res.status(500).json({ success: false, message: 'Internal server error' });
+    console.error('Error in changePassword :', error);
+    next(error);
   }
 };
 
 
 
 
-const editUserDetails = async (req, res)=>{
+const editUserDetails = async (req, res, next)=>{
 
         
+       try {
+
         const receivedPassword = req.body.password;
 
         const userData = await user.findOne({_id:req.session.user._id})
@@ -183,20 +190,37 @@ const editUserDetails = async (req, res)=>{
           
           res.json({success:false, message:"Enter the correct Password"})
          }
+        
+       } catch (error) {
+
+        console.error("Error in EditUserDetails: ",error);
+        next(error);
+
+        
+       }
 
 }
 
-const loadAddressEdit = async(req, res)=>{
+const loadAddressEdit = async(req, res, next)=>{
+      try {
         const receivedAddressId = req.query.addressId
         
         const addressData = await user.findOne({_id:req.session.user._id},{"address":{$elemMatch:{_id:receivedAddressId}}})
         
              
          res.render("userAddressEdit",{addressData})
+        
+      } catch (error) {
+
+        console.error("Error in loadAddressEdit: ",error);
+        next(error);
+        
+        
+      }
             
 } 
 
-const updateUserAddress = async (req, res)=>{
+const updateUserAddress = async (req, res, next)=>{
 
 
   try {
@@ -222,38 +246,47 @@ const updateUserAddress = async (req, res)=>{
        res.redirect('/profile')
         
        } catch (error) {
-        console.log(error)
+        console.log("Error in updateUserAddress: ",error);
+        next(error);
         
        }
 
 }
 
-const loadOrderDetails = async (req, res)=>{
+const loadOrderDetails = async (req, res, next)=>{
                
-               if(req.session.user){
-                const userData = req.session;
-               const orderData = await order.find({userId:req.session.user._id})
-
-               let itemsPerPage = 8;
-               let currentPage = parseInt(req.query.page) || 1;
-               let totalPages = Math.ceil(orderData.length / itemsPerPage);
-               let lastPage = totalPages;
-               
-               
-               let startIndex = orderData.length - (currentPage * itemsPerPage);
-               let endIndex = startIndex + itemsPerPage;
-               if (startIndex < 0) {
-                   endIndex += startIndex; 
-                   startIndex = 0;
-               }
-        
-               const currentProduct = orderData.slice(startIndex, endIndex);
-               
-               res.render("orderPage",{orderData:currentProduct,userData, totalPages, currentPage})
-               }else{
-                console.log("User is not found in loadorderDetais")
-                res.redirect("/")
-               }
+              try {
+                 
+                if(req.session.user){
+                  const userData = req.session;
+                 const orderData = await order.find({userId:req.session.user._id})
+  
+                 let itemsPerPage = 8;
+                 let currentPage = parseInt(req.query.page) || 1;
+                 let totalPages = Math.ceil(orderData.length / itemsPerPage);
+                 let lastPage = totalPages;
+                 
+                 
+                 let startIndex = orderData.length - (currentPage * itemsPerPage);
+                 let endIndex = startIndex + itemsPerPage;
+                 if (startIndex < 0) {
+                     endIndex += startIndex; 
+                     startIndex = 0;
+                 }
+          
+                 const currentProduct = orderData.slice(startIndex, endIndex);
+                 
+                 res.render("orderPage",{orderData:currentProduct,userData, totalPages, currentPage})
+                 }else{
+                  console.log("User is not found in loadorderDetais")
+                  res.redirect("/")
+                 }
+                
+              } catch (error) {
+                console.error("Error in loadOrderDetails: ",error);
+                next(error)
+                
+              }
 
 
 }

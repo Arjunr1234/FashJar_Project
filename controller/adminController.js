@@ -23,12 +23,22 @@ const offerHelper = require("../helper/offerHelper")
 
 
 
-const loadLogin =  (req,res)=>{
-  const error = req.flash("error")
-  res.render("adminLogin",{error})
+const loadLogin =  (req,res, next)=>{
+   try {
+
+    const error = req.flash("error")
+    res.render("adminLogin",{error})
+    
+   } catch (error) {
+    console.error("Error in loadLogin: ", error);
+    next(error)
+    
+   }
 }
 
-const loadHome = async (req, res)=>{
+const loadHome = async (req, res, next)=>{
+   try {
+
     if(req.session.admin){
 
 
@@ -157,15 +167,24 @@ const loadHome = async (req, res)=>{
     }else{
       res.redirect("admin/login")
     }
+    
+   } catch (error) {
+    console.error("Error in loadHome: ", error);
+    next(error);
+    
+   }
 }
 
-const loadAdminHome = async (req, res)=>{
+const loadAdminHome = async (req, res, next)=>{
          
-         const logEmail = req.body.email;
-         const logPassword = req.body.password;
+        
          
          
         try {
+
+          const logEmail = req.body.email;
+          const logPassword = req.body.password;
+
            const loggedUser = await admin.findOne({
                        email:logEmail,
                        password:logPassword
@@ -184,30 +203,39 @@ const loadAdminHome = async (req, res)=>{
            }
           
         } catch (error) {
-          console.log(error);
+          console.log("Error in loadAdminHome: ",error);
+          next(error);
           
         }
 }
 
 
 
-const loadAdminLogout = (req, res)=>{
+const loadAdminLogout = (req, res, next)=>{
+                 try {
+
                   if(req.session.admin){
-                     req.session.destroy((err)=>{
-                        if(err){
-                          console.log(err)
-                        }else{
-                          res.redirect("/admin/login")
-                        }
-                     })
-                  }else{
-                    res.redirect("/admin/login")
-                  }
+                    req.session.destroy((err)=>{
+                       if(err){
+                         console.log(err)
+                       }else{
+                         res.redirect("/admin/login")
+                       }
+                    })
+                 }else{
+                   res.redirect("/admin/login")
+                 }
+                  
+                 } catch (error) {
+                  console.error("Error in loadAdmininLogout: ", error);
+                  next(error)
+                  
+                 }
             }
 
  
 
-           const loadCustomerList = async (req, res)=>{
+           const loadCustomerList = async (req, res, next)=>{
             try {
               
               if(req.session.admin){
@@ -233,34 +261,43 @@ const loadAdminLogout = (req, res)=>{
               
 
             } catch (error) {
-              console.log(error)
+              console.log("Error in loadCustormelist: ",error);
+              next(error);
               
             }            
 };
 
-const loadCategoryPage = async (req, res) => {
+const loadCategoryPage = async (req, res, next) => {
+ try {
+
   if (req.session.admin) {
       
-      try {
-          const categoryD = await category.find();
-          console.log(category); 
-          const error = req.flash("error")
-          const message = req.flash("message")
-          res.render("catagoryPage", { categoryD,message,error });
-          
-      } catch (error) {
-          console.log(error);
-          res.status(500).send("Internal Server Error");
-      }
-  } else {
-      res.redirect("/admin/login");
-  }
+    try {
+        const categoryD = await category.find();
+        console.log(category); 
+        const error = req.flash("error")
+        const message = req.flash("message")
+        res.render("catagoryPage", { categoryD,message,error });
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("Internal Server Error");
+    }
+} else {
+    res.redirect("/admin/login");
+}
+  
+ } catch (error) {
+  console.error("Error in loadCategoryPage; ",error);
+  next(error);
+  
+ }
 };
 
 
   
 
-  const blockUser = async (req, res) => {
+  const blockUser = async (req, res, next) => {
     try {
       
       const userId = req.query.id;
@@ -275,13 +312,13 @@ const loadCategoryPage = async (req, res) => {
   
       res.json({ success: true }); 
     } catch (error) {
-      console.log(error.message);
-      res.status(500).json({ success: false, error: error.message }); // Handle errors
+      console.log("Error in blockUser: ",error);
+      next(error)
     }
   };
   
 
-    const listUnlistCategory = async(req, res)=>{
+    const listUnlistCategory = async(req, res, next)=>{
                    try{
                      
                      const catId = req.query.id;
@@ -298,24 +335,26 @@ const loadCategoryPage = async (req, res) => {
                      }
                     
                    }catch(error){
-                    console.log(error)
+                    console.log("Error in ulistCategory: ",error);
+                    next(error);
                    }
 
     }
    
 
-  const unblockUser = async (req, res)=>{
+  const unblockUser = async (req, res, next)=>{
                      try{
                       const userId = req.query._id;
                       const status = await User.findOne({_id:userId},{$set:{isActive:false}});
                       delete req.session.user
  
                      }catch(error){
-                      console.log(error.message);
+                      console.log("Error in unblockUser: ",error);
+                      next(error)
                      }
   }
 
-  const addCategory = async (req, res) => {
+  const addCategory = async (req, res, next) => {
     
     const categoryName = req.body.name;
     
@@ -340,7 +379,7 @@ const loadCategoryPage = async (req, res) => {
         res.redirect("/admin/category");
       } catch (error) {
         console.log(error.message);
-        res.status(500).send("Internal Server Error");
+        next(error)
       }
     } else {
       req.flash("error", "Category Exists");
@@ -350,13 +389,21 @@ const loadCategoryPage = async (req, res) => {
 
   }
 
-    const loadCategoryEdit = async (req, res)=>{
-           const   categoryId = req.query.categoryId
-           const   categoryData = await category.findOne({_id:categoryId})
-           res.render("categoryEdit",{categoryData})
+    const loadCategoryEdit = async (req, res, next)=>{
+          try {
+
+            const   categoryId = req.query.categoryId
+            const   categoryData = await category.findOne({_id:categoryId})
+            res.render("categoryEdit",{categoryData})
+            
+          } catch (error) {
+            console.error("Error in loadCategoryEdit: ", error);
+            next(error)
+            
+          }
        }
 
-       const updateCategory = async (req, res) => {
+       const updateCategory = async (req, res, next) => {
         try {
           
           const categoryId = req.query.categoryId;
@@ -378,13 +425,15 @@ const loadCategoryPage = async (req, res) => {
           
           res.redirect("/admin/category");
         } catch (error) {
-          console.log(error.message);
-          res.status(500).send("Internal Server Error");
+          console.error("Error in updateCategory",error);
+          next(error)
         }
       };
       
 
-   const loadProductPage = async (req, res)=>{
+   const loadProductPage = async (req, res, next)=>{
+                    try {
+
                       const productDetails = await product.aggregate([
                         {
                           $lookup: {
@@ -409,23 +458,30 @@ const loadCategoryPage = async (req, res) => {
                       
                        
                        res.render("productPage",{productDetails:currentProduct, totalPages, currentPage})
+                      
+                    } catch (error) {
+                      console.error("Error in loadProductPage: ",error);
+                      next(error)
+                      
+                    }
    }
    
 
-   const loadAddProduct = async (req, res)=>{
+   const loadAddProduct = async (req, res, next)=>{
                        try {
 
                         const categoryData = await category.find({isListed:true})
                         const message = req.flash("message")
                         res.render("addProduct",{category:categoryData,message})
                        } catch (error) {
-                        console.log("error in loadAddproduct: "+error)
+                        console.log("error in loadAddproduct: ",error);
+                        next(error)
                         
                         
                        }
    }
 
-   const addingProduct = async(req, res)=>{
+   const addingProduct = async(req, res, next)=>{
             try { 
               
               
@@ -477,11 +533,12 @@ const loadCategoryPage = async (req, res) => {
 
                   
             } catch (error) {
-              console.log(error.message);
+              console.log("Error in adding Product: ",error);
+              next(error);
               
             }}
 
-   const listUnlistProduct = async(req, res)=>{
+   const listUnlistProduct = async(req, res, next)=>{
     try {  
           
           const prodId = req.query.id;
@@ -498,7 +555,8 @@ const loadCategoryPage = async (req, res) => {
           }
       
     } catch (error) {
-      console.log(error.message);
+      console.log("Error in listUnlistProduct: ",error);
+      next(error)
       
     }
   }
@@ -506,7 +564,7 @@ const loadCategoryPage = async (req, res) => {
   
   const { Types: { ObjectId } } = mongoose;
   
-  const loadProductEdit = async (req, res) => {
+  const loadProductEdit = async (req, res, next) => {
     try {
       
       const productId = req.query.id;
@@ -523,14 +581,14 @@ const loadCategoryPage = async (req, res) => {
       res.render("productEdit", { productData, categoryData,selectedCat });
     } catch (error) {
       console.error("Error in loadProductEdit:", error);
-      res.status(500).send("Internal Server Error");
+      next(error)
     }
   };
   
 
    
 
-  const editProducts = async (req, res) => {
+  const editProducts = async (req, res, next) => {
     try {
         const imageName = [];
 
@@ -600,11 +658,11 @@ const loadCategoryPage = async (req, res) => {
         res.redirect('/admin/products');
     } catch (error) {
         console.error("Error editing product:", error.message);
-        res.status(500).json({ success: false, message: 'Internal server error' });
+        next(error)
     }
 };
 
-const deleteImage = async(req, res)=>{
+const deleteImage = async(req, res, next)=>{
                   try {
 
                     
@@ -633,7 +691,8 @@ const deleteImage = async(req, res)=>{
     res.json({message:true})
                     
                   } catch (error) {
-                    console.log(error)
+                    console.log("Error in deleteImage: ",error);
+                    next(error);
                     
                   }
 
@@ -641,7 +700,7 @@ const deleteImage = async(req, res)=>{
               
 }
 
-const loadOrderPage = async (req, res)=>{
+const loadOrderPage = async (req, res, next)=>{
       
        
        try {
@@ -694,13 +753,14 @@ const loadOrderPage = async (req, res)=>{
              res.render("orderDetails",{orderData:currentProduct, totalPages, currentPage})
         
        } catch (error) {
-        console.log(error)
+        console.error("Error in loadOrderPage: ",error);
+        next(error);
         
        }
 
       }
 
-const loadViewOrderPage = async(req, res)=>{
+const loadViewOrderPage = async(req, res, next)=>{
                 
                 
                 try {  
@@ -751,14 +811,15 @@ const loadViewOrderPage = async(req, res)=>{
                   
                   
                 } catch (error) {
-                  console.log(error)
+                  console.log("Error in loadViewOrderPage: ", error);
+                  next(error);
                   
                 }
               
 }      
 
 
-const changeOrderStatus = async (req, res) => {
+const changeOrderStatus = async (req, res, next) => {
   
 
   try {
@@ -820,8 +881,8 @@ const changeOrderStatus = async (req, res) => {
     }
     
   } catch (error) {
-      console.error('Error:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
+      console.error('Error in changing orderStatus:', error);
+      next(error);
   }
 };
 

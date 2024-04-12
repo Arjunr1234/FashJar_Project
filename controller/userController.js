@@ -15,8 +15,9 @@ const wishlist  = require("../models/wishlistModel")
 const {ObjectId} = require("mongoose").Types
 
 
-const loginLoad = function (req, res) {
+const loginLoad = function (req, res, next) {
 
+ try {
   if(req.session.user){
     res.redirect("/userHome")
   }else{
@@ -24,23 +25,38 @@ const loginLoad = function (req, res) {
     const error=req.flash("error")
     res.render("userLogin",{message,error})
   }
+  
+ } catch (error) {
+  console.error("Error in LoginLoad: ",error)
+  next(error)
+  
+ }
 
 }
 
 
 
-const loadRegister = function(req, res){
-     if(req.session.user){
+const loadRegister = function(req, res, next){
+   try {
+
+    if(req.session.user){
       res.redirect("/userHome")
      }else{
       const message = req.flash("message")
       const error = req.flash("error")
       res.render("register",{error,message})
      }
+    
+   } catch (error) {
+    console.error("Error in loadRegister: ",error);
+    next(error);
+
+    
+   }
 }
 
 
-const insertUserWithVerify = async function(req, res) {
+const insertUserWithVerify = async function(req, res, next) {
   try {
     
     const sendedOtp = req.session.otp;
@@ -121,8 +137,9 @@ const insertUserWithVerify = async function(req, res) {
       return res.redirect('/register');
     }
   } catch (error) {
-    console.error(error);
-    return res.redirect("/register");
+    console.error("Error in insertWithUserVerify: ",error);
+
+    next(error);
   }
 };
 
@@ -132,7 +149,7 @@ const insertUserWithVerify = async function(req, res) {
 
 
 
-const loginHome = async (req, res) => {
+const loginHome = async (req, res, next) => {
   try {
     const response = await userHelper.loginHome(req.body);
     
@@ -147,7 +164,8 @@ const loginHome = async (req, res) => {
     }
   } catch (error) {
     
-      res.status(500).send('Internal Server Error');
+    console.log("Error in loginHome: ",error);
+    next(error);
   }
 };
 
@@ -159,9 +177,12 @@ const loginHome = async (req, res) => {
 
 
 
-const loadUserHome = async function (req, res) {
+const loadUserHome = async function (req, res, next) {
   try {
+    
       if (req.session.user) {
+          
+          
           const userData = await User.findOne({ _id: req.session.user });
           const name = userData.name;
 
@@ -240,13 +261,17 @@ const loadUserHome = async function (req, res) {
           res.redirect("/");
       } 
   } catch (error) {
-      console.log(error.message);
+      console.error("Error in loadUserHome: ",error);
+      next(error)
   }
 };
 
-const loadGuestUserHome = async (req, res)=>{
+const loadGuestUserHome = async (req, res, next)=>{
 
-           const productData = await product.aggregate([
+          try {
+            
+
+             const productData = await product.aggregate([
               {
                   $match: {
                       "isBlocked": false
@@ -261,33 +286,87 @@ const loadGuestUserHome = async (req, res)=>{
                   }
               }
           ]);
-          const categoryData = await category.find({isListed:true});
+
+          const categoryData = await category.find({isListed:true})
+
           
+
+          
+
+         
+         
+          
+          
+          for(let i=0; i<productData.length; i++){
+            const product = productData[i];
+            const caluclatedPrice = await offerHelper.newOfferPrice(product)
+            product.offerPrice = caluclatedPrice
+          }
+         
+
+          const newAddedProducts = await product.find({"isBlocked":false}).sort({_id:-1}).lean();
+           for(let i=0; i<newAddedProducts.length; i++){
+             const product = newAddedProducts[i];
+             const calculatedPrice = await offerHelper.newOfferPrice(product)
+             product.offerPrice = calculatedPrice
+           }
+        
+          
+        
+        let itemsPerPage = 9
+        let currentPage = parseInt(req.query.page) || 1
+        let startIndex = (currentPage-1)* itemsPerPage
+        let endIndex = startIndex +itemsPerPage
+        let totalPages = Math.ceil(productData.length/itemsPerPage)
+        const currentProduct = productData.slice(startIndex,endIndex);
+          
+        res.render("userHome", { productData:currentProduct, totalPages, currentPage ,categoryData,newAddedProducts });
             
-            res.render("userHome",{productData,categoryData})
+          } catch (error) {
+
+            console.error("Error in loadGuestUserHome: ",error);
+            next(error);
+
+            
+          }
 }
 
 
-const loadLogout = (req, res) => {
-  if (req.session.user) {
-    req.session.destroy((err) => {
-      if (err) {
-        console.log("Error in logout:", err);
-        res.status(500).json({ response: false, error: "Logout failed" });
-      } else {
-       
-         res.redirect("/");
-      }
-    });
-  } else {
-    res.redirect("/");
+const loadLogout = (req, res, next) => {
+  try {
+    
+    if (req.session.user) {
+      req.session.destroy((err) => {
+        if (err) {
+          console.log("Error in logout:", err);
+          res.status(500).json({ response: false, error: "Logout failed" });
+        } else {
+         
+           res.redirect("/guestUser");
+        }
+      });
+    } else {
+      res.redirect("/");
+    }
+    
+  } catch (error) {
+    console.error("Error in loadLogout: ",error);
+    next(error);
+    
   }
 };
 
 
 const loadOtpVerify = async function(req,res,next){
      
+       try {
         res.render('otpVerify')
+        
+       } catch (error) {
+        console.error("Error in loadOtyVerify: ",error);
+        next(error)
+        
+       }
       
 }   
 
@@ -299,61 +378,78 @@ const loadOtpVerify = async function(req,res,next){
   
 
 
-const loadSample = async (req, res)=>{
+const loadSample = async (req, res, next)=>{
   
-  const products  = await product.find({_id:'65cdd01b55d639d38a200df2'})
-  const productData = await product.aggregate([
-    {
-        $match: {
-            "isBlocked": false
-        }  
-    },
-    {
-        $lookup: {
-            from: "categories",
-            localField: "category",
-            foreignField: "_id",
-            as: "newField"
-        }
-    }
-]);
-  
-  res.render("sample",{productData});
+            try {
+
+              const products  = await product.find({_id:'65cdd01b55d639d38a200df2'})
+              const productData = await product.aggregate([
+                {
+                    $match: {
+                        "isBlocked": false
+                    }  
+                },
+                {
+                    $lookup: {
+                        from: "categories",
+                        localField: "category",
+                        foreignField: "_id",
+                        as: "newField"
+                    }
+                }
+            ]);
+              
+              res.render("sample",{productData});
+              
+            } catch (error) {
+              console.error("Error in loadSample: ",error);
+              next(error)
+              
+            }
 }
 
 
-const loadVeiwProduct = async(req, res)=>{
+const loadVeiwProduct = async(req, res, next)=>{
         
-         const productId = req.query.id;
-         const userData = req.session.user
-         
-         let products = await product.findById({_id:productId}).lean();
-         const calculatedPrice = await offerHelper.newOfferPrice(products);
-         products.offerPrice = calculatedPrice
-
-         
-         
-        //  console.log("offerprice: ",products.offerPrice)
-////////////////////////////////////////////////////////////////////////////////////////////////
-        // const userId = userData._id
-        // const wishlistData = await wishlist.findOne({userId:new Object(userId)})
-
-        // console.log("This is wishlist data: ",wishlistData)
-
-        // var check = wishlistData.products.find(function(product) {
-        //   return  product.productId.toString() === productId.toString();
+        try {
+          const productId = req.query.id;
+          const userData = req.session.user
+          
+          let products = await product.findById({_id:productId}).lean();
+          const calculatedPrice = await offerHelper.newOfferPrice(products);
+          products.offerPrice = calculatedPrice
+ 
           
           
-        // });
+         //  console.log("offerprice: ",products.offerPrice)
+ ////////////////////////////////////////////////////////////////////////////////////////////////
+         // const userId = userData._id
+         // const wishlistData = await wishlist.findOne({userId:new Object(userId)})
+ 
+         // console.log("This is wishlist data: ",wishlistData)
+ 
+         // var check = wishlistData.products.find(function(product) {
+         //   return  product.productId.toString() === productId.toString();
+           
+           
+         // });
+ 
+         // console.log("This is check:????????????????????",check);
+ ////////////////////////////////////////////////////////////////////////////////////////////////////
+          
+          res.render("productView",{products,userData});
+          
+        } catch (error) {
+           
+          console.error("Error in loadViewProduct: ",error);
+          next(error);
 
-        // console.log("This is check:????????????????????",check);
-////////////////////////////////////////////////////////////////////////////////////////////////////
-         
-         res.render("productView",{products,userData});
+          
+        }
 
 }
 
-const displaySize = async(req, res)=>{
+const displaySize = async(req, res, next)=>{
   try {
      
     if(req.session.user){
@@ -381,37 +477,47 @@ const displaySize = async(req, res)=>{
     }
     
   } catch (error) {
-    console.log(error)
+    console.log("Error in displyaSize: ",error);
+    next(error)
     
   }
 }
 
-const loadShopProduct = async(req, res)=>{
+const loadShopProduct = async(req, res, next)=>{
 
-                const categoryData = await category.find()
+                try {
+                  const categoryData = await category.find()
                 
-                const filteredProduct = await product.find({isBlocked:false}).lean();
-
-                for(let i=0; i<filteredProduct.length; i++){
-                  const product = filteredProduct[i];
-                  const calculatedPrice = await offerHelper.newOfferPrice(product)
-                  product.offerPrice = calculatedPrice
+                  const filteredProduct = await product.find({isBlocked:false}).lean();
+  
+                  for(let i=0; i<filteredProduct.length; i++){
+                    const product = filteredProduct[i];
+                    const calculatedPrice = await offerHelper.newOfferPrice(product)
+                    product.offerPrice = calculatedPrice
+                  }
+                  
+  
+                  let itemsPerPage = 9;
+                  let currentPage = parseInt(req.query.page) || 1;
+                  let startIndex = (currentPage-1) * itemsPerPage;
+                  let endIndex = startIndex + itemsPerPage;
+                  let totalPages = Math.ceil(filteredProduct.length/itemsPerPage);
+                  const currentProduct = filteredProduct.slice(startIndex,endIndex);
+  
+                  res.render("shop",{categoryData, filteredProduct:currentProduct, totalPages, currentPage})
+                  
+                } catch (error) {
+                       console.error("Error in loadShopProduct: ",error);
+                       next(error)
+                  
                 }
-                
-
-                let itemsPerPage = 9;
-                let currentPage = parseInt(req.query.page) || 1;
-                let startIndex = (currentPage-1) * itemsPerPage;
-                let endIndex = startIndex + itemsPerPage;
-                let totalPages = Math.ceil(filteredProduct.length/itemsPerPage);
-                const currentProduct = filteredProduct.slice(startIndex,endIndex);
-
-                res.render("shop",{categoryData, filteredProduct:currentProduct, totalPages, currentPage})
 }
 
-const filterShopProducts = async(req, res)=>{
+const filterShopProducts = async(req, res, next)=>{
                   
                   
+                try {
+
                   const categoryData = await category.find()
                   const value = req.query.criteria;
                   const totalPages = 1;
@@ -484,11 +590,21 @@ const filterShopProducts = async(req, res)=>{
                 
 
                   res.render("shop",{filteredProduct,categoryData,totalPages,currentPage})
+                  
+                } catch (error) {
+
+                  console.error("Error in filterShopProducts: ",error);
+                  next(error)
+
+                  
+                }
                                  
 }
 
-const filterCatergoryProducts = async(req, res)=>{
+const filterCatergoryProducts = async(req, res, next)=>{
                         
+
+                      try {
 
                         const categoryId = req.query.catId;
                         
@@ -510,14 +626,23 @@ const filterCatergoryProducts = async(req, res)=>{
                                 const currentProduct = filteredProduct.slice(startIndex,endIndex);
 
                              res.render("shopCategory",{filteredProduct:currentProduct,totalPages, currentPage,categoryData,categoryId});   
+           
+                        
+                      } catch (error) {
 
+                        console.error("Error in fileterCategory Products: ",error);
+                        next(error);
+
+                        
+                      }
 
 
 
 }
 
-const categoryWiseFiltering = async(req, res)=>{
+const categoryWiseFiltering = async(req, res, next)=>{
                       
+                    try {
                       const value = req.query.criteria;
                       const categoryData = await category.find();
                       const totalPages = 1;
@@ -589,6 +714,12 @@ const categoryWiseFiltering = async(req, res)=>{
 
 
                       res.render("shopCategory",{filteredProduct,categoryId,categoryData,totalPages, currentPage})
+                      
+                    } catch (error) {
+                        console.error("Error in categoryWiseFiltering: ",error);
+                        next(error)
+                      
+                    }
 
 
 }
@@ -597,8 +728,9 @@ const categoryWiseFiltering = async(req, res)=>{
 
 
 
-const searchProduct = async(req, res)=>{
+const searchProduct = async(req, res, next)=>{
                   
+                 try {
                   const receivedData = req.body.productName
                   const categoryData = await category.find();
                   const filteredProduct = await product.aggregate([
@@ -631,19 +763,37 @@ const searchProduct = async(req, res)=>{
                   
 
                   res.render("shop",{filteredProduct,categoryData})
+                  
+                 } catch (error) {
+                         console.error("Error in searchProduct: ",error);
+                         next(error)
+
+                  
+                 }
 }
 
-const loadEmaiEnterInForgotpassword = async(req, res)=>{
+const loadEmaiEnterInForgotpassword = async(req, res, next)=>{
                       
 
+                    try {
+
                       res.render("enterEmailForgotPassword")
+                      
+                    } catch (error) {
+
+                      console.error("Error in loadEmaiEnterInForgotpassword : ",error);
+                      next(error)
+
+                      
+                    }
 }
 
 
-const verifyingTheEmail = async(req, res)=>{
+const verifyingTheEmail = async(req, res, next)=>{
                         
 
-                         const receivedEmail = req.body.email
+                         try {
+                          const receivedEmail = req.body.email
                          req.session.storedEmail = receivedEmail
 
                         const checkUserExist = await User.findOne({email:receivedEmail});
@@ -667,22 +817,38 @@ const verifyingTheEmail = async(req, res)=>{
 
                           res.redirect("/")
                         }
+                          
+                         } catch (error) {
+                          console.error("Error in verifyingTheEmail : ",error);
+                          next(error);
+
+                          
+                         }
 }
 
-const loadOtpForgotPassword = async(req, res)=>{
+const loadOtpForgotPassword = async(req, res, next)=>{
+
+        try {
+          const error = req.flash("error")
+          res.render("otpForgotPassword",{error});
+          
+        } catch (error) {
+          console.error("Error in loadOtpForgotPassword: ",error);
+          next(error)
+          
+        }
                        
                        
-                       const error = req.flash("error")
-                       res.render("otpForgotPassword",{error});
+                     
 }
 
 const loadEnterNewPassword = async(req, res)=>{
                        
-
+                       
                        res.render("enterPassForgotPassword")
 }
 
-const  changePassword = async(req, res)=>{
+const  changePassword = async(req, res, next)=>{
                        
                        
                        try {
@@ -695,7 +861,7 @@ const  changePassword = async(req, res)=>{
                        
 
                        const { newPassword, confirmPassword} = req.body;
-
+                       
                        if(confirmPassword === newPassword){
                         const hashedPassword = await bcrypt.hash(newPassword,10);
                         const updatePassword = await User.updateOne({_id:userId},{password:hashedPassword});
@@ -710,7 +876,8 @@ const  changePassword = async(req, res)=>{
 
                         
                        } catch (error) {
-                        console.log(error)
+                        console.error("Error in changePassword: ",error);
+                        next(error)
                         
                        }
 

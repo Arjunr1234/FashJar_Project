@@ -10,7 +10,7 @@ const coupon = require("../models/couponModel");
 
 
 
-const loadCartPage = async (req, res) => {
+const loadCartPage = async (req, res, next) => {
   try {
     
     const userData = req.session.user
@@ -77,11 +77,12 @@ const loadCartPage = async (req, res) => {
     }
 
   } catch (error) {
-    console.log(error)
+    console.log("Error in loadCartPage: ",error);
+    next(error)
   }
 }
 
-const addToCart = async (req, res) => {
+const addToCart = async (req, res, next) => {
   try {
     
     if(req.session.user){
@@ -94,7 +95,7 @@ const addToCart = async (req, res) => {
        req.session.userId = userId
        
        const productData = await product.findOne({_id:productId})
-       console.log(productData);
+       
 
       const cartItems = {
         productId : productId,
@@ -133,52 +134,60 @@ const addToCart = async (req, res) => {
       res.status(401).json({ message: 'Unauthorized: User not logged in' });
     }
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: 'Internal server error' });
-    
+    console.error("Error in addtoCart: ",error);
+    next(error);
+   
   }
 
   
   
 }
- const productWithSizeCartCheck = async(req, res)=>{
+ const productWithSizeCartCheck = async(req, res, next)=>{
 
-              
-              const id = req.query.id;
-              const size = req.query.size
-              const userId = req.session.user._id;
-              
-              const checkProduct = await cart.findOne({
-                  userId:userId,
-                        
-                          "items":{
-                            $elemMatch:{
-                              productId:id,
-                              size:size
-                            }
-                          
-                        }
-              },{
-                "items":{
-                  $elemMatch:{
-                    productId:id,
-                    size:size
-                  }
-                }
-              })
-              console.log(checkProduct)
+           try {
 
-              if(checkProduct){
-                
-                res.json({response:true})
-              }else{
                
-                res.json({response:false})
+            const id = req.query.id;
+            const size = req.query.size
+            const userId = req.session.user._id;
+            
+            const checkProduct = await cart.findOne({
+                userId:userId,
+                      
+                        "items":{
+                          $elemMatch:{
+                            productId:id,
+                            size:size
+                          }
+                        
+                      }
+            },{
+              "items":{
+                $elemMatch:{
+                  productId:id,
+                  size:size
+                }
               }
+            })
+            
+
+            if(checkProduct){
+              
+              res.json({response:true})
+            }else{
+             
+              res.json({response:false})
+            }
+            
+           } catch (error) {
+            console.error("Error in productWithSizeCartCheck: ",error);
+            next(error)
+            
+           }
               
  }
 
- const deleteCartedItems = async(req, res)=>{
+ const deleteCartedItems = async(req, res, next)=>{
      try {
 
       
@@ -208,7 +217,8 @@ const addToCart = async (req, res) => {
 
       
      } catch (error) {
-      console.log(error)
+      console.error("Error in deleteCartItems: ",error);
+      next(error);
       
      }
 
@@ -217,9 +227,11 @@ const addToCart = async (req, res) => {
 
 
 
-const incrementQuantity = async (req, res)=>{
+const incrementQuantity = async (req, res, next)=>{
   
   
+ try {
+
   const {productId,size,index,stock,productPrice } = req.body
   const price = parseInt(productPrice)
   const prdId = new ObjectId(productId)
@@ -270,11 +282,19 @@ const incrementQuantity = async (req, res)=>{
     res.json({status:false,response:"stockLess"})
   }
 
+  
+ } catch (error) {
+  console.error("Error in incrementQuantity: ",error);
+  next(error)
+  
+ }
 
 }
-const decreaseQuantity = async(req, res)=>{
+const decreaseQuantity = async(req, res, next)=>{
        
 
+       try {
+         
         const {productId,size,index,stock,productPrice } = req.body;
         const price = parseInt(productPrice)
         const cartD = await cart.findOne({ userId: new ObjectId(req.session.user._id) }, { _id: 0, items: 1 });
@@ -316,9 +336,15 @@ const decreaseQuantity = async(req, res)=>{
                         
                         res.json({status:false,quantity:"equalToOne"})
                       }
+        
+       } catch (error) {
+        console.error("Error in decreaseQuantity: ", decreaseQuantity);
+        next(error)
+        
+       }
 }
 
-const loadCheckOutPage = async(req, res)=>{
+const loadCheckOutPage = async(req, res, next)=>{
           
             try {
               const userData = req.session.user
@@ -373,7 +399,8 @@ const loadCheckOutPage = async(req, res)=>{
               }
               
             } catch (error) {
-              console.log(error)
+              console.error("Error in loadCheckOutPage: ",error);
+              next(error);
               
             }
   }
