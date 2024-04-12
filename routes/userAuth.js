@@ -15,10 +15,10 @@ router.get('/', userController.loginLoad);
 router.post('/userloging', userController.loginHome);
 
 router.get('/userHome', userController.loadUserHome);
-//router.post('/userHome', userController.logNewUser);
+
 
 router.get('/register', userController.loadRegister);
-// router.post('/register', userController.insertUser);
+
 
 router.get('/logout',isUser, userController.loadLogout);
 router.get('/sampleForCheck',isUser,userController.loadSample)

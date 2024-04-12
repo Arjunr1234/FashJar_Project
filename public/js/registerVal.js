@@ -15,7 +15,7 @@ function emailValidate(e){
     error2.style.display = "block";
     error2.innerHTML = "Invalid Format!!";
   } else {
-    error2.style.display = "none";  // Corrected to set display to "none"
+    error2.style.display = "none";  
     error2.innerHTML = "";
   }
 }

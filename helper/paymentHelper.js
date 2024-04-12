@@ -1,7 +1,8 @@
 const { rejects } = require("assert");
 const { resolve } = require("path");
+require("dotenv").config()
 const Razorpay = require("razorpay");
-const secretKey = 'w7TOk0LKBFfCmwIEyPvL0KfN'
+const secretKey = process.env.PAYMENT_SECRET_KEY
 var instance = new Razorpay({
   key_id: 'rzp_test_K8JS3lXn50mode',
   key_secret: secretKey,

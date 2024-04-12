@@ -13,9 +13,12 @@ const { findById } = require('../models/adminModel');
 
 
 
- const placeOrder = async(req, res)=>{
+ const placeOrder = async(req, res, next)=>{
 
          
+           try {
+
+
             const receivedData = req.body;
             const userId = req.session.user._id;
             const couponId = receivedData.globalCouponId
@@ -96,6 +99,12 @@ const { findById } = require('../models/adminModel');
               res.json({razorpayStatus:true, instance:payment})
               
             }
+            
+           } catch (error) {
+            console.log("Error in place order: ",error);
+            next(error)
+            
+           }
            
            
  }
@@ -107,7 +116,7 @@ const { findById } = require('../models/adminModel');
  }
 
 
- const loadViewOrderDetails = async(req, res)=>{
+ const loadViewOrderDetails = async(req, res, next)=>{
   
 
            try {     
@@ -157,15 +166,16 @@ const { findById } = require('../models/adminModel');
                   res.render("viewOrderDetails",{orders,userData});
                     
              } catch (error) {
-                    console.log(error)
+                    console.log("Error in loadViewOrderDetails: ",error);
+                    next(error)
                     
               }
              
  }
 
- const deleteOrder = async (req, res) => {
+ const deleteOrder = async (req, res, next) => {
   
-
+ try {
   const { orderId, productId, size,quantity,productPrice,discount,paymentMethod } = req.body;
   const userId = req.session.user._id;
  
@@ -240,6 +250,14 @@ const { findById } = require('../models/adminModel');
    
     res.json({success:false})
    }
+  
+ } catch (error) {
+  console.error("Error in deleteOrder: ",error);
+  next(error);
+
+  
+ }
+  
   }
 
   const returnProduct = async(req, res)=>{
@@ -282,14 +300,16 @@ const { findById } = require('../models/adminModel');
           }
         
        } catch (error) {
-        console.log(error)
+        console.log("Error in returnProduct: ",error);
+        next(error);
         
        }
              
   }
 
-  const loadAddressEditCheckout = async(req, res)=>{
+  const loadAddressEditCheckout = async(req, res, next)=>{
      
+     try {
       const addressId = req.query.addressId;
       
       
@@ -297,6 +317,12 @@ const { findById } = require('../models/adminModel');
       const addressData = await user.findOne({_id:req.session.user._id},{"address":{$elemMatch:{_id:new objectId(addressId)}}})
       
        res.render("EditAddressInCheckoutPage",{addressData})
+      
+     } catch (error) {
+      console.error("Error in loadAddAddressInCheckoutPage: ", error);
+      next(error);
+      
+     }
                     
   }
 
@@ -324,101 +350,130 @@ const { findById } = require('../models/adminModel');
      res.redirect('/proceedToCheckOut')
       
      } catch (error) {
-      console.log(error)
+      console.log("Error in updateAddress: ",error);
+      next(error);
       
      }
 
   }
-  const verifyPayment = async(req, res)=>{
-    
-
-    const receivedData = req.body.data;
-    const userId = req.session.user._id;
-
-   
-    
-    const result = await paymentHelper.verifyThePayment(req.body).then(async (response)=>{
+  const verifyPayment = async(req, res, next)=>{
+    try {
+      const receivedData = req.body.data;
+      const userId = req.session.user._id;
+  
+     
       
-       const placedOrder = await placeOrderHelper.placeOrderHelp(receivedData,userId);
-            
-              if(placedOrder.status === true){
-                 
-                 const clearedCart = await placeOrderHelper.clearCart(userId);
-                 
-                 if(clearedCart.acknowledged){
-                       
-                       res.json({success:true,url:"/orderIsPlaced"});
+      const result = await paymentHelper.verifyThePayment(req.body).then(async (response)=>{
+        
+         const placedOrder = await placeOrderHelper.placeOrderHelp(receivedData,userId);
+              
+                if(placedOrder.status === true){
+                   
+                   const clearedCart = await placeOrderHelper.clearCart(userId);
+                   
+                   if(clearedCart.acknowledged){
+                         
+                         res.json({success:true,url:"/orderIsPlaced"});
+                   }
+                }else{
+                  
+                  res.json({success:false,message:placedOrder.message,url:"/loadCartPage"})
                  }
-              }else{
-                
-                res.json({success:false,message:placedOrder.message,url:"/loadCartPage"})
-               }
+         
+      }).catch((err)=>{
+        res.json({success:false, message:'Payment Failed!!'});
+      })
+      
+    } catch (error) {
+      console.log("Error in verifyPayment: ",error);
+      next(error);
+
+      
+    }
+
+ 
+  }
+
+  const applyCoupon = async(req, res, next)=>{
+           
+    try {
+      
+
+      
+      const {couponId, couponCode, couponName, discount} = req.body
+      couponDiscount = parseInt(discount);
+
+      const userId = req.session.user._id;
+      
+      const cartData = await cart.findOne({userId:new objectId(userId)}).lean();
+      const totalAmountofCart = cartData.totalAmount
+      
+
+      couponPrice = Math.round(totalAmountofCart - ( totalAmountofCart * couponDiscount/100));
+      
+
+
+      const changeTotalPrice = await cart.updateOne(
+                                 {userId:new objectId(userId)},
+                                 {$set:{totalAmount:couponPrice}}
+      )
+
+      
+
+      if(changeTotalPrice.modifiedCount === 1){
+       res.json({success: true, couponPrice})
+      }else{
        
-    }).catch((err)=>{
-      res.json({success:false, message:'Payment Failed!!'});
-    })
-  }
+       res.json({success:false})
+      }
+      
+    } catch (error) {
 
-  const applyCoupon = async(req, res)=>{
-           
+      console.log("Error in applyCoupon: ",error);
+      next(error);
+      
 
-           const {couponId, couponCode, couponName, discount} = req.body
-           couponDiscount = parseInt(discount);
-
-           const userId = req.session.user._id;
-           
-           const cartData = await cart.findOne({userId:new objectId(userId)}).lean();
-           const totalAmountofCart = cartData.totalAmount
-           
-
-           couponPrice = Math.round(totalAmountofCart - ( totalAmountofCart * couponDiscount/100));
-           
-
-
-           const changeTotalPrice = await cart.updateOne(
-                                      {userId:new objectId(userId)},
-                                      {$set:{totalAmount:couponPrice}}
-           )
-
-           
-
-           if(changeTotalPrice.modifiedCount === 1){
-            res.json({success: true, couponPrice})
-           }else{
-            
-            res.json({success:false})
-           }
+      
+    }
 
 
 
   }
 
-  const updateOrderStatus = async(req, res)=>{
+  const updateOrderStatus = async(req, res, next)=>{
                         
+           try {
+                  
+            const receivedData = req.body.data;
+            const userId = req.session.user._id;
+            const orderId = req.body.data.orderId;
 
-                        const receivedData = req.body.data;
-                       const userId = req.session.user._id;
-                       const orderId = req.body.data.orderId;
 
-    
-    
-    const result = await paymentHelper.verifyThePayment(req.body).then(async (response)=>{
-       
 
-       const updateOrder = await order.updateOne(
-                                    {_id:new objectId(orderId)},
-                                     {$set:{status:"pending"}}          
-            );
+const result = await paymentHelper.verifyThePayment(req.body).then(async (response)=>{
+
+
+const updateOrder = await order.updateOne(
+                         {_id:new objectId(orderId)},
+                          {$set:{status:"pending"}}          
+ );
+ 
+ if(updateOrder.modifiedCount === 1){
+   res.json({success:true, url:"/orderIsPlaced"})
+ }else{
+   res.json({success:false, message:"Order is not Placed!!"}); 
+ }
+
+}).catch((err)=>{
+res.json({success:false, message:'Payment Failed!!'});
+})
+
             
-            if(updateOrder.modifiedCount === 1){
-              res.json({success:true, url:"/orderIsPlaced"})
-            }else{
-              res.json({success:false, message:"Order is not Placed!!"}); 
-            }
-       
-    }).catch((err)=>{
-      res.json({success:false, message:'Payment Failed!!'});
-    })
+           } catch (error) {
+
+              console.error("Error in updateOrderStatus: ",error);
+              next(error)
+           }
 
   }
 
@@ -485,7 +540,8 @@ const { findById } = require('../models/adminModel');
 
                     
                    } catch (error) {
-                    console.log(error)
+                    console.log("Error in saveAddress",error);
+                    next(error);
                     
                    }
 
