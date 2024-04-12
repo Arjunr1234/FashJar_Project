@@ -71,9 +71,9 @@
                                                     <td class="col-md-2 col-action">
                                                         <div class="">
                                                             <% if (categoryD[i].isListed) { %>
-                                                                 <a  class="btn btn-sm font-sm btn-action" style="width: 55%; background-color: rgb(54, 138, 198); color: white;" onclick="unlist('<%= categoryD[i]._id %>', 'Unlist')">Unlist</a> 
+                                                                 <a  class="btn btn-sm font-sm btn-action" style="width: 55%; background-color: rgb(54, 138, 198); color: white;" onclick="Unlist('<%= categoryD[i]._id %>', 'Unlist')">Unlist</a> 
                                                             <% } else { %>
-                                                                <a  class="btn btn-sm font-sm btn-action" style="width: 55%; background-color: rgb(252, 0, 0); color: white;" onclick="unlist('<%= categoryD[i]._id %>','list')">List</a>
+                                                                <a  class="btn btn-sm font-sm btn-action" style="width: 55%; background-color: rgb(252, 0, 0); color: white;" onclick="Unlist('<%= categoryD[i]._id %>','list')">List</a>
                                                             <% } %>
                                                         </div>
                                                     </td>
@@ -119,9 +119,10 @@
         },2000)
     </script>
     <script>
-        function unlist(id, clicked) {
-            let confirmationMessage;
-            if (clicked === 'Unlist') {
+        function Unlist(id, clickedd) {
+            
+            let confirmationMessage  
+            if (clickedd == 'Unlist') {
                 confirmationMessage = "Are you sure you want to unlist this category?"
             } else {
                 confirmationMessage = "Are you sure you want to list this category?"
@@ -133,13 +134,13 @@
             }).then((result) => {
                 if (result) {
                     $.ajax({
-                        url: `/admin/listUnlist?id=${id}`,  // Corrected from `categoryId` to `id`
+                        url: `/admin/listUnlist?id=${id}`,  
                         method: 'PATCH',
                         contentType: 'application/json',
                         success: function (data) {
                             console.log("Entered into success function")
                             if (data.success) {
-                                if (clicked === 'Unlist') {
+                                if (clickedd === 'Unlist') {
                                     swal("Category Unlisted!", {
                                         icon: "success",
                                     }).then(() => {
@@ -176,6 +177,8 @@
           
     </script>
     <script src="/public/js/categoryValidation.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="/public/admin-assets/js/vendors/jquery-3.6.0.min.js"></script>
     <script src="/public/admin-assets/js/vendors/bootstrap.bundle.min.js"></script>
