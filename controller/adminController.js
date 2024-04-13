@@ -1,19 +1,15 @@
-const session = require("express-session");
+
 const admin = require("../models/adminModel");
 const fs = require('fs');
 const path = require('path');
-const flash = require("express-flash");
 const User = require("../models/userModel");
 const category = require("../models/categoryModel")
 const product = require("../models/productModel")
 const mongoose = require('mongoose'); 
 const order = require("../models/orderModel");
-const cart = require("../models/cartModel");
-const wallet = require("../models/walletModel")
-const productModel = require("../models/productOfferModel");
-const coupon = require("../models/couponModel")
+const wallet = require("../models/walletModel");
 const objectId = require("mongoose").Types.ObjectId;
-const offerHelper = require("../helper/offerHelper")
+
 
 
 
@@ -805,7 +801,7 @@ const loadViewOrderPage = async(req, res, next)=>{
                   ]);
                   
                   
-                 
+                 console.log("This is orderData: ", orderData)
                   
                   res.render("viewOrderDetailsAdmin",{orderData});
                   

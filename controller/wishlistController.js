@@ -1,5 +1,4 @@
 const { newOfferPrice } = require("../helper/offerHelper");
-const { findOne } = require("../models/adminModel");
 const product = require("../models/productModel");
 const wishlist = require("../models/wishlistModel");
 const user = require("../models/userModel");

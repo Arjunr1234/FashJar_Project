@@ -1,14 +1,10 @@
 
-const mongoose = require('mongoose'); 
-const order = require("../models/orderModel");
-const admin = require("../models/adminModel");
-const User = require("../models/userModel");
+
 const category = require("../models/categoryModel")
 const product = require("../models/productModel");
 const categoryOffer = require("../models/categoryOfferModel");
 const productOffer = require("../models/productOfferModel");
 const CategoryOfferModel = require("../models/categoryOfferModel");
-const wallet = require("../models/walletModel");
 const coupon = require("../models/couponModel");
 const ObjectId = require("mongoose").Types.ObjectId
 

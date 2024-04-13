@@ -1,11 +1,9 @@
 const product = require("../models/productModel")
-const category = require("../models/categoryModel")
 const user = require("../models/userModel")
 const cart = require("../models/cartModel")
 const offerHelper = require("../helper/offerHelper")
 const ObjectId = require("mongoose").Types.ObjectId
-const order = require("../models/orderModel")
-const wishlist = require("../models/wishlistModel");
+
 const coupon = require("../models/couponModel");
 
 

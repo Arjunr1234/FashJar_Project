@@ -1,17 +1,13 @@
-const { render } = require("ejs")
+
 const User = require("../models/userModel");
-const otpSend = require("../helper/otpHelper")
 const otpHelper = require("../helper/otpHelper")
 const userHelper = require("../helper/userHelper")
-const { response } = require("express")
-const bcrypt = require("bcrypt")
-const order = require("../models/orderModel");
+const bcrypt = require("bcrypt");
 const product = require("../models/productModel")
 const category = require("../models/categoryModel")
 const cart = require("../models/cartModel");
 const offerHelper = require("../helper/offerHelper");
 const wallet = require("../models/walletModel")
-const wishlist  = require("../models/wishlistModel")
 const {ObjectId} = require("mongoose").Types
 
 
@@ -342,7 +338,7 @@ const loadLogout = (req, res, next) => {
           res.status(500).json({ response: false, error: "Logout failed" });
         } else {
          
-           res.redirect("/guestUser");
+           res.redirect("/");
         }
       });
     } else {
@@ -486,6 +482,7 @@ const displaySize = async(req, res, next)=>{
 const loadShopProduct = async(req, res, next)=>{
 
                 try {
+                  const userData = req.session.user
                   const categoryData = await category.find()
                 
                   const filteredProduct = await product.find({isBlocked:false}).lean();
@@ -504,7 +501,7 @@ const loadShopProduct = async(req, res, next)=>{
                   let totalPages = Math.ceil(filteredProduct.length/itemsPerPage);
                   const currentProduct = filteredProduct.slice(startIndex,endIndex);
   
-                  res.render("shop",{categoryData, filteredProduct:currentProduct, totalPages, currentPage})
+                  res.render("shop",{categoryData, filteredProduct:currentProduct, totalPages, currentPage,userData})
                   
                 } catch (error) {
                        console.error("Error in loadShopProduct: ",error);
@@ -517,7 +514,7 @@ const filterShopProducts = async(req, res, next)=>{
                   
                   
                 try {
-
+                  const userData = req.session.user
                   const categoryData = await category.find()
                   const value = req.query.criteria;
                   const totalPages = 1;
@@ -589,7 +586,7 @@ const filterShopProducts = async(req, res, next)=>{
 
                 
 
-                  res.render("shop",{filteredProduct,categoryData,totalPages,currentPage})
+                  res.render("shop",{filteredProduct,categoryData,totalPages,currentPage, userData})
                   
                 } catch (error) {
 
@@ -605,6 +602,8 @@ const filterCatergoryProducts = async(req, res, next)=>{
                         
 
                       try {
+
+                        const userData = req.session.userData
 
                         const categoryId = req.query.catId;
                         
@@ -625,7 +624,7 @@ const filterCatergoryProducts = async(req, res, next)=>{
                                 let totalPages = Math.ceil(filteredProduct.length/itemsPerPage);
                                 const currentProduct = filteredProduct.slice(startIndex,endIndex);
 
-                             res.render("shopCategory",{filteredProduct:currentProduct,totalPages, currentPage,categoryData,categoryId});   
+                             res.render("shopCategory",{filteredProduct:currentProduct,totalPages, currentPage,categoryData,categoryId, userData});   
            
                         
                       } catch (error) {
@@ -643,6 +642,7 @@ const filterCatergoryProducts = async(req, res, next)=>{
 const categoryWiseFiltering = async(req, res, next)=>{
                       
                     try {
+                      const userData = req.session.user
                       const value = req.query.criteria;
                       const categoryData = await category.find();
                       const totalPages = 1;
@@ -713,7 +713,7 @@ const categoryWiseFiltering = async(req, res, next)=>{
                  }
 
 
-                      res.render("shopCategory",{filteredProduct,categoryId,categoryData,totalPages, currentPage})
+                      res.render("shopCategory",{filteredProduct,categoryId,categoryData,totalPages, currentPage, userData})
                       
                     } catch (error) {
                         console.error("Error in categoryWiseFiltering: ",error);

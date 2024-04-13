@@ -3,8 +3,8 @@ const path = require("path");
 const nocache = require("nocache");
 const session = require("express-session");
 const flash = require("express-flash");
-const nodemailer = require("nodemailer");
-const bodyParser = require("body-parser")
+const bodyParser = require("body-parser");
+require('dotenv').config()
 
 
 const userAuthRoute = require("./routes/userAuth");
@@ -13,7 +13,9 @@ const adminAuthRoute = require("./routes/adminAuth")
 const app = express();
 
 const mongoose = require("mongoose");
-mongoose.connect("mongodb://localhost:27017/Fashjar");
+mongoose.connect(process.env.MONGOdB)
+    
+
 
 mongoose.connection.on("connected", () => console.log("Connected to MongoDB"));
 mongoose.connection.on("error", (err) => console.log("Error in connecting to MongoDB:", err));

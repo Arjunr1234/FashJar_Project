@@ -87,7 +87,11 @@
                                         <% } else if (orderData[i].products.status == 'Return pending') { %>
                                             <a id="changeStatus<%= orderData[i].products.product %>" onclick="changeOrderStatus('<%= orderData[i]._id %>','<%= orderData[i].products.size %>','<%= orderData[i].products.product %>','Returned','<%= orderData[i].products.productPrice %>','<%= orderData[i].userId %>','<%= orderData[i].products.quantity %>')" class="btn btn-outline-primary rounded font-sm">Approve Return</a>
                                         <% }else if(orderData[i].products.status == 'Returned'){%>
-                                            <a id="returnReason" onclick="returnReason('<%= orderData[i].products.returnReason %>')" class="btn  btn-warning rounded font-sm">Reason</a>
+                                            <% let reason = orderData[i].products.returnReason  %>
+                                             <%- console.log("This console ejs: ", orderData[i].products.returnReason) %>
+                                            <input type="hidden" value="<%= JSON.stringify(orderData[i].products.returnReason) %>" id="mess">
+                                            <a id="returnReason" onclick="returnReason('<%= reason  %>')" class="btn btn-warning rounded font-sm">Reason</a>
+
                                         <% }
                                         
                                         %>
@@ -251,7 +255,10 @@
     <script>
         // JavaScript functions for modal interaction
         function returnReason(reason) {
-            
+            console.log("This is the reason: ", reason)
+          
+ 
+ 
 
             Swal.fire({
                 title: reason,

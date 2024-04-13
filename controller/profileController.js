@@ -1,7 +1,4 @@
 const user = require("../models/userModel");
-const cart = require('../models/cartModel');
-const category = require("../models/categoryModel");
-const product = require("../models/productModel");
 const bcrypt = require("bcrypt");
 const order = require("../models/orderModel");
 const wallet = require("../models/walletModel");
@@ -260,6 +257,7 @@ const loadOrderDetails = async (req, res, next)=>{
                 if(req.session.user){
                   const userData = req.session;
                  const orderData = await order.find({userId:req.session.user._id})
+                 
   
                  let itemsPerPage = 8;
                  let currentPage = parseInt(req.query.page) || 1;
@@ -270,11 +268,12 @@ const loadOrderDetails = async (req, res, next)=>{
                  let startIndex = orderData.length - (currentPage * itemsPerPage);
                  let endIndex = startIndex + itemsPerPage;
                  if (startIndex < 0) {
-                     endIndex += startIndex; 
+                    // endIndex += startIndex; 
                      startIndex = 0;
                  }
           
                  const currentProduct = orderData.slice(startIndex, endIndex);
+                
                  
                  res.render("orderPage",{orderData:currentProduct,userData, totalPages, currentPage})
                  }else{
