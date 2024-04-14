@@ -1,5 +1,5 @@
 const user = require("../models/userModel");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const order = require("../models/orderModel");
 const wallet = require("../models/walletModel");
 const objectId = require("mongoose").Types.ObjectId
