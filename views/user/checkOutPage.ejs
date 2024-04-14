@@ -556,10 +556,7 @@ function otherFunction() {
         const selectPaymentMethod = document.querySelector('input[name="payment_option"]:checked').value;
         const totalPriceOfCart = document.getElementById('totalPriceOfCarts').innerHTML;
 
-        console.log("This is selected Address: ",selectedAddress);
-        console.log("This is the payment option: ",selectPaymentMethod);
-        console.log("Total Price of Cart: ",totalPriceOfCart);
-        console.log("This is global couponId: ",globalCouponId);
+       
         
         
         const data = {
@@ -574,17 +571,25 @@ function otherFunction() {
           data:JSON.stringify(data),
           contentType:'application/json',
           success:function(response){
-               console.log("This is response: ",response)
+               
                 if(response.success){
-                    console.log("This is response: ",response)
+                    
                     window.location.href=response.url
                 }else if(response.razorpayStatus){
                     console.log("Entered into payment in ajax")
                     razorpayPayment(response.instance, data)
 
-                }else {
-                    console.log("This is response: ",response)
-                    console.log("Entered in to else tostrify")
+                }else if(response.outOfStock){
+                    Toastify({
+                        text: response.message,
+                         backgroundColor: "red",
+                     duration: 3000,
+                     position: "center" 
+                 }).showToast();
+
+
+                } else {
+                    
                     Toastify({
                         text: response.message,
                          backgroundColor: "red",
@@ -640,7 +645,7 @@ function otherFunction() {
         rzp1.open();
 
         rzp1.on("payment.failed", function (response) {
-            console.log('Payment failed:', response.error.description);
+            
             handleFailure(response,data);
         });
       }
@@ -654,8 +659,7 @@ function otherFunction() {
                 if(response.success){
                     window.location.href=response.url
                 }else{
-                    console.log("This is response: ",response)
-                    console.log("Entered in to else tostrify in verifypayment")
+                   
                     Toastify({
                         text: response.message,
                          backgroundColor: "red",

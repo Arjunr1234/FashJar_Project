@@ -71,7 +71,7 @@ const loadCartPage = async (req, res, next) => {
         res.render("cartPage")
       }
     } else {
-      res.redirect('/')
+      res.redirect('/login')
     }
 
   } catch (error) {
@@ -393,7 +393,7 @@ const loadCheckOutPage = async(req, res, next)=>{
                 res.render("checkOutPage",{products, TotalPriceOfCart, userAddress,couponData,userData})
               }else{
                
-                res.redirect('/');
+                res.redirect('/login');
               }
               
             } catch (error) {

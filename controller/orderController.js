@@ -7,6 +7,7 @@ const user = require("../models/userModel");
 const wallet = require('../models/walletModel');
 const cart = require("../models/cartModel");
 const paymentHelper = require("../helper/paymentHelper");
+const quantityCheckHelper = require("../helper/quantityCheckingHelper")
 
 
 
@@ -92,10 +93,21 @@ const paymentHelper = require("../helper/paymentHelper");
                }
                
             }else if(receivedData.paymentMethod === 'Razorpay'){
-             
-              const payment = await paymentHelper.generateRazorpay(userId,totalPriceOfCart)
+
+              // const result = await quantityCheckHelper.checkingQuantity(userId);
+              // if(result.status === false){
+              //   res.json({outOfStock:true, message:result.message})
+              // }
+
+                const payment = await paymentHelper.generateRazorpay(userId,totalPriceOfCart)
               
-              res.json({razorpayStatus:true, instance:payment})
+                res.json({razorpayStatus:true, instance:payment})
+
+
+              
+               
+             
+            
               
             }
             
@@ -207,6 +219,9 @@ const paymentHelper = require("../helper/paymentHelper");
     );
    
     if(paymentMethod === 'Razorpay' || paymentMethod === 'wallet'){
+
+
+
       if(discount){
        
         const totalPrice = Math.floor((100-discount)/100*productPrice*quantity);

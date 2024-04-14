@@ -31,7 +31,7 @@ const placeOrderHelp = async (body, userId) => {
 
 
 
-      // Check if userCart is not null before proceeding
+      
       if (userCart) {
         const user = await users.findOne({ _id: userId });
 
@@ -48,7 +48,7 @@ const placeOrderHelp = async (body, userId) => {
             response.status = false;
             response.message = `Insufficient Quantity for product ${product.productName} `;
             resolve(response);
-            return;
+            
           }
         }
 

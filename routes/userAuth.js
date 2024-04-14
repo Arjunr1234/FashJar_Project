@@ -8,10 +8,14 @@ const profileController = require("../controller/profileController");
 const orderController = require("../controller/orderController");
 const wishlistController = require("../controller/wishlistController")
 const isUser = require("../middlewares/userLoggingMiddleware");
-const wishlist = require("../models/wishlistModel");
+const userChecking = require("../middlewares/userSessionCheckingMiddleware");
 
 
-router.get('/', userController.loginLoad);
+
+router.get('/',userChecking, userController.loadGuestUserHome);
+//router.get('/guestUser',userController.loadGuestUserHome);
+router.get('/login', userController.loginLoad)
+
 router.post('/userloging', userController.loginHome);
 
 router.get('/userHome', userController.loadUserHome);
@@ -53,7 +57,7 @@ router.get('/filterTheCategory',isUser,userController.categoryWiseFiltering);
 
 //===============GuestUser===========================
 
-router.get('/guestUser',userController.loadGuestUserHome)
+
 
 // ================cart===============================
 

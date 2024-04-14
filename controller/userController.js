@@ -123,7 +123,7 @@ const insertUserWithVerify = async function(req, res, next) {
 
         const message = response.message;
         req.flash("message", message);
-        return res.redirect('/');
+        return res.redirect('/login');
       }
     } else {
        
@@ -156,7 +156,7 @@ const loginHome = async (req, res, next) => {
     } else {
       
       req.flash("error",response.loginMessage)
-      res.redirect('/')
+      res.redirect('/login')
     }
   } catch (error) {
     
@@ -175,7 +175,7 @@ const loginHome = async (req, res, next) => {
 
 const loadUserHome = async function (req, res, next) {
   try {
-    
+     
       if (req.session.user) {
           
           
@@ -265,8 +265,8 @@ const loadUserHome = async function (req, res, next) {
 const loadGuestUserHome = async (req, res, next)=>{
 
           try {
-            
-
+          
+           
              const productData = await product.aggregate([
               {
                   $match: {
@@ -325,6 +325,7 @@ const loadGuestUserHome = async (req, res, next)=>{
 
             
           }
+        
 }
 
 
@@ -815,7 +816,7 @@ const verifyingTheEmail = async(req, res, next)=>{
                         }else{
                           req.flash("error","User not Exist");
 
-                          res.redirect("/")
+                          res.redirect("/login")
                         }
                           
                          } catch (error) {
@@ -869,7 +870,7 @@ const  changePassword = async(req, res, next)=>{
                         if(updatePassword.modifiedCount === 1){
                           
                           req.flash("message","Updated Successfully")
-                          res.redirect("/")
+                          res.redirect("/login")
                         }
                         
                        }

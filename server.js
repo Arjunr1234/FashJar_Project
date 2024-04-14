@@ -61,5 +61,5 @@ app.use(function (err, req, res, next) {
 
          
 app.listen(2999, () => {
-  console.log("Server is running at http://localhost:2999  http://localhost:2999/admin/login http://localhost:2999/guestUser");
+  console.log("Server is running at http://localhost:2999  http://localhost:2999/admin/login http://localhost:2999/login");
 });

@@ -301,7 +301,7 @@
                                                    
                                                 <div class="col-md-6"> 
                                                  
-                                                    <a href="/" class="btn btn-primary">Add to cart</a>
+                                                    <a href="/login" class="btn btn-primary">Add to cart</a>
                                                     <!-- <button  id="addToCartButton" type="submit" class="btn btn-primary">Add to cart</button> -->
                                                 </div>
                                             </div>
@@ -757,12 +757,10 @@
         let sizeClicked = null;
         
         function addToCart(productId){
-             console.log("add to cart is jhgjh clicked");
-             //console.log("This is offerprice in ajaz: ",offerPrice)
+          
             const  offerPrice = parseInt(document.getElementById("offerPrice").innerHTML)
              
-           //  console.log("This is ooooooooooooooofer:",offer)
-             console.log("This is productId:",productId)
+          
              if (sizeClicked === null) {
                 console.error("Please select a size before adding to cart");
                 Toastify({
@@ -775,7 +773,7 @@
                 return;
              }
              
-             console.log("This is before ajax enter")
+            
              $.ajax({
                 url:'/addToCart',
                 type:'POST',
@@ -790,13 +788,13 @@
                     }
                     if(!response.response){
                         
-                        console.log("Some error is found : !response.response")
-                        window.location.href = '/'
+                        
+                        window.location.href = '/login'
                     }
                 },
                 error:function(error){
-                    console.log("some error is found: error below response is not ")
-                    window.location.href = '/'
+                    console.log("some error is found ajax: error below response is not ")
+                    window.location.href = '/login'
                 }
 
              })
@@ -879,8 +877,7 @@
 
           
             function addToWishlistToggle(productId) {
-                console.log("Entered into function");
-                console.log("This is the product Id: ",productId)
+                
                 $.ajax({
                     url: '/addToWishlist',
                     method: 'post',

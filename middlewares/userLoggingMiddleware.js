@@ -15,11 +15,11 @@ const isUser = async(req, res,next)=>{
         
         
         delete req.session.user
-        res.redirect("/");
+        res.redirect("/login");
       }
     } else {
-      console.log("Some error is found in userLogging middleware");
-      res.redirect('/');
+      
+      res.redirect('/login');
     }
   } catch (error) {
     console.log(error);

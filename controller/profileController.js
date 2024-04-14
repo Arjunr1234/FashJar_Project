@@ -278,7 +278,7 @@ const loadOrderDetails = async (req, res, next)=>{
                  res.render("orderPage",{orderData:currentProduct,userData, totalPages, currentPage})
                  }else{
                   console.log("User is not found in loadorderDetais")
-                  res.redirect("/")
+                  res.redirect("/login")
                  }
                 
               } catch (error) {
