@@ -212,10 +212,14 @@ const quantityCheckHelper = require("../helper/quantityCheckingHelper")
 
    if(deletingOrder.modifiedCount===1){
    
+   
+
+    let updateOperation = {};
+    updateOperation[`size.${size}.quantity`] = quantity;
+
     const addingProduct = await product.updateOne(
-      { "_id": new objectId(productId), "size.s": { $exists: true } },
-      { $inc: { "size.s.quantity": quantity } }
-      
+        { "_id": new objectId(productId), [`size.${size}`]: { $exists: true } },
+        { $inc: updateOperation }
     );
    
     if(paymentMethod === 'Razorpay' || paymentMethod === 'wallet'){

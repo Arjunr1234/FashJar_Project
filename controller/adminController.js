@@ -801,7 +801,7 @@ const loadViewOrderPage = async(req, res, next)=>{
                   ]);
                   
                   
-                 console.log("This is orderData: ", orderData)
+                 
                   
                   res.render("viewOrderDetailsAdmin",{orderData});
                   
