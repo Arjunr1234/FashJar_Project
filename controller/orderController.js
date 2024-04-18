@@ -212,7 +212,10 @@ const quantityCheckHelper = require("../helper/quantityCheckingHelper")
 
    if(deletingOrder.modifiedCount===1){
    
-   
+    // const addingProduct = await product.updateOne(
+    //   { "_id": new objectId(productId), "size.s": { $exists: true } },
+    //   { $inc: { "size.s.quantity": quantity } }
+    // );
 
     let updateOperation = {};
     updateOperation[`size.${size}.quantity`] = quantity;
@@ -229,6 +232,7 @@ const quantityCheckHelper = require("../helper/quantityCheckingHelper")
       if(discount){
        
         const totalPrice = Math.floor((100-discount)/100*productPrice*quantity);
+        
         
         const data = {
           amount:totalPrice,
