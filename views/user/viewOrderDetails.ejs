@@ -72,12 +72,13 @@
                           <td class="col-price col-md-1 text-center">₹<%= orders[i].orderDetails.productPrice %></td>
                           <td class="col-size col-md-1 text-center"><%= orders[i].orderDetails.size.toUpperCase() %></td>
                           <td class="col-quantity col-md-1 text-center"><%= orders[i].orderDetails.quantity %></td>
-                          <th class="col-md-2 text-center">
+                          <td class="col-md-2 text-center">
                             <% if (orders[i].orderDetails.status == 'Pending') { %>
                               <span id="status" class="badge rounded-pill alert-warning"><%= orders[i].orderDetails.status %></span>
-                          <% } else if (orders[i].orderDetails.status == 'Processing') {%>
+                            <% } else if (orders[i].orderDetails.status == 'Processing') { %>
                               <span id="status" class="badge rounded-pill alert-secondary"><%= orders[i].orderDetails.status %></span>
-                          <% } else if (orders[i].orderDetails.status == 'Confirmed') {%>
+                            <!-- Other status conditions -->
+                            <% } else if (orders[i].orderDetails.status == 'Confirmed') {%>
                               <span id="status" class="badge rounded-pill alert-dark"><%=orders[i].orderDetails.status %></span>
                           <% } else if (orders[i].orderDetails.status == 'Shipped') {%>
                               <span id="status" class="badge rounded-pill alert-info"><%= orders[i].orderDetails.status %></span>
@@ -89,8 +90,9 @@
                               <span id="status" class="badge rounded-pill alert-warning"><%= orders[i].orderDetails.status %></span>
                           <% } else {%>
                               <span id="status" class="badge rounded-pill alert-danger"><%= orders[i].orderDetails.status %></span>
-                          <% } %>
-                          </th>
+                          <% }
+                            %>
+                          </td>
                           <td class="col-cancell col-md-2 text-center">
                             <!-- Cancel/Return button -->
                             <% if (orders[i].orderDetails.status === 'Delivered') { %>
