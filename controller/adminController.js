@@ -180,11 +180,12 @@ const loadAdminHome = async (req, res, next)=>{
 
           const logEmail = req.body.email;
           const logPassword = req.body.password;
-
+           console.log("This is email and password: ", logEmail, logPassword)
            const loggedUser = await admin.findOne({
                        email:logEmail,
                        password:logPassword
            })
+           console.log("This is loggedUser: ", loggedUser)
            
            if(loggedUser){
              
@@ -729,23 +730,27 @@ const loadOrderPage = async (req, res, next)=>{
           }
         ]);
 
-
-               let itemsPerPage = 8;
-               let currentPage = parseInt(req.query.page) || 1;
-               let totalPages = Math.ceil(orderData.length / itemsPerPage);
-               let lastPage = totalPages;
-               
-               
-               let startIndex = orderData.length - (currentPage * itemsPerPage);
-               let endIndex = startIndex + itemsPerPage;
-               if (startIndex < 0) {
-                   endIndex += startIndex; 
-                   startIndex = 0;
-               }
-        
-               const currentProduct = orderData.slice(startIndex, endIndex);
+              
+        let itemsPerPage = 8;
+        let currentPage = parseInt(req.query.page) || 1;
+        let totalPages = Math.ceil(orderData.length / itemsPerPage);
+        let lastPage = totalPages;
         
        
+        let startIndex = (currentPage - 1) * itemsPerPage;
+        let endIndex = startIndex + itemsPerPage;
+        
+       
+        if (startIndex >= orderData.length) {
+            startIndex = orderData.length - itemsPerPage;
+        }
+        if (startIndex < 0) startIndex = 0;
+        
+        
+        const currentProduct = orderData.slice(startIndex, endIndex);
+        
+               console.log("Thsi is current Product: ", currentProduct)
+             
              res.render("orderDetails",{orderData:currentProduct, totalPages, currentPage})
         
        } catch (error) {
@@ -802,7 +807,7 @@ const loadViewOrderPage = async(req, res, next)=>{
                   
                   
                  
-                  
+                  console.log("orderData: ", orderData)
                   res.render("viewOrderDetailsAdmin",{orderData});
                   
                   

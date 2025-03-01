@@ -8,7 +8,7 @@ function generateSixDigitNumber(){
 }
 
 const transporter = nodemailer.createTransport({
-          service:"gmail",
+          service:"gmail", 
           auth:{
             user:process.env.EMAIL_USER,
             pass:process.env.EMAIL_PASS
@@ -18,6 +18,7 @@ const transporter = nodemailer.createTransport({
 
 
 const sendOtp = (req,res)=>{
+  console.log("this is the email and passkey  :  ", process.env.EMAIL_USER, process.env.EMAIL_PASS  )
   try {    
     const {name,email,mobile,password,refferalCode} = req.body
      
@@ -34,12 +35,13 @@ const sendOtp = (req,res)=>{
     if(!userEmail){
       return res.status(400).json({error:"Error or Invalid Email"});
     }
-    const mailOptions = {
-      from:"arjunreji1234@gmail.com",
+    const mailOptions = { 
+      from:"arjunr1307@gmail.com",
       to:userEmail,
       subject:"Your OTP Verification Code",
       text:`Your otp is ${otp}`
     }
+    console.log("Thisis otp: ", otp)
    
     transporter.sendMail(mailOptions,(error)=>{
      
