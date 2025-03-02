@@ -15,7 +15,7 @@ const app = express();
 const mongoose = require("mongoose");
 mongoose.connect(process.env.MONGOdB)
     
-
+    
 
 mongoose.connection.on("connected", () => console.log("Connected to MongoDB"));
 mongoose.connection.on("error", (err) => console.log("Error in connecting to MongoDB:", err));
@@ -30,7 +30,7 @@ app.use(
   session({
     secret:"2232kdfdkf9788",
     resave:false,
-    saveUninitialized:true
+    saveUninitialized:true   
   })
 )
 app.use(bodyParser.json());
@@ -63,3 +63,4 @@ app.use(function (err, req, res, next) {
 app.listen(2999, () => {
   console.log("Server is running at http://localhost:2999  http://localhost:2999/admin/login http://localhost:2999/login");
 });
+  
